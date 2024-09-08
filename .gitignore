@@ -189,9 +189,7 @@ build/
 .angular-builds/
 
 # Compiled output
-*.js
 *.d.ts
-*.js.map
 *.tsbuildinfo
 
 # IDE-specific files
@@ -224,3 +222,4 @@ yarn.lock
 # Optional: remove this if you want to track the exact versions of packages
 package-lock.json
 yarn.lock
+package.json
