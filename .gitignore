@@ -189,9 +189,7 @@ build/
 .angular-builds/
 
 # Compiled output
-*.js
 *.d.ts
-*.js.map
 *.tsbuildinfo
 
 # IDE-specific files
