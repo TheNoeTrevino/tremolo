@@ -1,11 +1,15 @@
+from _typeshed import FileDescriptorOrPath
 from enum import Enum
+from pathlib import Path
 import os, tempfile
 
 from music21 import metadata
+from music21 import converter
 from music21.stream.base import Stream
 
 
 def get_xml_file(stream: Stream) -> bytes:
+    """Takes in a stream and converts it to xml, which is returned"""
     stream = clean_stream(stream)
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as tmp_file:
@@ -13,13 +17,24 @@ def get_xml_file(stream: Stream) -> bytes:
         tmp_file_path = tmp_file.name
 
     with open(tmp_file_path, "rb") as f:
-        midi_bytes = f.read()
+        xml_bytes = f.read()
 
     os.remove(tmp_file_path)
 
-    return midi_bytes
+    return xml_bytes
 
 
+def midi_to_xml(file: bytes | Path):
+    """
+    Takes in a file path or string and convertes it into a Stream.Score.
+    Then, made into an xml file which is returned.
+    """
+    score = converter.parse(file)
+
+    return get_xml_file(score)
+
+
+# NOTE: not used, as xml is all we really need
 def get_midi_file(stream: Stream) -> bytes:
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mid") as tmp_file:
@@ -35,6 +50,12 @@ def get_midi_file(stream: Stream) -> bytes:
 
 
 def clean_stream(s: Stream):
+    """
+    Takes in a stream, removes its Title and Composer
+    """
+    # TODO: remove more things, and add an optional
+    # parameter that can take in an instrument name, and set the instrument
+    # to that
     s.metadata = metadata.Metadata()
     s.metadata.title = ""
     s.metadata.composer = ""
@@ -42,6 +63,7 @@ def clean_stream(s: Stream):
 
 
 # NOTE: no longer used
+# WARNING: could be useful later though? just keep it
 class Tones(Enum):
     A0 = 21
     ASharp0 = 22
