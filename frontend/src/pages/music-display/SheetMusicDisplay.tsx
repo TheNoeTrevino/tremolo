@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
-import { getMarryMusic, getRhythmMusic } from "../../services/MusicService";
+import { getMaryMusic, getRhythmMusic } from "../../services/MusicService";
 import { useState, MouseEvent } from "react";
 import MusicButton from "./MusicButton";
 import {
@@ -119,7 +119,7 @@ const SheetMusicDisplay = () => {
               rhythmType: rhythmType,
             });
           } else {
-            getMarryMusic({ scale: scaleChoice, octave: octaveChoice });
+            getMaryMusic({ scale: scaleChoice, octave: octaveChoice });
           }
           setVisibility(true);
         }}

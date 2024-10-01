@@ -1,7 +1,7 @@
 import axios from "axios";
 import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
 
-interface marryMusic {
+interface maryMusic {
   scale: string;
   octave: string;
 }
@@ -14,13 +14,13 @@ interface rhythmMusic {
   // maybe make this an int?
   rhythm: string;
 }
-export async function getMarryMusic({
+export async function getMaryMusic({
   scale,
   octave,
-}: marryMusic): Promise<void> {
+}: maryMusic): Promise<void> {
   try {
     const response = await axios.post<string>(
-      "http://127.0.0.1:8000/marry",
+      "http://127.0.0.1:8000/mary",
       { tonic: scale, octave: octave },
       { responseType: "text" },
     );
