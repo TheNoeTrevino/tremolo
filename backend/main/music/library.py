@@ -19,7 +19,8 @@ eight_durations = {
 
 
 # TODO: figure out a way to make it only take in elements in
-# 16th variants like you can in ts.
+# 16th variants like you can in ts. maybe not possible since it is python :I
+# an enum???
 def get_sixteenth(varient: str, tone: str) -> Stream:
     s = Stream()
 
@@ -56,6 +57,7 @@ def get_eight(variant: str, tone: str) -> Stream:
     return s
 
 
+# Todo: make this an enumeration
 def get_notes(type: int, variant: str, tone: str) -> bytes:
     if type == 16:
         return get_xml_file(get_sixteenth(variant, tone))

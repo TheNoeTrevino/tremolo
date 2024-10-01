@@ -9,6 +9,8 @@ import {
   sixteenthOptions,
 } from "./MusicalOptions";
 
+// Todo: make the music get fetched as soon as the user clicks an option for
+// speed
 const SheetMusicDisplay = () => {
   const [scaleChoice, setScale] = useState<string>("C");
   const [octaveChoice, setOctaveChoice] = useState<string>("4");
