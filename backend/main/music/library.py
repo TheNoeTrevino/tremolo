@@ -24,9 +24,9 @@ def get_sixteenth(varient: str, tone: str) -> Stream:
     s = Stream()
 
     for _ in range(4):
-        for length in varient:
-            dur = sixteenth_durations[length]
-            if length == "0":
+        for note_length in varient:
+            dur = sixteenth_durations[note_length]
+            if note_length == "0":
                 r = note.Rest(duration=duration.Duration(dur))
                 s.append(r)
             else:
@@ -40,10 +40,10 @@ def get_eight(variant: str, tone: str) -> Stream:
     s = Stream()
 
     for _ in range(4):
-        for length in variant:
-            dur = eight_durations[length]
+        for note_length in variant:
+            dur = eight_durations[note_length]
 
-            if length == "0":
+            if note_length == "0":
                 r = note.Rest(duration=duration.Duration(dur))
                 s.append(r)
                 print("is this a rest?: ", r.isRest)
