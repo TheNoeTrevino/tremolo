@@ -13,6 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import { Link } from "react-router-dom";
+import { navbarStyles } from "../styles";
 
 const pages = [
   { name: "Home", path: "/" },
@@ -53,26 +54,18 @@ function NavBar() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <MusicNoteIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+          <MusicNoteIcon sx={navbarStyles.musicNoteIcon} />
           <Typography
             variant="h6"
             noWrap
             component={Link}
             to="/"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
+            sx={navbarStyles.smdTypography}
           >
             SMD
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <Box sx={navbarStyles.menuIconButton}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -97,7 +90,7 @@ function NavBar() {
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
-              sx={{ display: { xs: "block", md: "none" } }}
+              sx={navbarStyles.menu}
             >
               {pages.map((page) => (
                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
@@ -109,22 +102,13 @@ function NavBar() {
             </Menu>
           </Box>
 
-          <MusicNoteIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+          <MusicNoteIcon sx={navbarStyles.musicNoteIcon} />
           <Typography
             variant="h5"
             noWrap
             component="a"
             href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
+            sx={navbarStyles.logoTypography}
           >
             LOGO
           </Typography>
@@ -135,7 +119,7 @@ function NavBar() {
                 component={Link}
                 onClick={handleCloseNavMenu}
                 to={page.path}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={navbarStyles.button}
               >
                 {page.name}
               </Button>
