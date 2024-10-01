@@ -58,12 +58,12 @@ class DiatonicInformation:
         else:
             raise Exception("this note is not real")
 
-    def get_marry_had(self) -> bytes:
+    def get_mary_had(self) -> bytes:
         """
         Returns the sheet music for mary had a little lamb
         in an xml format.
         """
-        marry_notes = [
+        mary_notes = [
             self.third,
             self.second,
             self.root,
@@ -74,7 +74,7 @@ class DiatonicInformation:
             chord.Chord(self.I),
         ]
 
-        for element in marry_notes:
+        for element in mary_notes:
             self.notes.append(element)
 
         return get_xml_file(self.notes)

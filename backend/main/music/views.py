@@ -4,18 +4,18 @@ from django.http import HttpResponse
 from rest_framework.views import Response
 
 from .library import get_notes
-from .dynamic_marry import DiatonicInformation
+from .dynamic_mary import DiatonicInformation
 from rest_framework import status
 
 
 @api_view(["POST"])
-def get_marry_had(request: Request):
+def get_mary_had(request: Request):
     if request.method == "POST":
         tonic: str = request.data.get("tonic")  # type: ignore it is going crazy
         octave: int = int(request.data.get("octave"))  # type: ignore it is going crazy
 
         try:
-            music = DiatonicInformation(tonic, octave).get_marry_had()
+            music = DiatonicInformation(tonic, octave).get_mary_had()
         # out of the twelve tone system
         except Exception as e:
             return Response(

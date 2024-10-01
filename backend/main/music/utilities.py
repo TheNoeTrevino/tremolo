@@ -1,7 +1,7 @@
-from _typeshed import FileDescriptorOrPath
 from enum import Enum
 from pathlib import Path
 import os, tempfile
+from typing import Union
 
 from music21 import metadata
 from music21 import converter
@@ -24,7 +24,7 @@ def get_xml_file(stream: Stream) -> bytes:
     return xml_bytes
 
 
-def midi_to_xml(file: bytes | Path):
+def midi_to_xml(file: Union[bytes, Path]):
     """
     Takes in a file path or string and convertes it into a Stream.Score.
     Then, made into an xml file which is returned.
