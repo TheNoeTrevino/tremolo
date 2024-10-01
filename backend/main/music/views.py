@@ -32,12 +32,12 @@ def get_marry_had(request: Request):
 @api_view(["POST"])
 def get_random_notes(request: Request):
     if request.method == "POST":
-        var: str = request.data.get("rhythm")  # type: ignore
+        variant: str = request.data.get("rhythm")  # type: ignore
         type: int = request.data.get("rhythmType")  # type: ignore
         tone: str = request.data.get("tonic")  # type: ignore
 
         try:
-            music = get_notes(type, var, tone)
+            music = get_notes(type, variant, tone)
 
         # out of the twelve tone system
         except Exception as e:
