@@ -1,5 +1,10 @@
 import axios from "axios";
 import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
+import {
+  BasicAudioPlayer,
+  LinearTimingSource,
+  PlaybackManager,
+} from "../pages/music-display/Playback";
 
 interface maryMusic {
   scale: string;
@@ -32,7 +37,17 @@ export async function getMaryMusic({
     if (container) {
       const osmd = new OpenSheetMusicDisplay(container as HTMLElement);
 
-      await osmd.load(xml);
+      await osmd.load(xml).then(() => {
+        const timingSource: LinearTimingSource = new LinearTimingSource();
+        timingSource.Settings = osmd.Sheet.SheetPlaybackSetting;
+        timingSource.logEnabled = false;
+        const playbackManager: PlaybackManager = new PlaybackManager(
+          timingSource,
+          undefined,
+          new BasicAudioPlayer(),
+          undefined,
+        );
+      });
       osmd.render();
     } else {
       console.error("Could not find the sheet music container");
