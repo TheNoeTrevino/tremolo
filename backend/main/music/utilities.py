@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Union
 from pathlib import Path
 import os, tempfile
 from typing import Union
