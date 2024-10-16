@@ -7,6 +7,9 @@ from music21 import metadata
 from music21 import converter
 from music21.stream.base import Stream
 
+# TODO: general. do we have to process an xml from the
+# user so it can be played later on?
+
 
 def get_xml_file(stream: Stream) -> bytes:
     """Takes in a stream and converts it to xml, which is returned"""
@@ -36,6 +39,7 @@ def midi_to_xml(file: Union[bytes, Path]):
 
 # NOTE: not used, as xml is all we really need
 def get_midi_file(stream: Stream) -> bytes:
+    """Takes in a stream and converts it to midi, which is returned"""
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mid") as tmp_file:
         stream.write("midi", fp=tmp_file.name)

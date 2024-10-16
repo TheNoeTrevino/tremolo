@@ -29,7 +29,7 @@ function App() {
         <div id="detail">
           <Outlet />
         </div>
-        <Footer />
+        <kooter />
       </Box>
     </ThemeProvider>
   );

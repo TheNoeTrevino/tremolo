@@ -12,6 +12,7 @@ import Account from "./pages/users/Account";
 import Profile from "./pages/users/Profile";
 import Dashboard from "./pages/users/Dashboard";
 import Logout from "./pages/users/Logout";
+import MidiInput from "./pages/MidiInput";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: "/logout",
         element: <Logout />,
+      },
+      {
+        path: "/test",
+        element: <MidiInput />,
       },
     ],
   },
