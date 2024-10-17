@@ -20,6 +20,7 @@ const pages = [
   { name: "Practice", path: "/sheet-music" },
   { name: "Note Game", path: "/note-game" },
   { name: "About", path: "/about" },
+  { name: "Convert", path: "/convert" },
 ];
 const settings = [
   { name: "Profile", path: "/profile" },

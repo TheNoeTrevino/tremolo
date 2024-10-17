@@ -12,6 +12,7 @@ import Account from "./pages/users/Account";
 import Profile from "./pages/users/Profile";
 import Dashboard from "./pages/users/Dashboard";
 import Logout from "./pages/users/Logout";
+import Converter from "./pages/Converter.tsx";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <About />,
+      },
+      {
+        path: "/convert",
+        element: <Converter />,
       },
       {
         path: "/note-game",
