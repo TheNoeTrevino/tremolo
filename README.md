@@ -13,7 +13,12 @@ This also be a technical exercise for myself as I will be learning a huge amount
 
 https://github.com/user-attachments/assets/63a7100e-a79c-4aca-be35-3089c9ec1d7d
 
-
+## Install
+`cd frontend`
+`npm install @mui/material @emotion/react @emotion/styled axios opensheetmusicdisplay react-router-dom`
+`cd backend`
+`python3 -m venv env`
+`pip install django djangorestframework django-cors-headers music21`
 
 ## Technologies used:
 
