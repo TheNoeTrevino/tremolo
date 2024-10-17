@@ -76,12 +76,39 @@ export async function getRhythmMusic({
 }
 
 export async function displayXml(files: FileList | null): Promise<void> {
-  //TODO: parse the xml and display it
+  const container = document.getElementById("sheet-music-div");
   if (files) {
     const file = files[0];
-    const reader = new FileReader();
-    alert("IT DID IT");
+
+    if (container) {
+      const osmd = new OpenSheetMusicDisplay(container as HTMLElement);
+
+      if (file) {
+        try {
+          const xml = await readFileAsText(file);
+          await osmd.load(xml);
+          osmd.render();
+        } catch (error) {
+          console.error("Error rendering sheet music", error);
+        }
+      } else {
+        alert("an error occurred rendering the sheet music.");
+      }
+    } else {
+      console.error(
+        "could not find the sheet music container. should be 'sheet-music-div'.",
+      );
+    }
   } else {
-    alert("something unexpected happened processing you xml file");
+    alert("something strange happened");
   }
+}
+
+function readFileAsText(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsText(file);
+  });
 }
