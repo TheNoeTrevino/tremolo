@@ -1,9 +1,11 @@
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
-import { displayXml } from "../services/MusicService";
 
-export default function InputFileUpload() {
+interface FileUploadProps {
+  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+const InputFileUpload = ({ handleChange }: FileUploadProps) => {
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
     clipPath: "inset(50%)",
@@ -18,6 +20,12 @@ export default function InputFileUpload() {
 
   return (
     <Button
+      sx={{
+        mt: 2,
+        position: "relative",
+        left: "50%",
+        transform: "translateX(-50%)",
+      }}
       component="label"
       role={undefined}
       variant="contained"
@@ -27,10 +35,12 @@ export default function InputFileUpload() {
       Upload files
       <VisuallyHiddenInput
         type="file"
-        onChange={(event) => displayXml(event.target.files)}
+        onChange={handleChange}
         multiple
         accept=".xml"
       />
     </Button>
   );
-}
+};
+
+export default InputFileUpload;
