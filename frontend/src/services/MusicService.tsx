@@ -14,6 +14,7 @@ interface rhythmMusic {
   // maybe make this an int?
   rhythm: string;
 }
+
 export async function getMaryMusic({
   scale,
   octave,
@@ -71,5 +72,16 @@ export async function getRhythmMusic({
     }
   } catch (error) {
     console.error("Did not get sheet music", error);
+  }
+}
+
+export async function displayXml(files: FileList | null): Promise<void> {
+  //TODO: parse the xml and display it
+  if (files) {
+    const file = files[0];
+    const reader = new FileReader();
+    alert("IT DID IT");
+  } else {
+    alert("something unexpected happened processing you xml file");
   }
 }
