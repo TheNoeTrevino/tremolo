@@ -100,3 +100,14 @@ export async function getNoteGameXml(
     console.error("did not get sheet music, params: ${noteParams}", error);
   }
 }
+
+export async function displayXml(files: FileList | null): Promise<void> {
+  //TODO: parse the xml and display it
+  if (files) {
+    const file = files[0];
+    const reader = new FileReader();
+    alert("IT DID IT");
+  } else {
+    alert("something unexpected happened processing you xml file");
+  }
+}
