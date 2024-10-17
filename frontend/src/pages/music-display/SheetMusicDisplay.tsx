@@ -79,28 +79,21 @@ const SheetMusicDisplay = () => {
 
   return (
     <>
-      {isVisible && (
-        <Box
-          id="sheet-music-div"
-          sx={{ width: "100%", height: "500px", border: "1px solid grey" }}
-        ></Box>
-      )}
-
-      {!isVisible && (
-        <Box
-          sx={{
-            width: "100%",
-            height: "500px",
-            border: "1px dashed grey",
-            alignContent: "center",
-          }}
-        >
+      <Box
+        id="sheet-music-div"
+        sx={{
+          width: "100%",
+          height: "500px",
+          border: "1px solid grey",
+          alignContent: "center",
+        }}
+      >
+        {!isVisible && (
           <Typography variant="h6" textAlign="center">
             Click the button below to open the sheet music
           </Typography>
-        </Box>
-      )}
-
+        )}
+      </Box>
       <Button
         sx={{
           mt: 2,
