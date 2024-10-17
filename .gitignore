@@ -216,10 +216,10 @@ coverage/
 lcov-report/
 
 # NPM package locks
-package-lock.json
+# package-lock.json
 yarn.lock
 
 # Optional: remove this if you want to track the exact versions of packages
-package-lock.json
+# package-lock.json
 yarn.lock
-package.json
+# package.json
