@@ -65,3 +65,9 @@ def get_notes(type: int, variant: str, tone: str) -> bytes:
         return get_xml_file(get_eight(variant, tone))
     else:
         raise Exception("this rhythm is not supported")
+
+
+# TODO: add -> bytes here. make function to return
+# an int from 1-8, and take the scale and octave as the parameters:wqqa
+def note_game(scale: str, octave: str):
+    return
