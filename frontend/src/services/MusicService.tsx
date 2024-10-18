@@ -50,7 +50,7 @@ export async function getRhythmMusic({
 }: rhythmMusic): Promise<void> {
   try {
     const response = await axios.post<string>(
-      "http://127.0.0.1:8000/test",
+      "http://127.0.0.1:8000/random",
       // below is the sent info
       // choice,
       { tonic: scale + octave, rhythmType: rhythmType, rhythm: rhythm },
