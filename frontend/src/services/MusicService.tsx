@@ -1,24 +1,17 @@
 import axios from "axios";
 import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
 
-interface maryMusic {
-  scale: string;
-  octave: string;
-}
-
 interface rhythmMusic {
   scale: string;
   octave: string;
-  //TODO: make this more type safe
   rhythmType: number;
-  // maybe make this an int?
   rhythm: string;
 }
 
-export async function getMaryMusic({
-  scale,
-  octave,
-}: maryMusic): Promise<void> {
+export async function getMaryMusic(
+  scale: string,
+  octave: string,
+): Promise<void> {
   try {
     const response = await axios.post<string>(
       "http://127.0.0.1:8000/mary",
@@ -29,17 +22,15 @@ export async function getMaryMusic({
     const generatedXml = response.data;
     const sheetMusicContainer = document.getElementById("sheet-music-div");
 
-    // Ensure the container is not null and is an HTML element
-    if (sheetMusicContainer) {
-      const osmd = new OpenSheetMusicDisplay(
-        sheetMusicContainer as HTMLElement,
-      );
-
-      await osmd.load(generatedXml);
-      osmd.render();
-    } else {
+    if (!sheetMusicContainer) {
       console.error("Could not find the sheet music container");
+      return;
     }
+
+    const osmd = new OpenSheetMusicDisplay(sheetMusicContainer as HTMLElement);
+
+    await osmd.load(generatedXml);
+    osmd.render();
   } catch (error) {
     console.error("Did not get sheet music", error);
   }
@@ -54,8 +45,6 @@ export async function getRhythmMusic({
   try {
     const response = await axios.post<string>(
       "http://127.0.0.1:8000/random",
-      // below is the sent info
-      // choice,
       { tonic: scale + octave, rhythmType: rhythmType, rhythm: rhythm },
       { responseType: "text" },
     );
@@ -63,17 +52,15 @@ export async function getRhythmMusic({
     const generatedXml = response.data;
     const sheetMusicContainer = document.getElementById("sheet-music-div");
 
-    // Ensure the container is not null and is an HTML element
-    if (sheetMusicContainer) {
-      const osmd = new OpenSheetMusicDisplay(
-        sheetMusicContainer as HTMLElement,
-      );
-
-      await osmd.load(generatedXml);
-      osmd.render();
-    } else {
+    if (!sheetMusicContainer) {
       console.error("Could not find the sheet music container");
+      return;
     }
+
+    const osmd = new OpenSheetMusicDisplay(sheetMusicContainer as HTMLElement);
+
+    await osmd.load(generatedXml);
+    osmd.render();
   } catch (error) {
     console.error("Did not get sheet music", error);
   }
@@ -117,6 +104,7 @@ export async function displayXml(
 
   if (selectedFiles.length > 1) {
     alert("Currently, only one file at a time is supported");
+    return;
   }
 
   const fileToConvert = selectedFiles[0];
@@ -134,6 +122,7 @@ export async function displayXml(
     console.error("an error occurred rendering the sheet music.");
     return;
   }
+
   try {
     const filesAsXml = await readFileAsText(fileToConvert);
     await osmd.load(filesAsXml);
@@ -150,4 +139,33 @@ function readFileAsText(file: File): Promise<string> {
     reader.onerror = () => reject(reader.error);
     reader.readAsText(file);
   });
+}
+
+export async function getNoteGameXml(
+  scale: string,
+  octave: string,
+): Promise<void> {
+  try {
+    const response = await axios.post<string>(
+      "http://127.0.0.1:8000/note_game",
+      { scale: scale, octave: octave },
+    );
+    const xml = response.data;
+    const container = document.getElementById("sheet-music-div");
+
+    if (!container) {
+      console.error("Could not find the sheet music container");
+      return;
+    }
+
+    const osmd = new OpenSheetMusicDisplay(container as HTMLElement);
+
+    await osmd.load(xml);
+    osmd.render();
+  } catch (error) {
+    console.error(
+      `did not get sheet music, params: ${scale}, ${octave}`,
+      error,
+    );
+  }
 }
