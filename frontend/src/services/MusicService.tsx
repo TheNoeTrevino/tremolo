@@ -14,6 +14,7 @@ interface rhythmMusic {
   // maybe make this an int?
   rhythm: string;
 }
+
 export async function getMaryMusic({
   scale,
   octave,
@@ -71,5 +72,31 @@ export async function getRhythmMusic({
     }
   } catch (error) {
     console.error("Did not get sheet music", error);
+  }
+}
+
+export async function getNoteGameXml(
+  scale: string,
+  octave: string,
+): Promise<void> {
+  try {
+    const response = await axios.post<string>(
+      "http://127.0.0.1:8000/note_game",
+      { scale: scale, octave: octave },
+    );
+    const xml = response.data;
+    const container = document.getElementById("sheet-music-div");
+
+    // Ensure the container is not null and is an HTML element
+    if (container) {
+      const osmd = new OpenSheetMusicDisplay(container as HTMLElement);
+
+      await osmd.load(xml);
+      osmd.render();
+    } else {
+      console.error("Could not find the sheet music container");
+    }
+  } catch (error) {
+    console.error("did not get sheet music, params: ${noteParams}", error);
   }
 }
