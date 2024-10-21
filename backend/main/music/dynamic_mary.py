@@ -5,6 +5,8 @@ from music21.interval import Interval
 
 from .utilities import get_xml_file
 
+# FIX: rename root to tonic lol
+
 
 # TODO: Overhaul this to use the scale thingy from music21
 class DiatonicInformation:
@@ -50,6 +52,18 @@ class DiatonicInformation:
     @property
     def seventh(self):
         return self.transpose(self.root, interval.Interval("M7"))
+
+    # TODO: add a way to increase the range of this?
+    def getScale(self):
+        return [
+            self.root,
+            self.second,
+            self.third,
+            self.fourth,
+            self.fifth,
+            self.sixth,
+            self.seventh,
+        ]
 
     def transpose(self, starting_note: Note, interval: Interval) -> Note:
         transposed_note = starting_note.transpose(interval)
