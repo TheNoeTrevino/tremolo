@@ -1,6 +1,10 @@
 from music21 import note, duration
+import random
 
+from music21.interval import DiatonicInterval
 from music21.stream.base import Stream
+
+from backend.main.music.dynamic_mary import DiatonicInformation
 
 from .utilities import get_xml_file
 
@@ -69,5 +73,11 @@ def get_notes(type: int, variant: str, tone: str) -> bytes:
 
 # TODO: add -> bytes here. make function to return
 # an int from 1-8, and take the scale and octave as the parameters:wqqa
-def note_game(scale: str, octave: str):
-    return
+# FIX: make all the octave occurences actual integers instead of this shit
+def note_game(scale: str, octave: str) -> bytes:
+    s = Stream()
+    notes = DiatonicInformation(scale, int(octave)).getScale()
+    note = random.choice(notes)
+    s.append(note)
+
+    return get_xml_file(s)
