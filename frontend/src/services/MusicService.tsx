@@ -26,14 +26,16 @@ export async function getMaryMusic({
       { responseType: "text" },
     );
 
-    const xml = response.data;
-    const container = document.getElementById("sheet-music-div");
+    const generatedXml = response.data;
+    const sheetMusicContainer = document.getElementById("sheet-music-div");
 
     // Ensure the container is not null and is an HTML element
-    if (container) {
-      const osmd = new OpenSheetMusicDisplay(container as HTMLElement);
+    if (sheetMusicContainer) {
+      const osmd = new OpenSheetMusicDisplay(
+        sheetMusicContainer as HTMLElement,
+      );
 
-      await osmd.load(xml);
+      await osmd.load(generatedXml);
       osmd.render();
     } else {
       console.error("Could not find the sheet music container");
@@ -58,14 +60,16 @@ export async function getRhythmMusic({
       { responseType: "text" },
     );
 
-    const xml = response.data;
-    const container = document.getElementById("sheet-music-div");
+    const generatedXml = response.data;
+    const sheetMusicContainer = document.getElementById("sheet-music-div");
 
     // Ensure the container is not null and is an HTML element
-    if (container) {
-      const osmd = new OpenSheetMusicDisplay(container as HTMLElement);
+    if (sheetMusicContainer) {
+      const osmd = new OpenSheetMusicDisplay(
+        sheetMusicContainer as HTMLElement,
+      );
 
-      await osmd.load(xml);
+      await osmd.load(generatedXml);
       osmd.render();
     } else {
       console.error("Could not find the sheet music container");
@@ -101,32 +105,41 @@ export async function getNoteGameXml(
   }
 }
 
-export async function displayXml(files: FileList | null): Promise<void> {
-  const container = document.getElementById("sheet-music-div");
-  if (files) {
-    const file = files[0];
+export async function displayXml(
+  selectedFiles: FileList | null,
+): Promise<void> {
+  const sheetMusicContainer = document.getElementById("sheet-music-div");
 
-    if (container) {
-      const osmd = new OpenSheetMusicDisplay(container as HTMLElement);
+  if (!selectedFiles) {
+    console.error("Files were not uploaded correctly");
+    return;
+  }
 
-      if (file) {
-        try {
-          const xml = await readFileAsText(file);
-          await osmd.load(xml);
-          osmd.render();
-        } catch (error) {
-          console.error("Error rendering sheet music", error);
-        }
-      } else {
-        alert("an error occurred rendering the sheet music.");
-      }
-    } else {
-      console.error(
-        "could not find the sheet music container. should be 'sheet-music-div'.",
-      );
-    }
-  } else {
-    alert("something strange happened");
+  if (selectedFiles.length > 1) {
+    alert("Currently, only one file at a time is supported");
+  }
+
+  const fileToConvert = selectedFiles[0];
+
+  if (!sheetMusicContainer) {
+    console.error(
+      "could not find the sheet music container. should be 'sheet-music-div'.",
+    );
+    return;
+  }
+
+  const osmd = new OpenSheetMusicDisplay(sheetMusicContainer as HTMLElement);
+
+  if (!fileToConvert) {
+    console.error("an error occurred rendering the sheet music.");
+    return;
+  }
+  try {
+    const filesAsXml = await readFileAsText(fileToConvert);
+    await osmd.load(filesAsXml);
+    osmd.render();
+  } catch (error) {
+    console.error("Error rendering sheet music", error);
   }
 }
 
