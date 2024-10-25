@@ -16,13 +16,15 @@ https://github.com/user-attachments/assets/63a7100e-a79c-4aca-be35-3089c9ec1d7d
 ## Install
 `cd frontend`
 
-`npm install @mui/material @emotion/react @emotion/styled axios opensheetmusicdisplay react-router-dom`
+`npm install && npm run dev`
 
 `cd backend`
 
 `python3 -m venv env`
 
 `pip install django djangorestframework django-cors-headers music21`
+
+`python3 main/manage.py migrate && runserver`
 
 ## Technologies used:
 
@@ -32,7 +34,9 @@ React
 
 TypeScript
 
-OpenSheetMusicDisplay - Display the xml files on the web browser
+Material UI - Beautiful UI components
+
+OpenSheetMusicDisplay - Display the musical files on the web browser
 
 ### Backend
 
@@ -40,4 +44,4 @@ Music21 - Generate the midi and xml files as needed
 
 Django - Complementing the music21 library very well
 
-...planning on adding java for database interaction and user authentication 
+...planning on adding java for database interaction and user authentication, and keeping progress of user stats
