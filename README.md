@@ -1,4 +1,4 @@
-# Sight Reading Application (name pending)
+# Tremolo
 
 ## Goal
 
