@@ -39,6 +39,7 @@ const NoteGame = () => {
   return (
     <>
       <Box
+        id="sheet-music-div"
         sx={{
           width: "100%",
           height: "500px",

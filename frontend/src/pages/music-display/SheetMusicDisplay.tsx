@@ -36,6 +36,7 @@ const SheetMusicDisplay = () => {
     setOctaveChoice(octaveChoice);
   };
 
+  // bytes
   // TODO: add these rythms choices to a list, and display that list on a page
   // NOTE: for now, we are just sending back a measure of the same one
   const choose16thRhythm = (rhythmChoice: string) => {

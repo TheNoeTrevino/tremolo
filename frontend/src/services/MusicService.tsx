@@ -147,7 +147,7 @@ export async function getNoteGameXml(
 ): Promise<void> {
   try {
     const response = await axios.post<string>(
-      "http://127.0.0.1:8000/note_game",
+      "http://127.0.0.1:8000/note-game",
       { scale: scale, octave: octave },
     );
     const xml = response.data;
@@ -164,7 +164,7 @@ export async function getNoteGameXml(
     osmd.render();
   } catch (error) {
     console.error(
-      `did not get sheet music, params: ${scale}, ${octave}`,
+      `did not get sheet music, params: scale: ${scale}, octave: ${octave} `,
       error,
     );
   }
