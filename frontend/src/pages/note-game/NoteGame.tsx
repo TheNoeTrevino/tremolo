@@ -1,7 +1,13 @@
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useState, MouseEvent, useEffect } from "react";
 import MusicButton from "../music-display/MusicButton";
-import { octaveOptions, scaleOptions } from "../music-display/MusicalOptions";
+import {
+  flatOptions,
+  naturalOptions,
+  octaveOptions,
+  scaleOptions,
+  sharpOptions,
+} from "../music-display/MusicalOptions";
 import { getNoteGameXml } from "../../services/MusicService";
 
 const NoteGame = () => {
@@ -33,6 +39,7 @@ const NoteGame = () => {
   };
   const openScaleOptions = Boolean(scaleAnchorEl);
   const openOctaveOptions = Boolean(octaveAnchorEl);
+  const totalOptions = [sharpOptions, naturalOptions, flatOptions];
   useEffect(() => {
     getNoteGameXml(scaleChoice, octaveChoice);
   }, [scaleChoice, octaveChoice]);
@@ -66,6 +73,18 @@ const NoteGame = () => {
         handleClose={handleOctaveClose}
         handleOptionClick={chooseOctave}
       />
+      <Box>
+        {totalOptions.map((optionList) => (
+          <Box>
+            {optionList.map((option) => (
+              // TODO make the buttons larger for the kids
+              <Button variant="contained" sx={{ m: 1 }}>
+                {option.name}
+              </Button>
+            ))}
+          </Box>
+        ))}
+      </Box>
     </>
   );
 };
