@@ -43,6 +43,12 @@ const NoteGame = () => {
   useEffect(() => {
     getNoteGameXml(scaleChoice, octaveChoice);
   }, [scaleChoice, octaveChoice]);
+  const validateInput = (noteName: string): void => {
+    console.log(noteName);
+    //TODO: make the function check if they are equal, if they are not, make the
+    //button red for a moment, if they are equal, make it green for a moment
+    return;
+  };
   return (
     <>
       <Box
@@ -54,7 +60,6 @@ const NoteGame = () => {
           alignContent: "center",
         }}
       ></Box>
-
       <MusicButton
         text="Choose Scale"
         handleClick={handleScaleClick}
@@ -77,8 +82,13 @@ const NoteGame = () => {
         {totalOptions.map((optionList) => (
           <Box>
             {optionList.map((option) => (
-              // TODO make the buttons larger for the kids
-              <Button variant="contained" sx={{ m: 1 }}>
+              // TODO: make the buttons larger for the kids
+              <Button
+                key={option.value}
+                variant="contained"
+                sx={{ m: 1 }}
+                onClick={() => validateInput(option.value)}
+              >
                 {option.name}
               </Button>
             ))}
