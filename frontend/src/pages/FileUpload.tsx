@@ -7,25 +7,19 @@ interface FileUploadProps {
 }
 const InputFileUpload = ({ handleChange }: FileUploadProps) => {
   const VisuallyHiddenInput = styled("input")({
-    clip: "rect(0 0 0 0)",
-    clipPath: "inset(50%)",
     height: 1,
-    overflow: "hidden",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    whiteSpace: "nowrap",
     width: 1,
   });
+  const buttonStyling = {
+    mt: 2,
+    position: "relative",
+    left: "50%",
+    transform: "translateX(-50%)",
+  };
 
   return (
     <Button
-      sx={{
-        mt: 2,
-        position: "relative",
-        left: "50%",
-        transform: "translateX(-50%)",
-      }}
+      sx={buttonStyling}
       component="label"
       role={undefined}
       variant="contained"
