@@ -14,6 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import { Link } from "react-router-dom";
 import { navbarStyles } from "../styles";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const pages = [
   { name: "Home", path: "/" },
@@ -25,10 +26,10 @@ const settings = [
   { name: "Profile", path: "/profile" },
   { name: "Account", path: "/account" },
   { name: "Dashboard", path: "/dashboard" },
-  { name: "Logout", path: "/logout" },
 ];
 
 function NavBar() {
+  const { loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null,
   );
@@ -92,6 +93,9 @@ function NavBar() {
               onClose={handleCloseNavMenu}
               sx={navbarStyles.menu}
             >
+              <MenuItem key={"hello"} onClick={() => alert("clicked")}>
+                <Typography sx={{ textAlign: "center" }}>Hello help</Typography>
+              </MenuItem>
               {pages.map((page) => (
                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
                   <Typography sx={{ textAlign: "center" }}>
@@ -128,7 +132,11 @@ function NavBar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                {isAuthenticated ? (
+                  <Avatar alt="Remy Sharp" src={user?.picture} />
+                ) : (
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                )}
               </IconButton>
             </Tooltip>
             <Menu
@@ -147,6 +155,9 @@ function NavBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
+              <MenuItem key="Log in" onClick={() => loginWithRedirect()}>
+                <Typography sx={{ textAlign: "center" }}>Log In</Typography>
+              </MenuItem>
               {settings.map((setting) => (
                 <MenuItem
                   key={setting.name}
@@ -159,6 +170,14 @@ function NavBar() {
                   </Typography>
                 </MenuItem>
               ))}
+              <MenuItem
+                key="Log Out"
+                onClick={() =>
+                  logout({ logoutParams: { returnTo: window.location.origin } })
+                }
+              >
+                <Typography sx={{ textAlign: "center" }}>Log Out</Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
