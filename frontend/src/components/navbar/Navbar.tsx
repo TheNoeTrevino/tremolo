@@ -11,9 +11,9 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import { Link } from "react-router-dom";
-import { navbarStyles } from "../styles";
+import { navbarStyles } from "../../styles";
 import { useAuth0 } from "@auth0/auth0-react";
-import UserOptions from "../pages/users/UserOptions";
+import UserOptions from "./UserOptions";
 
 const pages = [
   { name: "Home", path: "/" },

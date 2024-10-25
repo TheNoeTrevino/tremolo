@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/navbar/Navbar";
 import { Box, createTheme, ThemeProvider } from "@mui/material";
 import Footer from "./components/Footer";
 import { Auth0Provider } from "@auth0/auth0-react";
