@@ -47,7 +47,7 @@ function NavBar() {
             to="/"
             sx={navbarStyles.smdTypography}
           >
-            SMD
+            Tremolo
           </Typography>
 
           <Box sx={navbarStyles.menuIconButton}>
@@ -77,9 +77,6 @@ function NavBar() {
               onClose={handleCloseNavMenu}
               sx={navbarStyles.menu}
             >
-              <MenuItem key={"hello"} onClick={() => alert("clicked")}>
-                <Typography sx={{ textAlign: "center" }}>Hello help</Typography>
-              </MenuItem>
               {pages.map((page) => (
                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
                   <Typography sx={{ textAlign: "center" }}>
@@ -89,8 +86,6 @@ function NavBar() {
               ))}
             </Menu>
           </Box>
-
-          <MusicNoteIcon sx={navbarStyles.musicNoteIcon} />
           <Typography
             variant="h5"
             noWrap
