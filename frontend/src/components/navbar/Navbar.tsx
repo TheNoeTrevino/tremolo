@@ -16,7 +16,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import UserOptions from "./UserOptions";
 
 const pages = [
-  { name: "Home", path: "/" },
+  { name: "Tremolo", path: "/" },
   { name: "Practice", path: "/sheet-music" },
   { name: "Note Game", path: "/note-game" },
   { name: "About", path: "/about" },
@@ -40,16 +40,6 @@ function NavBar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <MusicNoteIcon sx={navbarStyles.musicNoteIcon} />
-          <Typography
-            variant="h6"
-            noWrap
-            component={Link}
-            to="/"
-            sx={navbarStyles.smdTypography}
-          >
-            Tremolo
-          </Typography>
-
           <Box sx={navbarStyles.menuIconButton}>
             <IconButton
               size="large"
