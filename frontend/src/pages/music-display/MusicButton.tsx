@@ -1,4 +1,4 @@
-import { Menu, MenuItem } from "@mui/material";
+import { Menu, MenuItem, SxProps } from "@mui/material";
 import Box from "@mui/material/Box/Box";
 import Button from "@mui/material/Button/Button";
 import { MouseEvent } from "react";
@@ -11,6 +11,7 @@ interface ButtonProps {
   open: boolean;
   handleClose: () => void;
   handleOptionClick: (option: string) => void;
+  styles: SxProps;
 }
 
 const MusicButton = ({
@@ -21,18 +22,14 @@ const MusicButton = ({
   open,
   handleClose,
   handleOptionClick,
+  styles,
 }: ButtonProps) => {
   return (
     <Box>
       <Button
         id="demo-positioned-button"
         variant="contained"
-        sx={{
-          mt: 2,
-          position: "relative",
-          left: "50%",
-          transform: "translateX(-50%)",
-        }}
+        sx={styles}
         onClick={handleClick}
       >
         {text}
