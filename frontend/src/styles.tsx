@@ -35,4 +35,19 @@ const navbarStyles = {
     display: "block",
   },
 };
-export { navbarStyles };
+
+const sheetMusicStyles = {
+  width: "100%",
+  height: "500px",
+  border: "1px solid grey",
+  alignContent: "center",
+};
+
+const musicButtonStyles = {
+  mt: 2,
+  position: "relative",
+  left: "50%",
+  transform: "translateX(-50%)",
+};
+
+export { navbarStyles, sheetMusicStyles, musicButtonStyles };

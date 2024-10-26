@@ -8,6 +8,7 @@ import {
   scaleOptions,
   sixteenthOptions,
 } from "./MusicalOptions";
+import { musicButtonStyles, sheetMusicStyles } from "../../styles";
 
 // Todo: make the music get fetched as soon as the user clicks an option for
 // speed
@@ -76,31 +77,15 @@ const SheetMusicDisplay = () => {
   const handle8thRhythmClose = () => {
     set8thRhythmAnchorEl(null);
   };
-
   return (
     <>
-      {isVisible && (
-        <Box
-          id="sheet-music-div"
-          sx={{ width: "100%", height: "500px", border: "1px solid grey" }}
-        ></Box>
-      )}
-
-      {!isVisible && (
-        <Box
-          sx={{
-            width: "100%",
-            height: "500px",
-            border: "1px dashed grey",
-            alignContent: "center",
-          }}
-        >
+      <Box id="sheet-music-div" sx={sheetMusicStyles}>
+        {!isVisible && (
           <Typography variant="h6" textAlign="center">
             Click the button below to open the sheet music
           </Typography>
-        </Box>
-      )}
-
+        )}
+      </Box>
       <Button
         sx={{
           mt: 2,
@@ -137,6 +122,7 @@ const SheetMusicDisplay = () => {
         open={openScaleOptions}
         handleClose={handleScaleClose}
         handleOptionClick={chooseScale}
+        styles={musicButtonStyles}
       />
       <MusicButton
         text="Choose Octave"
@@ -146,6 +132,7 @@ const SheetMusicDisplay = () => {
         open={openOctaveOptions}
         handleClose={handleOctaveClose}
         handleOptionClick={chooseOctave}
+        styles={musicButtonStyles}
       />
       <MusicButton
         text="16th Note Rhythms"
@@ -155,6 +142,7 @@ const SheetMusicDisplay = () => {
         open={open16thRhythmOptions}
         handleClose={handle16thRhythmClose}
         handleOptionClick={choose16thRhythm}
+        styles={musicButtonStyles}
       />
       <MusicButton
         text="8th Note Rhythms"
@@ -164,6 +152,7 @@ const SheetMusicDisplay = () => {
         open={open8thRhythmOptions}
         handleClose={handle8thRhythmClose}
         handleOptionClick={choose8thRhythm}
+        styles={musicButtonStyles}
       />
     </>
   );
