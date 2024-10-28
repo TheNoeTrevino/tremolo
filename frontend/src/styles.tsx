@@ -37,7 +37,8 @@ const navbarStyles = {
 };
 
 const sheetMusicStyles = {
-  width: "100%",
+  mt: 4,
+  width: "66%",
   height: "500px",
   border: "1px solid grey",
   alignContent: "center",
@@ -50,4 +51,10 @@ const musicButtonStyles = {
   transform: "translateX(-50%)",
 };
 
-export { navbarStyles, sheetMusicStyles, musicButtonStyles };
+const centerInBox = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+};
+
+export { centerInBox, navbarStyles, sheetMusicStyles, musicButtonStyles };
