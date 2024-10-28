@@ -124,17 +124,17 @@ export async function getNoteGameXml(
       "http://127.0.0.1:8000/note-game",
       { scale: scale, octave: octave },
     );
-    const xml = response.data;
-    const container = document.getElementById("sheet-music-div");
+    const generatedXml = response.data;
+    const sheetMusicContainer = document.getElementById("sheet-music-div");
 
-    if (!container) {
+    if (!sheetMusicContainer) {
       console.error("Could not find the sheet music container");
       return;
     }
 
-    const osmd = new OpenSheetMusicDisplay(container as HTMLElement);
+    const osmd = new OpenSheetMusicDisplay(sheetMusicContainer as HTMLElement);
 
-    await osmd.load(xml);
+    await osmd.load(generatedXml);
     osmd.render();
   } catch (error) {
     console.error(
