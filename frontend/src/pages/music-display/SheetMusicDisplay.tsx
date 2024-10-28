@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { getMaryMusic, getRhythmMusic } from "../../services/MusicService";
 import { useState, MouseEvent } from "react";
 import MusicButton from "./MusicButton";
@@ -8,7 +8,7 @@ import {
   scaleOptions,
   sixteenthOptions,
 } from "./MusicalOptions";
-import { musicButtonStyles, sheetMusicStyles } from "../../styles";
+import { centerInBox, musicButtonStyles, sheetMusicStyles } from "../../styles";
 
 // Todo: make the music get fetched as soon as the user clicks an option for
 // speed
@@ -79,12 +79,14 @@ const SheetMusicDisplay = () => {
   };
   return (
     <>
-      <Box id="sheet-music-div" sx={sheetMusicStyles}>
-        {!isVisible && (
-          <Typography variant="h6" textAlign="center">
-            Click the button below to open the sheet music
-          </Typography>
-        )}
+      <Box sx={{ ...centerInBox }}>
+        <Paper id="sheet-music-div" elevation={3} sx={{ ...sheetMusicStyles }}>
+          {!isVisible && (
+            <Typography variant="h6" textAlign="center">
+              Click the button below to open the sheet music
+            </Typography>
+          )}
+        </Paper>
       </Box>
       <Button
         sx={{
