@@ -107,7 +107,7 @@ const SheetMusicDisplay = () => {
               rhythmType: rhythmType,
             });
           } else {
-            getMaryMusic({ scale: scaleChoice, octave: octaveChoice });
+            getMaryMusic(scaleChoice, octaveChoice);
           }
           setVisibility(true);
         }}
