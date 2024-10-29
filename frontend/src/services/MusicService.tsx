@@ -8,10 +8,15 @@ interface rhythmMusic {
   rhythm: string;
 }
 
-export async function getMaryMusic(
-  scale: string,
-  octave: string,
-): Promise<void> {
+interface generatedMusicProps {
+  scale: string;
+  octave: string;
+}
+
+export async function getMaryMusic({
+  scale,
+  octave,
+}: generatedMusicProps): Promise<void> {
   try {
     const response = await axios.post<string>(
       "http://127.0.0.1:8000/mary",
@@ -123,6 +128,7 @@ export async function getNoteGameXml(
     const response = await axios.post<string>(
       "http://127.0.0.1:8000/note-game",
       { scale: scale, octave: octave },
+      { responseType: "text" },
     );
     const generatedXml = response.data;
     const sheetMusicContainer = document.getElementById("sheet-music-div");
