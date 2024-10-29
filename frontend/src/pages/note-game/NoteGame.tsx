@@ -9,6 +9,7 @@ import {
   sharpOptions,
 } from "../music-display/MusicalOptions";
 import { getNoteGameXml } from "../../services/MusicService";
+import { musicButtonStyles } from "../../styles";
 
 const NoteGame = () => {
   //TODO: use effect to return the value, then immediately call another request
@@ -68,6 +69,7 @@ const NoteGame = () => {
         open={openScaleOptions}
         handleClose={handleScaleClose}
         handleOptionClick={chooseScale}
+        styles={musicButtonStyles}
       />
       <MusicButton
         text="Choose Octave"
@@ -77,6 +79,7 @@ const NoteGame = () => {
         open={openOctaveOptions}
         handleClose={handleOctaveClose}
         handleOptionClick={chooseOctave}
+        styles={musicButtonStyles}
       />
       <Box>
         {totalOptions.map((optionList) => (
