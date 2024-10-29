@@ -24,7 +24,8 @@ https://github.com/user-attachments/assets/63a7100e-a79c-4aca-be35-3089c9ec1d7d
 
 `pip install django djangorestframework django-cors-headers music21`
 
-`python3 main/manage.py migrate && runserver`
+`python3 main/manage.py migrate `
+`python3 main/manage.py runserver`
 
 ## Technologies used:
 
