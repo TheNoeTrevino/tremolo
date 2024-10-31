@@ -7,6 +7,10 @@ from .library import get_notes, note_game
 from .dynamic_mary import DiatonicInformation
 from rest_framework import status
 
+# FIX: remove the content disposition from the functions
+
+#
+
 
 @api_view(["POST"])
 def get_mary_had(request: Request):
