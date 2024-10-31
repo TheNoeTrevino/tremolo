@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
-import { getMaryMusic, getRhythmMusic } from "../../services/MusicService";
+import { MusicService } from "../../services/MusicService";
 import { useState, MouseEvent } from "react";
 import MusicButton from "./MusicButton";
 import {
@@ -100,14 +100,17 @@ const SheetMusicDisplay = () => {
         onClick={() => {
           if (rhythmChoice && rhythmType) {
             // TODO: if they entered rhythms, then call the rhythm function
-            getRhythmMusic({
+            MusicService.getRhythmMusic({
               scale: scaleChoice,
               octave: octaveChoice,
               rhythm: rhythmChoice,
               rhythmType: rhythmType,
             });
           } else {
-            getMaryMusic(scaleChoice, octaveChoice);
+            MusicService.getMaryMusic({
+              scale: scaleChoice,
+              octave: octaveChoice,
+            });
           }
           setVisibility(true);
         }}

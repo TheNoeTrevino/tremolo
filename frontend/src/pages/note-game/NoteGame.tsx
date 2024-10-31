@@ -8,7 +8,7 @@ import {
   scaleOptions,
   sharpOptions,
 } from "../music-display/MusicalOptions";
-import { getNoteGameXml } from "../../services/MusicService";
+import { MusicService } from "../../services/MusicService";
 import { musicButtonStyles } from "../../styles";
 
 const NoteGame = () => {
@@ -42,7 +42,7 @@ const NoteGame = () => {
   const openOctaveOptions = Boolean(octaveAnchorEl);
   const totalOptions = [sharpOptions, naturalOptions, flatOptions];
   useEffect(() => {
-    getNoteGameXml(scaleChoice, octaveChoice);
+    MusicService.getNoteGameXml(scaleChoice, octaveChoice);
   }, [scaleChoice, octaveChoice]);
   const validateInput = (noteName: string): void => {
     console.log(noteName);

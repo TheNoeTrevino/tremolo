@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import InputFileUpload from "./FileUpload";
 import { useState } from "react";
-import { displayXml } from "../services/MusicService";
+import { MusicService } from "../services/MusicService";
 
 const Converter = () => {
   const [isVisible, setVisibility] = useState<boolean>(false);
@@ -25,7 +25,7 @@ const Converter = () => {
 
       <InputFileUpload
         handleChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-          displayXml(event.target.files);
+          MusicService.displayXml(event.target.files);
           setVisibility(true);
         }}
       />
