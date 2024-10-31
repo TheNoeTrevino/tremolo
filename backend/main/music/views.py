@@ -28,9 +28,7 @@ def get_mary_had(request: Request):
             )
 
         # TODO: move this to a service
-        response = HttpResponse(music, content_type="application/xml")
-        response["Content-Disposition"] = 'attachment; filename="test.xml"'
-        return response
+        return HttpResponse(music, content_type="application/xml")
 
 
 @api_view(["POST"])
@@ -52,9 +50,7 @@ def get_random_notes(request: Request):
             )
 
         # TODO: move this to a service
-        response = HttpResponse(music, content_type="application/xml")
-        response["Content-Disposition"] = 'attachment; filename="test.xml"'
-        return response
+        return HttpResponse(music, content_type="application/xml")
 
 
 @api_view(["POST"])
@@ -75,6 +71,4 @@ def get_note_game(request: Request):
             )
 
         # TODO: move this to a service
-        response = HttpResponse(music, content_type="application/xml")
-        response["Content-Disposition"] = 'attachment; filename="test.xml"'
-        return response
+        return HttpResponse(music, content_type="application/xml")
