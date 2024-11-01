@@ -1,12 +1,12 @@
 from typing import Tuple, Any
-from music21 import note, duration
+from music21 import key, note, duration
 import random
 
 from music21.stream.base import Stream
 
 from .dynamic_mary import DiatonicInformation
 
-from .utilities import get_xml_file
+from .utilities import CircleOfFourths, get_xml_file
 
 sixteenth_variants = ["1111", "112", "121", "211", "0111"]
 sixteenth_durations = {
@@ -74,6 +74,7 @@ def get_notes(type: int, variant: str, tone: str) -> bytes:
 # an int from 1-8, and take the scale and octave as the parameters:wqqa
 def note_game(scale: str, octave: str) -> Tuple[str, Any]:
     s = Stream()
+    s.keySignature = key.KeySignature(CircleOfFourths[scale])
     notes = DiatonicInformation(scale, int(octave)).getScale()
     note = random.choice(notes)
     s.append(note)
