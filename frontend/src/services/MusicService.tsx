@@ -1,7 +1,7 @@
 import axios from "axios";
 import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
 
-interface rhythmMusic {
+interface rhythmMusicProps {
   scale: string;
   octave: string;
   rhythmType: number;
@@ -11,6 +11,11 @@ interface rhythmMusic {
 interface generatedMusicProps {
   scale: string;
   octave: string;
+}
+
+interface NoteGameDTO {
+  generatedXml: string;
+  noteName: string;
 }
 
 export const MusicService = {
@@ -46,7 +51,7 @@ export const MusicService = {
     octave,
     rhythmType,
     rhythm,
-  }: rhythmMusic): Promise<void> {
+  }: rhythmMusicProps): Promise<void> {
     try {
       const response = await axios.post<string>(
         "http://127.0.0.1:8000/random",
@@ -124,31 +129,35 @@ export const MusicService = {
   // from the backend: return the note name with either the name or value option
   // (see the options from musical options)
   // and if is correct, make the elevation green, if wrong, make it bl async getNoteGameXml(
-  async getNoteGameXml(scale: string, octave: string): Promise<void> {
+  async getNoteGameXml(scale: string, octave: string): Promise<string> {
     try {
-      const response = await axios.post<string>(
+      const response = await axios.post<NoteGameDTO>(
         "http://127.0.0.1:8000/note-game",
         { scale: scale, octave: octave },
-        { responseType: "text" },
+        { responseType: "json" },
       );
-      const generatedXml = response.data;
+
+      const generatedXml = response.data.generatedXml;
+      const noteName = response.data.noteName;
+
       const sheetMusicContainer = document.getElementById("sheet-music-div");
 
       if (!sheetMusicContainer) {
-        console.error("Could not find the sheet music container");
-        return;
+        throw new Error("Could not find the sheet music container");
       }
 
       const osmd = new OpenSheetMusicDisplay(
         sheetMusicContainer as HTMLElement,
       );
 
+      // alert(`${noteName}`);
+
       await osmd.load(generatedXml);
       osmd.render();
+      return noteName;
     } catch (error) {
-      console.error(
+      throw new Error(
         `did not get sheet music, params: scale: ${scale}, octave: ${octave} `,
-        error,
       );
     }
   },
