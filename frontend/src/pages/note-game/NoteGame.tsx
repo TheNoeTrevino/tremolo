@@ -1,4 +1,4 @@
-import { Box, Button, Card } from "@mui/material";
+import { Box, Button, Card, Typography } from "@mui/material";
 import { useState, MouseEvent, useEffect } from "react";
 import MusicButton from "../music-display/MusicButton";
 import {
@@ -10,15 +10,17 @@ import {
 } from "../music-display/MusicalOptions";
 import { MusicService } from "../../services/MusicService";
 import { musicButtonStyles } from "../../styles";
+import { noteGameStyles } from "./NoteGameStyles";
 
-// TODO: update the score everytime the user inputs something, use in useEffect
-// dependency
+// TODO: add
 const NoteGame = () => {
   const [totalCounter, setTotalcounter] = useState<number>(0);
   const [correctCounter, setCorrectCounter] = useState<number>(0);
   const [incorrectCounter, setIncorrectCounter] = useState<number>(0);
+
   const [scaleChoice, setScale] = useState<string>("C");
   const [octaveChoice, setOctaveChoice] = useState<string>("4");
+
   const [noteName, setNoteName] = useState<string>("C");
 
   const [scaleAnchorEl, setScaleAnchorEl] = useState<null | HTMLElement>(null);
@@ -43,12 +45,15 @@ const NoteGame = () => {
   const chooseOctave = (octaveChoice: string) => {
     setOctaveChoice(octaveChoice);
   };
-  async function fetchNote(): Promise<void> {
-    setNoteName(await MusicService.getNoteGameXml(scaleChoice, octaveChoice));
-  }
+
   const openScaleOptions = Boolean(scaleAnchorEl);
   const openOctaveOptions = Boolean(octaveAnchorEl);
   const totalOptions = [sharpOptions, naturalOptions, flatOptions];
+
+  async function fetchNote(): Promise<void> {
+    setNoteName(await MusicService.getNoteGameXml(scaleChoice, octaveChoice));
+  }
+
   useEffect(() => {
     fetchNote();
   }, [scaleChoice, octaveChoice, totalCounter]);
@@ -60,8 +65,6 @@ const NoteGame = () => {
       alert("false");
       return;
     }
-    //TODO: make the function check if they are equal, if they are not, make the
-    //button red for a moment, if they are equal, make it green for a moment
     setCorrectCounter(correctCounter + 1);
     alert("true");
   };
@@ -77,48 +80,23 @@ const NoteGame = () => {
           flexDirection: "column",
         }}
       >
-        <Card
-          elevation={4}
-          sx={{
-            width: "33%",
-            height: "2rem",
-            textAlign: "center",
-            textJustify: "center",
-            mb: "2rem",
-          }}
-        >
-          {correctCounter / totalCounter} %
+        <Card elevation={4} sx={noteGameStyles.scoreboard}>
+          <Typography textAlign={"center"}>
+            {isNaN(correctCounter / totalCounter)
+              ? "Answer the current question to start a session!"
+              : correctCounter / totalCounter === 1
+                ? "100%"
+                : `${Math.round((correctCounter / totalCounter) * 100)}%`}
+          </Typography>
         </Card>
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-evenly",
-            alignItems: "center",
-          }}
-        >
+        <Box id="main" sx={noteGameStyles.mainDiv}>
           <Card
             id="sheet-music-div"
             elevation={6}
-            sx={{
-              display: "flex",
-              width: "66%",
-              height: "20rem",
-              alignItems: "center",
-              mb: "2rem",
-            }}
-          ></Card>
-          <Card
-            elevation={6}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              height: "20rem",
-              justifyContent: "center",
-            }}
-          >
-            <Box>
+            sx={noteGameStyles.musicDisplay}
+          />
+          <Card elevation={6} sx={noteGameStyles.optionButtonsCard}>
+            <Box sx={noteGameStyles.optionButtonsContainer}>
               <MusicButton
                 text="Choose Scale"
                 handleClick={handleScaleClick}
@@ -142,15 +120,14 @@ const NoteGame = () => {
             </Box>
           </Card>
         </Box>
-        <Box>
+        <Box id="options">
           {totalOptions.map((optionList) => (
-            <Box>
+            <Box width={"100%"}>
               {optionList.map((option) => (
-                // TODO: make the buttons larger for the kids
                 <Button
                   key={option.value}
                   variant="contained"
-                  sx={{ m: 1, textTransform: "none" }}
+                  sx={{ ...noteGameStyles.answerButtons }}
                   onClick={() => validateInput(option.value)}
                 >
                   {option.name}
