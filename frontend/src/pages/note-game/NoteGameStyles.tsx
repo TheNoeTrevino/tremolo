@@ -1,11 +1,17 @@
-const noteGameStyles = {
-  scoreboard: {
+import { SxProps } from "@mui/system";
+
+const noteGameStyles: Record<string, SxProps> = {
+  scoreboardContainer: {
+    mb: "2rem",
+    display: "flex",
+    justifyContent: "space-evenly",
+    gap: 3,
+  },
+
+  scoreboardItems: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    width: "33%",
-    height: "3rem",
-    mb: "2rem",
   },
 
   mainDiv: {
