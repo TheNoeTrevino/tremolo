@@ -11,6 +11,7 @@ import {
 import { MusicService } from "../../services/MusicService";
 import { musicButtonStyles } from "../../styles";
 import { noteGameStyles } from "./NoteGameStyles";
+import { Score } from "@mui/icons-material";
 
 // TODO: add
 const NoteGame = () => {
@@ -80,15 +81,31 @@ const NoteGame = () => {
           flexDirection: "column",
         }}
       >
-        <Card elevation={4} sx={noteGameStyles.scoreboard}>
-          <Typography textAlign={"center"}>
-            {isNaN(correctCounter / totalCounter)
-              ? "Answer the current question to start a session!"
-              : correctCounter / totalCounter === 1
-                ? "100%"
-                : `${Math.round((correctCounter / totalCounter) * 100)}%`}
-          </Typography>
-        </Card>
+        {isNaN(correctCounter / totalCounter) ? (
+          <Card sx={noteGameStyles.scoreboardContainer}>
+            <Typography m={"1rem"}>
+              Answer the current question to start a session!
+            </Typography>
+          </Card>
+        ) : (
+          <Box sx={noteGameStyles.scoreboardContainer}>
+            <Card sx={noteGameStyles.scoreboardItems}>
+              <Typography m={"1rem"}>
+                {correctCounter / totalCounter === 1
+                  ? "100%"
+                  : `${Math.round((correctCounter / totalCounter) * 100)}%`}
+              </Typography>
+            </Card>
+            <Card sx={noteGameStyles.scoreboardItems}>
+              <Typography m={"1rem"}>
+                Fraction: {correctCounter}/{totalCounter}
+              </Typography>
+            </Card>
+            <Card sx={noteGameStyles.scoreboardItems}>
+              <Typography m={"1rem"}>NPM: </Typography>
+            </Card>
+          </Box>
+        )}
         <Box id="main" sx={noteGameStyles.mainDiv}>
           <Card
             id="sheet-music-div"
