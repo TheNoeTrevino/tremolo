@@ -1,3 +1,4 @@
+from typing import Tuple, Any
 from music21 import note, duration
 import random
 
@@ -71,10 +72,10 @@ def get_notes(type: int, variant: str, tone: str) -> bytes:
 
 
 # an int from 1-8, and take the scale and octave as the parameters:wqqa
-def note_game(scale: str, octave: str) -> bytes:
+def note_game(scale: str, octave: str) -> Tuple[str, Any]:
     s = Stream()
     notes = DiatonicInformation(scale, int(octave)).getScale()
     note = random.choice(notes)
     s.append(note)
 
-    return get_xml_file(s)
+    return get_xml_file(s).decode("utf-8"), note.name
