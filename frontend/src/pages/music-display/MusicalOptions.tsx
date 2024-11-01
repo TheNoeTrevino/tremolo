@@ -43,13 +43,13 @@ export const eightOptions: { name: string; option: string }[] = [
 //NOTE: these next three items are for the note game, the redundancy is probably
 //needed
 export const sharpOptions: { name: string; value: string }[] = [
-  { name: "C#", value: "CSharp" },
-  { name: "D#", value: "DSharp" },
-  { name: "E#", value: "ESharp" },
-  { name: "F#", value: "FSharp" },
-  { name: "G#", value: "GSharp" },
-  { name: "A#", value: "ASharp" },
-  { name: "B#", value: "BSharp" },
+  { name: "C#", value: "C#" },
+  { name: "D#", value: "D#" },
+  { name: "E#", value: "E#" },
+  { name: "F#", value: "F#" },
+  { name: "G#", value: "G#" },
+  { name: "A#", value: "A#" },
+  { name: "B#", value: "B#" },
 ];
 export const naturalOptions: { name: string; value: string }[] = [
   { name: "C", value: "C" },
@@ -61,11 +61,11 @@ export const naturalOptions: { name: string; value: string }[] = [
   { name: "B", value: "B" },
 ];
 export const flatOptions: { name: string; value: string }[] = [
-  { name: "Cb", value: "CFlat" },
-  { name: "Db", value: "DFlat" },
-  { name: "Eb", value: "EFlat" },
-  { name: "Fb", value: "FFlat" },
-  { name: "Gb", value: "GFlat" },
-  { name: "Ab", value: "AFlat" },
-  { name: "Bb", value: "BFlat" },
+  { name: "Cb", value: "C-" },
+  { name: "Db", value: "D-" },
+  { name: "Eb", value: "E-" },
+  { name: "Fb", value: "F-" },
+  { name: "Gb", value: "G-" },
+  { name: "Ab", value: "A-" },
+  { name: "Bb", value: "B-" },
 ];
