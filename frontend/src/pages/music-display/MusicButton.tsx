@@ -45,7 +45,7 @@ const MusicButton = ({
         open={open}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: "top",
+          vertical: "bottom",
           horizontal: "center",
         }}
         transformOrigin={{
