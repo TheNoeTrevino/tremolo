@@ -1,5 +1,5 @@
-import { Box, Button, Card, Fade, Typography } from "@mui/material";
-import { useState, MouseEvent, useEffect } from "react";
+import { Box, Button, ButtonBase, Card, Fade, Typography } from "@mui/material";
+import { useState, MouseEvent, useEffect, useRef } from "react";
 import MusicButton from "../music-display/MusicButton";
 import {
   flatOptions,
@@ -13,12 +13,12 @@ import { musicButtonStyles } from "../../styles";
 import { noteGameStyles } from "./NoteGameStyles";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
-// TODO: add conditional colors to the answer choice answerButtons
-// add the Notes per minute calculation
 const NoteGame = () => {
+  // use ref keeps the value for the lifecyle of the component, nice
+  const startTime = useRef<number>(Math.floor(new Date().getTime() / 1000));
+  const currentTime = Math.floor(new Date().getTime() / 1000);
   const [totalCounter, setTotalcounter] = useState<number>(0);
   const [correctCounter, setCorrectCounter] = useState<number>(0);
-  const [incorrectCounter, setIncorrectCounter] = useState<number>(0);
 
   const [scaleChoice, setScale] = useState<string>("C");
   const [octaveChoice, setOctaveChoice] = useState<string>("4");
@@ -63,12 +63,11 @@ const NoteGame = () => {
   const validateInput = (noteKey: string): void => {
     setTotalcounter(totalCounter + 1);
     if (noteKey != noteName) {
-      setIncorrectCounter(correctCounter + 1);
-      alert("false");
+      // alert("false");
       return;
     }
     setCorrectCounter(correctCounter + 1);
-    alert("true");
+    // alert("true");
   };
 
   return (
@@ -112,7 +111,13 @@ const NoteGame = () => {
                     </Typography>
                   </Card>
                   <Card sx={noteGameStyles.scoreboardItems}>
-                    <Typography m={"1rem"}>NPM: </Typography>
+                    <Typography m={"1rem"}>
+                      {`NPM:
+                      ${Math.floor(
+                        (totalCounter / (currentTime - startTime.current)) *
+                          100,
+                      )}`}
+                    </Typography>
                   </Card>
                 </Box>
               )}
@@ -124,7 +129,6 @@ const NoteGame = () => {
             />
             <Card elevation={6} sx={noteGameStyles.optionButtonsCard}>
               <Box sx={noteGameStyles.optionButtonsContainer}>
-                {/* make the music button take in a possible icon for the end icon */}
                 <MusicButton
                   text="Choose Scale"
                   handleClick={handleScaleClick}
