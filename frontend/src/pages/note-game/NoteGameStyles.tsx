@@ -4,6 +4,7 @@ const noteGameStyles: Record<string, SxProps> = {
   scoreboardContainer: {
     mb: "2rem",
     display: "flex",
+    flexDirection: "column",
     justifyContent: "space-evenly",
     gap: 3,
   },
@@ -20,17 +21,21 @@ const noteGameStyles: Record<string, SxProps> = {
     justifyContent: "space-evenly",
     alignItems: "center",
     width: "100%",
+    gap: "1rem",
+    px: "2rem",
     mb: "2rem",
   },
 
   musicDisplay: {
+    flexGrow: "2",
     display: "flex",
-    width: "66%",
+    width: "50%",
     height: "20rem",
     alignItems: "center",
   },
 
   optionButtonsCard: {
+    flexGrow: "1",
     display: "flex",
     flexDirection: "column",
     height: "20rem",
@@ -41,7 +46,6 @@ const noteGameStyles: Record<string, SxProps> = {
   optionButtonsContainer: {
     display: "flex",
     flexDirection: "column",
-    mx: "1rem",
   },
 
   answerButtons: {
