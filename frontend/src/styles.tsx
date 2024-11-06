@@ -1,4 +1,6 @@
-const navbarStyles = {
+import { SxProps } from "@mui/material";
+
+const navbarStyles: Record<string, SxProps> = {
   musicNoteIcon: {
     display: { xs: "none", md: "flex" },
     mr: 1,
