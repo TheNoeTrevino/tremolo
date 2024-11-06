@@ -84,7 +84,12 @@ const NoteGame = () => {
           }}
         >
           <Box id="main" sx={noteGameStyles.mainDiv}>
-            <Card elevation={6} sx={noteGameStyles.optionButtonsCard}>
+            <ButtonBase
+              centerRipple={true}
+              component={Card}
+              elevation={6}
+              sx={noteGameStyles.optionButtonsCard}
+            >
               {isNaN(correctCounter / totalCounter) ? (
                 <Card sx={noteGameStyles.scoreboardContainer}>
                   <Typography m={"1rem"}>
@@ -111,7 +116,7 @@ const NoteGame = () => {
                   </Card>
                 </Box>
               )}
-            </Card>
+            </ButtonBase>
             <Card
               id="sheet-music-div"
               elevation={6}
