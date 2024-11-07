@@ -1,55 +1,69 @@
-from music21 import interval, note, chord
+from music21 import interval, key, note, chord
 from music21.stream.base import Stream
 from music21.note import Note
 from music21.interval import Interval
 
-from .utilities import get_xml_file
+from .utilities import CircleOfFourths, get_xml_file, remove_part_name
 
 
-# TODO: Overhaul this to use the scale thingy from music21
 class DiatonicInformation:
-    def __init__(self, root: str, octave: int):
-        self._root = note.Note(root)
-        self._root.octave = octave
+    def __init__(self, tonic: str, octave: int):
+        self._tonic = note.Note(tonic)
+        self._tonic.octave = octave
 
         # diatonic chords
-        self.I = [self.root, self.third, self.fifth]
+        self.I = [self.tonic, self.third, self.fifth]
         self.ii = [self.second, self.fourth, self.sixth]
         self.iii = [self.third, self.fifth, self.seventh]
-        self.IV = [self.fourth, self.sixth, self.root]
+        self.IV = [self.fourth, self.sixth, self.tonic]
         self.V = [self.fifth, self.seventh, self.second]
-        self.vi = [self.sixth, self.root, self.third]
+        self.vi = [self.sixth, self.tonic, self.third]
         self.vii = [self.seventh, self.second, self.fourth]
 
         self.notes = Stream()
+        remove_part_name(self.notes)
+
+        self.notes.keySignature = key.KeySignature(CircleOfFourths[tonic])
 
     @property
-    def root(self):
-        return self._root
+    def tonic(self):
+        return self._tonic
 
     @property
     def second(self):
-        return self.transpose(self.root, interval.Interval("M2"))
+        return self.transpose(self.tonic, interval.Interval("M2"))
 
     @property
     def third(self):
-        return self.transpose(self.root, interval.Interval("M3"))
+        return self.transpose(self.tonic, interval.Interval("M3"))
 
     @property
     def fourth(self):
-        return self.transpose(self.root, interval.Interval("P4"))
+        return self.transpose(self.tonic, interval.Interval("P4"))
 
     @property
     def fifth(self):
-        return self.transpose(self.root, interval.Interval("P5"))
+        return self.transpose(self.tonic, interval.Interval("P5"))
 
     @property
     def sixth(self):
-        return self.transpose(self.root, interval.Interval("M6"))
+        return self.transpose(self.tonic, interval.Interval("M6"))
 
     @property
     def seventh(self):
-        return self.transpose(self.root, interval.Interval("M7"))
+        return self.transpose(self.tonic, interval.Interval("M7"))
+
+    # TODO: add a way to increase the range of this?
+    def getScale(self):
+        return [
+            self.tonic,
+            self.second,
+            self.third,
+            self.fourth,
+            self.fifth,
+            self.sixth,
+            self.seventh,
+        ]
 
     def transpose(self, starting_note: Note, interval: Interval) -> Note:
         transposed_note = starting_note.transpose(interval)
@@ -66,7 +80,7 @@ class DiatonicInformation:
         mary_notes = [
             self.third,
             self.second,
-            self.root,
+            self.tonic,
             self.second,
             self.third,
             self.third,

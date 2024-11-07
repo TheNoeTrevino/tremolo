@@ -12,9 +12,9 @@ import MenuItem from "@mui/material/MenuItem";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import { Link } from "react-router-dom";
 import { navbarStyles } from "../../styles";
-import { useAuth0 } from "@auth0/auth0-react";
 import UserOptions from "./UserOptions";
 import Slide from "@mui/material/Slide/Slide";
+import { useState } from "react";
 
 const pages = [
   { name: "Tremolo", path: "/" },
@@ -25,10 +25,7 @@ const pages = [
 ];
 
 function NavBar() {
-  const { loginWithRedirect, isAuthenticated } = useAuth0();
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null,
-  );
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -102,13 +99,7 @@ function NavBar() {
               ))}
             </Box>
             <Box sx={{ flexGrow: 0 }}>
-              {isAuthenticated ? (
-                <UserOptions />
-              ) : (
-                <Button color="inherit" onClick={() => loginWithRedirect()}>
-                  Sign In
-                </Button>
-              )}
+              <UserOptions />
             </Box>
           </Toolbar>
         </Container>

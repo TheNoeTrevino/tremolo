@@ -1,12 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import {
-  Tooltip,
-  IconButton,
-  Avatar,
-  Menu,
-  MenuItem,
-  Typography,
-} from "@mui/material";
+import { Tooltip, IconButton, Menu, MenuItem, Typography } from "@mui/material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -17,7 +9,6 @@ const UserOptions = () => {
     { name: "Dashboard", path: "/dashboard" },
   ];
 
-  const { logout, user } = useAuth0();
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -30,9 +21,7 @@ const UserOptions = () => {
   return (
     <>
       <Tooltip title="Open settings">
-        <IconButton onClick={handleOpenUserMenu} sx={{ mr: -5 }}>
-          <Avatar alt={user?.name} src={user?.picture} />
-        </IconButton>
+        <IconButton onClick={handleOpenUserMenu} sx={{ mr: -5 }}></IconButton>
       </Tooltip>
       <Menu
         sx={{ mt: "45px" }}
@@ -60,14 +49,7 @@ const UserOptions = () => {
             <Typography sx={{ textAlign: "center" }}>{setting.name}</Typography>
           </MenuItem>
         ))}
-        <MenuItem
-          key="Log Out"
-          onClick={() =>
-            logout({
-              logoutParams: { returnTo: window.location.origin },
-            })
-          }
-        >
+        <MenuItem key="Log Out">
           <Typography sx={{ textAlign: "center" }}>Log Out</Typography>
         </MenuItem>
       </Menu>

@@ -12,6 +12,8 @@ interface ButtonProps {
   handleClose: () => void;
   handleOptionClick: (option: string) => void;
   styles: SxProps;
+  startIcon?: React.ReactNode;
+  endIcon?: React.ReactNode;
 }
 
 const MusicButton = ({
@@ -23,6 +25,8 @@ const MusicButton = ({
   handleClose,
   handleOptionClick,
   styles,
+  startIcon,
+  endIcon,
 }: ButtonProps) => {
   return (
     <Box>
@@ -31,6 +35,8 @@ const MusicButton = ({
         variant="contained"
         sx={styles}
         onClick={handleClick}
+        startIcon={startIcon}
+        endIcon={endIcon}
       >
         {text}
       </Button>
@@ -39,7 +45,7 @@ const MusicButton = ({
         open={open}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: "top",
+          vertical: "bottom",
           horizontal: "center",
         }}
         transformOrigin={{

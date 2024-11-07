@@ -1,9 +1,10 @@
+from django.http.response import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from rest_framework.views import Response
 from django.http import HttpResponse
 
-from .library import get_notes
+from .library import get_notes, note_game
 from .dynamic_mary import DiatonicInformation
 from rest_framework import status
 
@@ -24,9 +25,7 @@ def get_mary_had(request: Request):
             )
 
         # TODO: move this to a service
-        response = HttpResponse(music, content_type="application/xml")
-        response["Content-Disposition"] = 'attachment; filename="test.xml"'
-        return response
+        return HttpResponse(music, content_type="application/xml")
 
 
 @api_view(["POST"])
@@ -48,6 +47,30 @@ def get_random_notes(request: Request):
             )
 
         # TODO: move this to a service
-        response = HttpResponse(music, content_type="application/xml")
-        response["Content-Disposition"] = 'attachment; filename="test.xml"'
-        return response
+        return HttpResponse(music, content_type="application/xml")
+
+
+@api_view(["POST"])
+def get_note_game(request: Request):
+    if request.method == "POST":
+        scale: str = request.data.get("scale")  # type: ignore
+        octave: str = request.data.get("octave")  # type: ignore
+
+        try:
+            music, note_name = note_game(scale, octave)
+
+        # out of the twelve tone system
+        except Exception as e:
+            e = str(e)
+            return Response(
+                f"something is not right\n error: {e} \n {request.data}",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        response = {}
+        response["generatedXml"] = music
+        response["noteName"] = note_name
+        response["noteOctave"] = octave
+
+        # TODO: move this to a service
+        return JsonResponse(response)

@@ -1,4 +1,6 @@
-const navbarStyles = {
+import { SxProps } from "@mui/material";
+
+const navbarStyles: Record<string, SxProps> = {
   musicNoteIcon: {
     display: { xs: "none", md: "flex" },
     mr: 1,
@@ -37,8 +39,7 @@ const navbarStyles = {
 };
 
 const sheetMusicStyles = {
-  mt: 4,
-  width: "66%",
+  width: "100%",
   height: "500px",
   border: "1px solid grey",
   alignContent: "center",
@@ -51,10 +52,4 @@ const musicButtonStyles = {
   transform: "translateX(-50%)",
 };
 
-const centerInBox = {
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-};
-
-export { centerInBox, navbarStyles, sheetMusicStyles, musicButtonStyles };
+export { navbarStyles, sheetMusicStyles, musicButtonStyles };
