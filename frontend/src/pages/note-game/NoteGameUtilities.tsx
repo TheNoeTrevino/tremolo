@@ -31,4 +31,22 @@ const noteToSound: Record<string, string> = {
   B4: b4sound,
 };
 
-export { noteToSound };
+// TODO: make this take in type of keydown, what ever that is
+// also make a vim version lol
+const keyToNote: Record<string, string> = {
+  A: "C",
+  W: "D-",
+  S: "D",
+  E: "E-",
+  D: "E",
+  F: "F",
+  T: "G-",
+  G: "G",
+  Y: "A-",
+  H: "A",
+  U: "B-",
+  J: "B",
+  K: "C",
+};
+
+export { noteToSound, keyToNote };
