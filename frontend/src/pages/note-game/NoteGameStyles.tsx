@@ -26,16 +26,23 @@ const noteGameStyles: Record<string, SxProps> = {
     mb: "2rem",
   },
 
-  musicDisplay: {
-    flexGrow: "2",
+  musicContainer: {
+    flex: "2",
     display: "flex",
     width: "50%",
-    height: "20rem",
+    height: "50%",
     alignItems: "center",
+    justifyContent: "center",
+  },
+
+  musicDisplay: {
+    width: "50%",
+    height: "20rem",
+    pl: "3rem",
   },
 
   optionButtonsCard: {
-    flexGrow: "1",
+    flex: "1",
     display: "flex",
     flexDirection: "column",
     height: "20rem",
