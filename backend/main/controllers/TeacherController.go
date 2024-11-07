@@ -7,8 +7,8 @@ import (
 )
 
 func SetupTeacherRoutes(router *gin.Engine) {
-	router.POST("/", services.CreatePost)
-	router.GET("/", services.GetPosts)
-	router.GET("/:id", services.GetPost)
-	router.POST("/:id", services.GetPost)
+	router.POST("/", services.CreateTeacher)
+	router.GET("/", services.GetStudents)
+	router.GET("/:id", services.GetStudent)
+	router.POST("/:id", services.GetEntried)
 }
