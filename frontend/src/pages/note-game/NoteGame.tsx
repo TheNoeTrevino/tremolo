@@ -1,4 +1,5 @@
 import { Box, Button, ButtonBase, Card, Fade, Typography } from "@mui/material";
+import useSound from "use-sound";
 import { useState, MouseEvent, useEffect, useRef } from "react";
 import MusicButton from "../music-display/MusicButton";
 import {
@@ -12,6 +13,8 @@ import { MusicService } from "../../services/MusicService";
 import { musicButtonStyles } from "../../styles";
 import { noteGameStyles } from "./NoteGameStyles";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { noteGameProps } from "../../models/models";
+import { noteToSound } from "./Audios";
 
 const NoteGame = () => {
   // use ref keeps the value for the lifecyle of the component, nice
@@ -23,7 +26,12 @@ const NoteGame = () => {
   const [scaleChoice, setScale] = useState<string>("C");
   const [octaveChoice, setOctaveChoice] = useState<string>("4");
 
-  const [noteName, setNoteName] = useState<string>("C");
+  const [noteInformation, setNoteInformation] = useState<
+    noteGameProps | undefined
+  >(undefined);
+
+  const [sound, setSound] = useState<string>("c");
+  const [playSound] = useSound(sound);
 
   const [scaleAnchorEl, setScaleAnchorEl] = useState<null | HTMLElement>(null);
   const [octaveAnchorEl, setOctaveAnchorEl] = useState<null | HTMLElement>(
@@ -53,21 +61,34 @@ const NoteGame = () => {
   const totalOptions = [sharpOptions, naturalOptions, flatOptions];
 
   async function fetchNote(): Promise<void> {
-    setNoteName(await MusicService.getNoteGameXml(scaleChoice, octaveChoice));
+    setNoteInformation(
+      await MusicService.getNoteGameXml(scaleChoice, octaveChoice),
+    );
   }
 
   useEffect(() => {
     fetchNote();
   }, [scaleChoice, octaveChoice, totalCounter]);
 
+  // since we wait for the previous one to finsish, this will not be undefined
+  useEffect(() => {
+    if (!noteInformation) {
+      alert("damn");
+    } else {
+      console.log(noteInformation?.fullNoteName);
+      const newSound = noteToSound[noteInformation.fullNoteName];
+      setSound(newSound);
+    }
+  }, [noteInformation]);
+
   const validateInput = (noteKey: string): void => {
     setTotalcounter(totalCounter + 1);
-    if (noteKey != noteName) {
-      // alert("false");
+    if (noteKey != noteInformation?.noteName) {
       return;
     }
+
     setCorrectCounter(correctCounter + 1);
-    // alert("true");
+    playSound();
   };
 
   return (
@@ -90,14 +111,12 @@ const NoteGame = () => {
               sx={noteGameStyles.optionButtonsCard}
             >
               {isNaN(correctCounter / totalCounter) ? (
-                <Card sx={noteGameStyles.scoreboardContainer}>
-                  <Typography m={"1rem"}>
-                    Answer the current question to start a session!
-                  </Typography>
+                <Card sx={noteGameStyles.scoreboardContainer} elevation={3}>
+                  <Typography m={"1rem"}>Answer to start a session!</Typography>
                 </Card>
               ) : (
                 <Box sx={noteGameStyles.scoreboardContainer}>
-                  <Card sx={noteGameStyles.scoreboardItems}>
+                  <Card sx={noteGameStyles.scoreboardItems} elevation={3}>
                     <Typography m={"1rem"}>
                       Accurracy
                       {correctCounter / totalCounter === 1
@@ -105,12 +124,12 @@ const NoteGame = () => {
                         : `: ${Math.round((correctCounter / totalCounter) * 100)}%`}
                     </Typography>
                   </Card>
-                  <Card sx={noteGameStyles.scoreboardItems}>
+                  <Card sx={noteGameStyles.scoreboardItems} elevation={3}>
                     <Typography m={"1rem"}>
                       Fraction: {correctCounter}/{totalCounter}
                     </Typography>
                   </Card>
-                  <Card sx={noteGameStyles.scoreboardItems}>
+                  <Card sx={noteGameStyles.scoreboardItems} elevation={3}>
                     <Typography m={"1rem"}>
                       {`NPM:
                       ${Math.floor(
@@ -122,11 +141,9 @@ const NoteGame = () => {
                 </Box>
               )}
             </ButtonBase>
-            <Card
-              id="sheet-music-div"
-              elevation={6}
-              sx={noteGameStyles.musicDisplay}
-            />
+            <Card sx={noteGameStyles.musicContainer} elevation={6}>
+              <Box id="sheet-music-div" sx={noteGameStyles.musicDisplay}></Box>
+            </Card>
             <Card elevation={6} sx={noteGameStyles.optionButtonsCard}>
               <Box sx={noteGameStyles.optionButtonsContainer}>
                 <MusicButton
