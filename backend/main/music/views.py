@@ -70,6 +70,7 @@ def get_note_game(request: Request):
         response = {}
         response["generatedXml"] = music
         response["noteName"] = note_name
+        response["noteOctave"] = octave
 
         # TODO: move this to a service
         return JsonResponse(response)
