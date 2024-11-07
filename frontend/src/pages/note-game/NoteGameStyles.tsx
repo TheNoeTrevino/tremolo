@@ -21,7 +21,7 @@ const noteGameStyles: Record<string, SxProps> = {
     justifyContent: "space-evenly",
     alignItems: "center",
     width: "100%",
-    gap: "1rem",
+    gap: "2rem",
     px: "2rem",
     mb: "2rem",
   },
@@ -33,12 +33,15 @@ const noteGameStyles: Record<string, SxProps> = {
     height: "50%",
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: "10px",
   },
 
   musicDisplay: {
     width: "50%",
     height: "20rem",
-    pl: "3rem",
+    justifyItems: "center",
+    alignItems: "center",
+    pl: "2rem",
   },
 
   optionButtonsCard: {
@@ -48,6 +51,7 @@ const noteGameStyles: Record<string, SxProps> = {
     height: "20rem",
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: "10px",
   },
 
   optionButtonsContainer: {

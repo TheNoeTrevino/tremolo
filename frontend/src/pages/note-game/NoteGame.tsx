@@ -14,7 +14,7 @@ import { musicButtonStyles } from "../../styles";
 import { noteGameStyles } from "./NoteGameStyles";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { noteGameProps } from "../../models/models";
-import { noteToSound } from "./Audios";
+import { noteToSound } from "./NoteGameUtilities";
 
 const NoteGame = () => {
   // use ref keeps the value for the lifecyle of the component, nice
@@ -73,7 +73,7 @@ const NoteGame = () => {
   // since we wait for the previous one to finsish, this will not be undefined
   useEffect(() => {
     if (!noteInformation) {
-      alert("damn");
+      console.log("note information not yet fetch");
     } else {
       console.log(noteInformation?.fullNoteName);
       const newSound = noteToSound[noteInformation.fullNoteName];
