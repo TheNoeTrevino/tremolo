@@ -1,22 +1,11 @@
 import axios from "axios";
 import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
-
-interface rhythmMusicProps {
-  scale: string;
-  octave: string;
-  rhythmType: number;
-  rhythm: string;
-}
-
-interface generatedMusicProps {
-  scale: string;
-  octave: string;
-}
-
-interface NoteGameDTO {
-  generatedXml: string;
-  noteName: string;
-}
+import {
+  generatedMusicProps,
+  rhythmMusicProps,
+  noteGameProps,
+  NoteGameDTO,
+} from "../models/models";
 
 export const MusicService = {
   async getMaryMusic({ scale, octave }: generatedMusicProps): Promise<void> {
@@ -129,7 +118,7 @@ export const MusicService = {
   // from the backend: return the note name with either the name or value option
   // (see the options from musical options)
   // and if is correct, make the elevation green, if wrong, make it bl async getNoteGameXml(
-  async getNoteGameXml(scale: string, octave: string): Promise<string> {
+  async getNoteGameXml(scale: string, octave: string): Promise<noteGameProps> {
     try {
       const response = await axios.post<NoteGameDTO>(
         "http://127.0.0.1:8000/note-game",
@@ -139,6 +128,7 @@ export const MusicService = {
 
       const generatedXml = response.data.generatedXml;
       const noteName = response.data.noteName;
+      const noteOctave = response.data.noteOctave;
 
       const sheetMusicContainer = document.getElementById("sheet-music-div");
 
@@ -150,11 +140,18 @@ export const MusicService = {
         sheetMusicContainer as HTMLElement,
       );
 
-      // alert(`${noteName}`);
+      // alert(`${noteName} ${noteOctave}`);
 
       await osmd.load(generatedXml);
       osmd.render();
-      return noteName;
+
+      const noteInformation: noteGameProps = {
+        noteName: noteName,
+        octave: noteOctave,
+        fullNoteName: noteName + noteOctave,
+      };
+
+      return noteInformation;
     } catch (error) {
       throw new Error(
         `did not get sheet music, params: scale: ${scale}, octave: ${octave} `,
