@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./pages/ErrorPage";
 import About from "./pages/About.tsx";
 import HomePage from "./pages/HomePage";
-import SheetMusicDisplay from "./pages/music-display/SheetMusicDisplay.tsx";
+import SheetMusicDisplay from "./pages/generated-music/GeneratedMusicDisplay.tsx";
 import NoteGame from "./pages/note-game/NoteGame";
 import Account from "./pages/users/Account";
 import Profile from "./pages/users/Profile";

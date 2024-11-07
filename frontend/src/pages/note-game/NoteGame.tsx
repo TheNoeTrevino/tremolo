@@ -1,20 +1,20 @@
 import { Box, Button, ButtonBase, Card, Fade, Typography } from "@mui/material";
 import useSound from "use-sound";
 import { useState, MouseEvent, useEffect, useRef } from "react";
-import MusicButton from "../music-display/MusicButton";
-import {
-  flatOptions,
-  naturalOptions,
-  octaveOptions,
-  scaleOptions,
-  sharpOptions,
-} from "../music-display/MusicalOptions";
 import { MusicService } from "../../services/MusicService";
 import { musicButtonStyles } from "../../styles";
 import { noteGameStyles } from "./NoteGameStyles";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { noteGameProps } from "../../models/models";
 import { noteToSound } from "./NoteGameUtilities";
+import {
+  sharpOptions,
+  naturalOptions,
+  flatOptions,
+  scaleOptions,
+  octaveOptions,
+} from "../../components/musical/MusicalOptions";
+import MusicButton from "../../components/musical/MusicButton";
 
 const NoteGame = () => {
   // use ref keeps the value for the lifecyle of the component, nice
@@ -93,7 +93,7 @@ const NoteGame = () => {
 
   return (
     <>
-      <Fade in={true}>
+      <Fade in={true} timeout={500}>
         <Box
           my={"2rem"}
           sx={{
