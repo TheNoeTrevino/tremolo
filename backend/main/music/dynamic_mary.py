@@ -3,7 +3,7 @@ from music21.stream.base import Stream
 from music21.note import Note
 from music21.interval import Interval
 
-from .utilities import CircleOfFourths, get_xml_file
+from .utilities import CircleOfFourths, get_xml_file, remove_part_name
 
 
 class DiatonicInformation:
@@ -21,6 +21,8 @@ class DiatonicInformation:
         self.vii = [self.seventh, self.second, self.fourth]
 
         self.notes = Stream()
+        remove_part_name(self.notes)
+
         self.notes.keySignature = key.KeySignature(CircleOfFourths[tonic])
 
     @property

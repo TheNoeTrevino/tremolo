@@ -4,7 +4,7 @@ from pathlib import Path
 import os, tempfile
 from typing import Union
 
-from music21 import metadata
+from music21 import instrument, metadata
 from music21 import converter
 from music21.stream.base import Stream
 
@@ -57,10 +57,17 @@ def clean_stream(s: Stream):
     # TODO: remove more things, and add an optional
     # parameter that can take in an instrument name, and set the instrument
     # to that
+
     s.metadata = metadata.Metadata()
     s.metadata.title = ""
     s.metadata.composer = ""
     return s
+
+
+def remove_part_name(s: Stream):
+    instr = instrument.Piano()
+    instr.partName = " "
+    s.append(instr)
 
 
 CircleOfFourths = {
