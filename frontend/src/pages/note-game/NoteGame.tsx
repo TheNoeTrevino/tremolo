@@ -17,8 +17,10 @@ import MusicButton from "../../components/musical/MusicButton";
 
 const NoteGame = () => {
   const [sound, setSound] = useState<string | undefined>(undefined);
+
   const startTime = useRef<number>(Math.floor(new Date().getTime() / 1000));
   const currentTime = Math.floor(new Date().getTime() / 1000);
+
   const [totalCounter, setTotalcounter] = useState<number>(0);
   const [correctCounter, setCorrectCounter] = useState<number>(0);
 
@@ -33,6 +35,7 @@ const NoteGame = () => {
   const [octaveAnchorEl, setOctaveAnchorEl] = useState<null | HTMLElement>(
     null,
   );
+
   const handleScaleClick = (event: MouseEvent<HTMLElement>) => {
     setScaleAnchorEl(event.currentTarget);
   };
