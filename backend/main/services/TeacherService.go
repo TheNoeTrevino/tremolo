@@ -3,21 +3,14 @@ package services
 import (
 	"net/http"
 	"sight-reading/database"
+	"sight-reading/models"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Post struct {
-	ID        *int16    `json:"id" db:"id"`
-	CreatedAt time.Time `json:"created_at" db:"created_at"`
-	Title     string    `json:"title" db:"title"`
-	Content   string    `json:"content" db:"content"`
-}
-
-func CreatePost(c *gin.Context) {
-	var reqBody Post
+func CreateTeacher(c *gin.Context) {
+	var reqBody models.User
 
 	err := c.ShouldBindJSON(&reqBody)
 	if err != nil {
@@ -28,7 +21,18 @@ func CreatePost(c *gin.Context) {
 		return
 	}
 
-	query := `INSERT INTO posts (title, content) VALUES (:title, :content) RETURNING id`
+	query := `
+  INSERT INTO posts (
+    first_name,
+    last_name,
+    content
+  )
+  VALUES (
+  :title,
+  :content
+  )
+  RETURNING id`
+
 	rows, err := database.DBClient.NamedQuery(query, reqBody)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -50,22 +54,11 @@ func CreatePost(c *gin.Context) {
 	})
 }
 
-func GetPosts(c *gin.Context) {
-	var posts []Post
-
-	err := database.DBClient.Select(&posts, "SELECT id, title, content, created_at FROM posts ORDER BY id;")
-	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"error":   true,
-			"message": "Invalid request body",
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, posts)
+// TODO:
+func UpdateTeacher(c *gin.Context) {
 }
 
-func GetPost(c *gin.Context) {
+func GetStudents(c *gin.Context) {
 	idSrt := c.Param("id")
 	id, err := strconv.Atoi(idSrt)
 	if err != nil {
@@ -76,11 +69,14 @@ func GetPost(c *gin.Context) {
 		return
 	}
 
-	var post Post
-	err = database.DBClient.Get(
-		&post,
-		"SELECT id, title, content, created_at FROM posts WHERE id = $1;", id,
-	)
+	query := `
+  SELECT *
+  WHERE user.role = 'student'
+  AND user.teacher = $1;
+  `
+
+	var students []models.User
+	err = database.DBClient.Get(&students, query, id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error":   true,
@@ -88,8 +84,38 @@ func GetPost(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, post)
+	c.JSON(http.StatusOK, students)
 }
 
-func UpdatePost(c *gin.Context) {
+func GetStudent(c *gin.Context) {
+	idSrt := c.Param("id")
+	queriedName := c.Param("name")
+	id, err := strconv.Atoi(idSrt)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":   true,
+			"message": "Invalid request body",
+		})
+		return
+	}
+
+	// the and of this is not right
+	query := `
+  SELECT *
+  WHERE user.role = 'student'
+  AND user.teacher = $1;
+  AND user.first_name LIKE '%$2%'
+  OR user.last_name LIKE '%$2%'
+  `
+
+	var students models.User
+	err = database.DBClient.Get(&students, query, id, queriedName)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error":   true,
+			"message": "not found",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, students)
 }

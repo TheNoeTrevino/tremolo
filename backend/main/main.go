@@ -13,7 +13,7 @@ func main() {
 
 	router := gin.Default()
 
-	controllers.SetupPostsRoutes(router)
+	controllers.SetupTeacherRoutes(router)
 
 	err := router.Run(":5000")
 	if err != nil {

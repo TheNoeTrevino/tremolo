@@ -18,6 +18,9 @@ import MusicButton from "../../components/musical/MusicButton";
 
 const NoteGame = () => {
   // use ref keeps the value for the lifecyle of the component, nice
+  const [sound, setSound] = useState<string>("c");
+  const [playSound] = useSound(sound);
+
   const startTime = useRef<number>(Math.floor(new Date().getTime() / 1000));
   const currentTime = Math.floor(new Date().getTime() / 1000);
   const [totalCounter, setTotalcounter] = useState<number>(0);
@@ -29,9 +32,6 @@ const NoteGame = () => {
   const [noteInformation, setNoteInformation] = useState<
     noteGameProps | undefined
   >(undefined);
-
-  const [sound, setSound] = useState<string>("c");
-  const [playSound] = useSound(sound);
 
   const [scaleAnchorEl, setScaleAnchorEl] = useState<null | HTMLElement>(null);
   const [octaveAnchorEl, setOctaveAnchorEl] = useState<null | HTMLElement>(
