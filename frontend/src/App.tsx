@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
 import { Box, createTheme, ThemeProvider } from "@mui/material";
-import Footer from "./components/Footer";
 
 // https://colorhunt.co/palette/1e201e3c3d37697565ecdfcc
 const theme = createTheme({
@@ -29,7 +28,6 @@ function App() {
         <div id="detail">
           <Outlet />
         </div>
-        <Footer />
       </Box>
     </ThemeProvider>
   );
