@@ -1,12 +1,11 @@
 import { Box, Button, ButtonBase, Card, Fade, Typography } from "@mui/material";
-import useSound from "use-sound";
 import { useState, MouseEvent, useEffect, useRef } from "react";
 import { MusicService } from "../../services/MusicService";
 import { musicButtonStyles } from "../../styles";
 import { noteGameStyles } from "./NoteGameStyles";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { noteGameProps } from "../../models/models";
-import { noteToSound } from "./NoteGameUtilities";
+import { keypressToNote, noteToSound } from "./NoteGameUtilities";
 import {
   sharpOptions,
   naturalOptions,
@@ -17,10 +16,7 @@ import {
 import MusicButton from "../../components/musical/MusicButton";
 
 const NoteGame = () => {
-  // use ref keeps the value for the lifecyle of the component, nice
-  const [sound, setSound] = useState<string>("c");
-  const [playSound] = useSound(sound);
-
+  const [sound, setSound] = useState<string | undefined>(undefined);
   const startTime = useRef<number>(Math.floor(new Date().getTime() / 1000));
   const currentTime = Math.floor(new Date().getTime() / 1000);
   const [totalCounter, setTotalcounter] = useState<number>(0);
@@ -70,7 +66,6 @@ const NoteGame = () => {
     fetchNote();
   }, [scaleChoice, octaveChoice, totalCounter]);
 
-  // since we wait for the previous one to finsish, this will not be undefined
   useEffect(() => {
     if (!noteInformation) {
       console.log("note information not yet fetch");
@@ -88,11 +83,29 @@ const NoteGame = () => {
     }
 
     setCorrectCounter(correctCounter + 1);
-    playSound();
+    const audio = new Audio(sound);
+    audio.play();
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    // alert(noteInformation?.noteName); // B
+    if (noteInformation?.noteName == "B") {
+      alert(event.key); // j
+      alert(noteInformation?.noteName); // B
+      alert(keypressToNote[event.key]); // undefined?
+    }
+    setTotalcounter(totalCounter + 1);
+    if (keypressToNote[event.key] != noteInformation?.noteName) {
+      return;
+    }
+
+    setCorrectCounter(correctCounter + 1);
+    const audio = new Audio(sound);
+    audio.play();
   };
 
   return (
-    <>
+    <div onKeyDown={handleKeyDown} tabIndex={0}>
       <Fade in={true} timeout={500}>
         <Box
           my={"2rem"}
@@ -189,7 +202,7 @@ const NoteGame = () => {
           </Box>
         </Box>
       </Fade>
-    </>
+    </div>
   );
 };
 
