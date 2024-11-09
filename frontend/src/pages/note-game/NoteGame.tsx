@@ -65,6 +65,7 @@ const NoteGame = () => {
     );
   }
 
+  // FIX: this is getting ran twice
   useEffect(() => {
     fetchNote();
   }, [scaleChoice, octaveChoice, totalCounter]);
@@ -79,7 +80,7 @@ const NoteGame = () => {
     }
   }, [noteInformation]);
 
-  const validateInput = (noteKey: string): void => {
+  const validateButtonClick = (noteKey: string): void => {
     setTotalcounter(totalCounter + 1);
     if (noteKey != noteInformation?.noteName) {
       return;
@@ -90,13 +91,7 @@ const NoteGame = () => {
     audio.play();
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    // alert(noteInformation?.noteName); // B
-    if (noteInformation?.noteName == "B") {
-      alert(event.key); // j
-      alert(noteInformation?.noteName); // B
-      alert(keypressToNote[event.key]); // undefined?
-    }
+  const validateKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     setTotalcounter(totalCounter + 1);
     if (keypressToNote[event.key] != noteInformation?.noteName) {
       return;
@@ -108,7 +103,7 @@ const NoteGame = () => {
   };
 
   return (
-    <div onKeyDown={handleKeyDown} tabIndex={0}>
+    <div onKeyDown={validateKeyDown} tabIndex={0}>
       <Fade in={true} timeout={500}>
         <Box
           my={"2rem"}
@@ -195,7 +190,7 @@ const NoteGame = () => {
                     key={option.value}
                     variant="contained"
                     sx={{ ...noteGameStyles.answerButtons }}
-                    onClick={() => validateInput(option.value)}
+                    onClick={() => validateButtonClick(option.value)}
                   >
                     {option.name}
                   </Button>
