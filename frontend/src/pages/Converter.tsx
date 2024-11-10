@@ -2,7 +2,7 @@ import { Box, Fade, Paper, Typography } from "@mui/material";
 import InputFileUpload from "./FileUpload";
 import { useState } from "react";
 import { MusicService } from "../services/MusicService";
-import { sheetMusicStyles } from "../styles";
+import { generatedMusicStyles } from "../styles";
 
 const Converter = () => {
   const [isVisible, setVisibility] = useState<boolean>(false);
@@ -12,16 +12,12 @@ const Converter = () => {
     //
     <Fade in={true} timeout={500}>
       <Box>
-        <Box alignContent="center">
-          <Box
-            sx={{
-              display: "flex",
-            }}
-          >
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          <Box sx={generatedMusicStyles.sheetMusicContainer}>
             <Paper
               id="sheet-music-div"
               elevation={6}
-              sx={{ ...sheetMusicStyles }}
+              sx={generatedMusicStyles.sheetMusic}
             >
               {!isVisible && (
                 <Box>
@@ -32,7 +28,9 @@ const Converter = () => {
               )}
             </Paper>
           </Box>
+        </Box>
 
+        <Box>
           <InputFileUpload
             handleChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               MusicService.displayXml(event.target.files);

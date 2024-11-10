@@ -1,7 +1,6 @@
 import { Box, Button, ButtonBase, Card, Fade, Typography } from "@mui/material";
 import { useState, MouseEvent, useEffect, useRef } from "react";
 import { MusicService } from "../../services/MusicService";
-import { musicButtonStyles } from "../../styles";
 import { noteGameStyles } from "./NoteGameStyles";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { noteGameProps } from "../../models/models";
@@ -165,7 +164,7 @@ const NoteGame = () => {
                   open={openScaleOptions}
                   handleClose={handleScaleClose}
                   handleOptionClick={chooseScale}
-                  styles={musicButtonStyles}
+                  styles={{ mt: 2, width: "100%" }}
                   startIcon={<KeyboardArrowDownIcon />}
                 />
                 <MusicButton
@@ -176,7 +175,7 @@ const NoteGame = () => {
                   open={openOctaveOptions}
                   handleClose={handleOctaveClose}
                   handleOptionClick={chooseOctave}
-                  styles={musicButtonStyles}
+                  styles={{ mt: 2, width: "100%" }}
                   startIcon={<KeyboardArrowDownIcon />}
                 />
               </Box>
