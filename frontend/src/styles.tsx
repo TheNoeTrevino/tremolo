@@ -38,18 +38,24 @@ const navbarStyles: Record<string, SxProps> = {
   },
 };
 
-const sheetMusicStyles = {
-  width: "100%",
-  height: "500px",
-  border: "1px solid grey",
-  alignContent: "center",
+const generatedMusicStyles: Record<string, SxProps> = {
+  sheetMusicContainer: {
+    display: "flex",
+    width: "66%",
+  },
+  sheetMusic: {
+    width: "100%",
+    height: "500px",
+    border: "1px solid grey",
+    alignContent: "center",
+    justifyContent: "center",
+  },
+  musicButtonDiv: {
+    display: "flex",
+    mt: 2,
+    justifyContent: "center",
+    gap: "1rem",
+  },
 };
 
-const musicButtonStyles = {
-  mt: 2,
-  position: "relative",
-  left: "50%",
-  transform: "translateX(-50%)",
-};
-
-export { navbarStyles, sheetMusicStyles, musicButtonStyles };
+export { navbarStyles, generatedMusicStyles };
