@@ -5,7 +5,6 @@ import {
   Stack,
   Chip,
   SxProps,
-  ThemeVars,
 } from "@mui/material";
 import { LineChart } from "@mui/x-charts";
 
@@ -34,19 +33,28 @@ function getDaysInMonth(month: number, year: number) {
   }
   return days;
 }
-const data = getDaysInMonth(4, 2024);
+const now = new Date();
+const data = getDaysInMonth(now.getMonth() + 1, now.getFullYear());
 
 // TODO: make this reusable, input datam etc
 interface ThreeLinedGraphProps {
+  lineOne: number[];
+  lineTwo: number[];
+  lineThree: number[];
   sx: SxProps;
 }
 
-const ThreeLinedGraph = ({ sx }: ThreeLinedGraphProps) => {
+const ThreeLinedGraph = ({
+  sx,
+  lineOne,
+  lineTwo,
+  lineThree,
+}: ThreeLinedGraphProps) => {
   return (
     <Card variant="outlined" sx={sx}>
       <CardContent>
         <Typography component="h2" variant="subtitle2" gutterBottom>
-          Sessions
+          Note Game Sessions
         </Typography>
         <Stack sx={{ justifyContent: "space-between" }}>
           <Stack
@@ -60,7 +68,7 @@ const ThreeLinedGraph = ({ sx }: ThreeLinedGraphProps) => {
             <Typography variant="h4" component="p">
               13,277
             </Typography>
-            <Chip size="small" color="success" label="+35%" />
+            <Chip size="small" color="success" label="+35% from last month" />
           </Stack>
           <Typography variant="caption" sx={{ color: "text.secondary" }}>
             Sessions per day for the last 30 days
@@ -84,11 +92,7 @@ const ThreeLinedGraph = ({ sx }: ThreeLinedGraphProps) => {
               stack: "total",
               area: true,
               stackOrder: "ascending",
-              data: [
-                300, 900, 600, 1200, 1500, 1800, 2400, 2100, 2700, 3000, 1800,
-                3300, 3600, 3900, 4200, 4500, 3900, 4800, 5100, 5400, 4800,
-                5700, 6000, 6300, 6600, 6900, 7200, 7500, 7800, 8100,
-              ],
+              data: lineOne,
             },
             {
               id: "referral",
@@ -98,11 +102,7 @@ const ThreeLinedGraph = ({ sx }: ThreeLinedGraphProps) => {
               stack: "total",
               area: true,
               stackOrder: "ascending",
-              data: [
-                500, 900, 700, 1400, 1100, 1700, 2300, 2000, 2600, 2900, 2300,
-                3200, 3500, 3800, 4100, 4400, 2900, 4700, 5000, 5300, 5600,
-                5900, 6200, 6500, 5600, 6800, 7100, 7400, 7700, 8000,
-              ],
+              data: lineTwo,
             },
             {
               id: "organic",
@@ -111,11 +111,7 @@ const ThreeLinedGraph = ({ sx }: ThreeLinedGraphProps) => {
               curve: "linear",
               stack: "total",
               stackOrder: "ascending",
-              data: [
-                1000, 1500, 1200, 1700, 1300, 2000, 2400, 2200, 2600, 2800,
-                2500, 3000, 3400, 3700, 3200, 3900, 4100, 3500, 4300, 4500,
-                4000, 4700, 5000, 5200, 4800, 5400, 5600, 5900, 6100, 6300,
-              ],
+              data: lineThree,
               area: true,
             },
           ]}
