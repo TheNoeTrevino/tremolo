@@ -1,6 +1,13 @@
 package models
 
-// created times are stored in DB for accuracy
+import (
+	"errors"
+
+	"github.com/go-playground/validator/v10"
+)
+
+// TODO: the models are not really necessary since we are not using an orm,
+// maybe we should switch all this in to just dtos instead
 
 // TODO:
 // custom validation to the roles, has to be in the enumeration
@@ -57,7 +64,8 @@ func validateUserRole(fl validator.FieldLevel) bool {
 
 func (user *User) ValidateUser() error {
 	validate := validator.New()
-	// do not forget to register your custom validations
+	// do not forget to register your custom validations, maybe make this a .map
+	// with a dictionary? to make it more readable for the custom registrations
 	validate.RegisterValidation("role", validateUserRole)
 
 	err := validate.Struct(user)
