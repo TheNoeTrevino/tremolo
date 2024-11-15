@@ -9,10 +9,10 @@ import (
 
 type District struct {
 	ID      *int16 `db:"id"      json:"id"`
-	Title   string `db:"title"   json:"title"    validate:"required"`
-	County  string `db:"county"  json:"county"   validate:"required"`
-	State   string `db:"state"   json:"state"    validate:"required"`
-	Country string `db:"country" json:"country"  validate:"required"`
+	Title   string `db:"title"   json:"title"    validate:"required,alphanum"`
+	County  string `db:"county"  json:"county"   validate:"required,alpha"`
+	State   string `db:"state"   json:"state"    validate:"required,alpha"`
+	Country string `db:"country" json:"country"  validate:"required,alpha"`
 }
 
 // TODO: add varchar constraints
@@ -30,25 +30,33 @@ func (district *District) ValidateDistrict() error {
 				case "Title":
 					switch fieldErr.Tag() {
 					case "required":
-						errorMessage = append(errorMessage, "Title is required")
+						errorMessage = append(errorMessage, "Title: title is required")
+					case "alphanum":
+						errorMessage = append(errorMessage, "Title: title must be alphanumeric")
 					}
 
 				case "County":
 					switch fieldErr.Tag() {
 					case "required":
 						errorMessage = append(errorMessage, "County amount is required")
+					case "alpha":
+						errorMessage = append(errorMessage, "County: title must be alpha")
 					}
 
 				case "State":
 					switch fieldErr.Tag() {
 					case "required":
 						errorMessage = append(errorMessage, "State questions are required")
+					case "alpha":
+						errorMessage = append(errorMessage, "State: title must be alpha")
 					}
 
 				case "Country":
 					switch fieldErr.Tag() {
 					case "required":
 						errorMessage = append(errorMessage, "Country is required")
+					case "alpha":
+						errorMessage = append(errorMessage, "Country: title must be alpha")
 					}
 				}
 			}
