@@ -11,7 +11,7 @@ import (
 )
 
 // created successful, fix validation
-func CreateTeacher(c *gin.Context) {
+func CreateUser(c *gin.Context) {
 	var reqBody models.User
 
 	// validates that the json is valid
@@ -20,6 +20,15 @@ func CreateTeacher(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"error":   true,
 			"message": "Invalid request body",
+		})
+		return
+	}
+
+	err = reqBody.ValidateUser()
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":   true,
+			"message": reqBody.ValidateUser().Error(),
 		})
 		return
 	}
@@ -35,7 +44,7 @@ func CreateTeacher(c *gin.Context) {
     :first_name,
     :last_name,
     :district_id,
-    'TEACHER'
+    :role
   )
   RETURNING
     first_name,
@@ -44,6 +53,9 @@ func CreateTeacher(c *gin.Context) {
     district_id
   `
 
+	// TODO: dont get confused here, just add the role to the request body in the
+	// front end
+	//
 	// rows contains all the 'returning values'
 	rows, err := database.DBClient.NamedQuery(query, reqBody)
 	if err != nil {
@@ -63,6 +75,7 @@ func CreateTeacher(c *gin.Context) {
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
+				"help":  "this is at the database level",
 			})
 			return
 		}
@@ -85,6 +98,7 @@ func GetStudents(c *gin.Context) {
 	query := `
   SELECT first_name, last_name, role, district_id
   FROM users
+  WHERE role = 'STUDENT'  
   `
 	// WHERE users.role = 'STUDENT'
 
