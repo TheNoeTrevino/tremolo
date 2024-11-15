@@ -11,7 +11,7 @@ type User struct {
 	ID          *int16 `db:"id"           json:"id"`
 	FirstName   string `db:"first_name"   json:"first_name"   validate:"required,alpha"`
 	LastName    string `db:"last_name"    json:"last_name"    validate:"required,alpha"`
-	Role        Role   `db:"role"         json:"role"         validate:"required,role"` // TODO: add custom validation to only have teacher...
+	Role        Role   `db:"role"         json:"role"         validate:"required,role"`
 	CreatedDate string `db:"created_date" json:"created_date"`
 	DistrictID  int16  `db:"district_id"  json:"district_id"`
 }
@@ -35,7 +35,6 @@ func validateUserRole(fl validator.FieldLevel) bool {
 	return false
 }
 
-// TODO: append every error to a slice of errors, return that
 func (user *User) ValidateUser() error {
 	validate := validator.New()
 	validate.RegisterValidation("role", validateUserRole)

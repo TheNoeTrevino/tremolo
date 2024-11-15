@@ -15,6 +15,15 @@ func CreateNoteGameEntry(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"error":   err.Error(),
+			"message": "Invalid json",
+		})
+		return
+	}
+
+	err = reqBody.ValidateEntry()
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":   err.Error(),
 			"message": "Invalid request body for entry",
 		})
 		return

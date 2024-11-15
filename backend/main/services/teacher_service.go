@@ -18,7 +18,7 @@ func CreateUser(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"error":   true,
-			"message": "Invalid request body",
+			"message": "Invalid json body",
 		})
 		return
 	}
@@ -26,8 +26,8 @@ func CreateUser(c *gin.Context) {
 	err = reqBody.ValidateUser()
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"error":   true,
-			"message": reqBody.ValidateUser().Error(),
+			"error":   reqBody.ValidateUser().Error(),
+			"message": "Information invalid",
 		})
 		return
 	}

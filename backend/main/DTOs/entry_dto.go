@@ -16,12 +16,10 @@ type Entry struct {
 	UserID           int16  `db:"user_id"    json:"user_id"           validate:"required"`
 }
 
-// TODO: i think there a way make this more appropriate for when has a 2 at the
-// beginning
-// TODO: make a validation for correct lte total questions
+// add an or to the hours to ensure the miliary time and nothing else
 func validateEntryTimeLength(fl validator.FieldLevel) bool {
-	r := regexp.MustCompile("[0-2][0-9]:[0-5][0-9]:[0-5][0-9]")
-	// why -1?
+	r := regexp.MustCompile("([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]")
+	// -1 returns all matches, so we also need to make sure that is one
 	matches := r.FindAllString(fl.Field().String(), -1)
 
 	if len(matches) != 1 {
@@ -52,7 +50,7 @@ func (entry *Entry) ValidateEntry() error {
 					case "required":
 						errorMessage = append(errorMessage, "Time length is required")
 					case "time":
-						errorMessage = append(errorMessage, "Time must be in the 12:59:59 format")
+						errorMessage = append(errorMessage, "Time must be in the 23:59:59 format (militaty time)")
 					}
 
 				case "Questions":
