@@ -1,11 +1,5 @@
 package models
 
-import (
-	"errors"
-
-	"github.com/go-playground/validator/v10"
-)
-
 // TODO: the models are not really necessary since we are not using an orm,
 // maybe we should switch all this in to just dtos instead
 
@@ -51,56 +45,3 @@ const (
 // file. also make these return a custom error
 //
 // NOTE: these are all user validations
-
-// youtube custom validation
-func validateUserRole(fl validator.FieldLevel) bool {
-	switch fl.Field().String() {
-	case "TEACHER", "STUDENT", "ADMIN":
-		return true
-	}
-
-	return false
-}
-
-func (user *User) ValidateUser() error {
-	validate := validator.New()
-	// do not forget to register your custom validations, maybe make this a .map
-	// with a dictionary? to make it more readable for the custom registrations
-	validate.RegisterValidation("role", validateUserRole)
-
-	err := validate.Struct(user)
-	if err != nil {
-		if errs, ok := err.(validator.ValidationErrors); ok {
-			for _, fieldErr := range errs {
-				switch fieldErr.StructField() {
-				case "FirstName":
-					switch fieldErr.Tag() {
-					case "required":
-						return errors.New("First name is required")
-					case "alpha":
-						return errors.New("First name must be only alphabetical charaters")
-					}
-
-				case "LastName":
-					switch fieldErr.Tag() {
-					case "required":
-						return errors.New("Last name is required")
-					case "alpha":
-						return errors.New("Last name must be only alphabetical charaters")
-					}
-
-				case "Role":
-					switch fieldErr.Tag() {
-					case "required":
-						return errors.New("Role is required when making a user")
-					case "role":
-						return errors.New("Role must be either STUDENT, TEACHER, or ADMIN")
-					}
-				}
-			}
-		}
-		return err
-	}
-
-	return nil
-}
