@@ -8,7 +8,7 @@ import (
 var DBClient *sqlx.DB
 
 func InitializeDBConnection() {
-	db, err := sqlx.Open("postgres", "postgres://postgres:test123@localhost:5432/postgres?sslmode=disable")
+	db, err := sqlx.Open("postgres", "postgres://postgres:@localhost:5432/tremolo?sslmode=disable")
 	if err != nil {
 		panic(err.Error())
 	}
