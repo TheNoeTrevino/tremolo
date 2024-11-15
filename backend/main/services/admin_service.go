@@ -3,9 +3,9 @@ package services
 import (
 	"net/http"
 	"sight-reading/database"
-	"sight-reading/models"
-	dtos "sight-reading/models/DTOs"
 	"strconv"
+
+	dtos "sight-reading/DTOs"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,7 +19,7 @@ func GetTeachers(c *gin.Context) {
   `
 	// WHERE users.role = 'STUDENT'
 
-	var students []dtos.UserDTO
+	var students []dtos.User
 
 	err := database.DBClient.Select(&students, query)
 	if err != nil {
@@ -43,7 +43,7 @@ func GetTeacher(c *gin.Context) {
 		return
 	}
 
-	var post models.User
+	var post dtos.User
 
 	// association table here
 	query := `
@@ -71,7 +71,7 @@ func GetDistrictTeachers(c *gin.Context) {
   AND user.role = 'TEACHER'
   `
 
-	var teachers []dtos.UserDTO
+	var teachers []dtos.User
 
 	err := database.DBClient.Select(&teachers, query)
 	if err != nil {
@@ -93,7 +93,7 @@ func GetDistrictStudents(c *gin.Context) {
   AND user.role = 'STUDENT'
   `
 
-	var students []dtos.UserDTO
+	var students []dtos.User
 
 	err := database.DBClient.Select(&students, query)
 	if err != nil {

@@ -2,9 +2,8 @@ package services
 
 import (
 	"net/http"
+	dtos "sight-reading/DTOs"
 	"sight-reading/database"
-	"sight-reading/models"
-	dtos "sight-reading/models/DTOs"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +11,7 @@ import (
 
 // created successful, fix validation
 func CreateUser(c *gin.Context) {
-	var reqBody models.User
+	var reqBody dtos.User
 
 	// validates that the json is valid
 	err := c.ShouldBindJSON(&reqBody)
@@ -65,7 +64,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	var teacherValidation dtos.UserDTO
+	var teacherValidation dtos.User
 
 	// in this case, we just have one, but when wanting to do a multitude of
 	// entities this works the same
@@ -102,7 +101,7 @@ func GetStudents(c *gin.Context) {
   `
 	// WHERE users.role = 'STUDENT'
 
-	var students []dtos.UserDTO
+	var students []dtos.User
 
 	err := database.DBClient.Select(&students, query)
 	if err != nil {
@@ -135,7 +134,7 @@ func GetStudent(c *gin.Context) {
   AND users.id = $1
   `
 
-	var students models.User
+	var students dtos.User
 
 	err = database.DBClient.Get(&students, query, id)
 	if err != nil {
@@ -145,5 +144,6 @@ func GetStudent(c *gin.Context) {
 		})
 		return
 	}
+
 	c.JSON(http.StatusOK, students)
 }
