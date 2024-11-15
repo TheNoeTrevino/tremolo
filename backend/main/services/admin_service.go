@@ -12,10 +12,12 @@ import (
 func GetTeachers(c *gin.Context) {
 	var posts []models.User
 
+	// TODO: use association table here
 	query := `
   SELECT id, first_name, last_name
-  FROM posts
-  WHERE role = 'teacher'
+  FROM users
+  WHERE role = 'TEACHER'
+  AND 
   ORDER BY id;
   `
 
@@ -44,9 +46,10 @@ func GetTeacher(c *gin.Context) {
 
 	var post models.User
 
+	// association table here
 	query := `
   SELECT id, first_name, last_name
-  FROM posts
+  FROM users
   WHERE id = $1;
   `
 	err = database.DBClient.Get(&post, query, id)

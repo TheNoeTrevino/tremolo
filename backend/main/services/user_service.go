@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateEntry(c *gin.Context) {
+func CreateNoteGameEntry(c *gin.Context) {
 	var reqBody models.Entry
 
 	err := c.ShouldBindJSON(&reqBody)
@@ -20,26 +20,22 @@ func CreateEntry(c *gin.Context) {
 		return
 	}
 
+	// NOTE: db check passed
 	query := `
-  INSERT INTO entries (
-    created_at,
-    length,
+  INSERT INTO note_game_entries (
+    user_id,
+    time_length,
     total_questions,
     correct_questions,
-    first_name,
-    last_name,
-    user_id
+    notes_per_minute
   )
   VALUES (
-    :created_at,
-    :length,
+    :user_id
+    :time_length,
     :total_questions,
     :correct_questions,
-    :first_name,
-    :last_name,
-    :user_id
   )
-  RETURNING id
+  RETURNING id, user_id
   `
 
 	rows, err := database.DBClient.NamedQuery(query, reqBody)
@@ -63,18 +59,12 @@ func CreateEntry(c *gin.Context) {
 	})
 }
 
-func GetEntries(c *gin.Context) {
+func GetEntriesByUserId(c *gin.Context) {
+	// NOTE: db check passed
+	// TODO: specify columns
 	query := `
   SELECT *
   FROM entries
-  where userId = $1
-  `
-}
-
-func GetEntry(c *gin.Context) {
-	query := `
-  SELECT *
-  FROM entries
-  where ...
+  where entries.user_id = $1
   `
 }
