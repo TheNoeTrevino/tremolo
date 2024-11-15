@@ -4,14 +4,17 @@ import (
 	"net/http"
 	"sight-reading/database"
 	"sight-reading/models"
+	dtos "sight-reading/models/DTOs"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
+// created successful, fix validation
 func CreateTeacher(c *gin.Context) {
 	var reqBody models.User
 
+	// validates that the json is valid
 	err := c.ShouldBindJSON(&reqBody)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -22,17 +25,26 @@ func CreateTeacher(c *gin.Context) {
 	}
 
 	query := `
-  INSERT INTO posts (
+  INSERT INTO users (
     first_name,
     last_name,
-    content
+    district_id,
+    role
   )
   VALUES (
-  :title,
-  :content
+    :first_name,
+    :last_name,
+    :district_id,
+    'TEACHER'
   )
-  RETURNING id`
+  RETURNING
+    first_name,
+    last_name,
+    role,
+    district_id
+  `
 
+	// rows contains all the 'returning values'
 	rows, err := database.DBClient.NamedQuery(query, reqBody)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -41,16 +53,26 @@ func CreateTeacher(c *gin.Context) {
 		return
 	}
 
-	var postID int64
+	var teacherValidation dtos.UserDTO
+
+	// in this case, we just have one, but when wanting to do a multitude of
+	// entities this works the same
+	// iterates through all the rows returned, and maps to a struct
 	if rows.Next() {
-		rows.Scan(&postID)
+		err := rows.StructScan(&teacherValidation)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
 	}
+
 	rows.Close()
 
 	c.JSON(http.StatusCreated, gin.H{
-		"body":    reqBody,
-		"post_id": postID,
-		"error":   false,
+		"body":   teacherValidation,
+		"status": "teacher created sucessfully",
 	})
 }
 
@@ -58,38 +80,30 @@ func CreateTeacher(c *gin.Context) {
 func UpdateTeacher(c *gin.Context) {
 }
 
+// postman passed
 func GetStudents(c *gin.Context) {
-	idSrt := c.Param("id")
-	id, err := strconv.Atoi(idSrt)
-	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"error":   true,
-			"message": "Invalid request body",
-		})
-		return
-	}
-
 	query := `
-  SELECT *
-  WHERE user.role = 'student'
-  AND user.teacher = $1;
+  SELECT first_name, last_name, role, district_id
+  FROM users
   `
+	// WHERE users.role = 'STUDENT'
 
-	var students []models.User
-	err = database.DBClient.Get(&students, query, id)
+	var students []dtos.UserDTO
+
+	err := database.DBClient.Select(&students, query)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
-			"error":   true,
-			"message": "not found",
+			"error":   err.Error(),
+			"message": "not updated",
 		})
 		return
 	}
 	c.JSON(http.StatusOK, students)
 }
 
+// postman passed
 func GetStudent(c *gin.Context) {
 	idSrt := c.Param("id")
-	queriedName := c.Param("name")
 	id, err := strconv.Atoi(idSrt)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -101,18 +115,18 @@ func GetStudent(c *gin.Context) {
 
 	// the and of this is not right
 	query := `
-  SELECT *
-  WHERE user.role = 'student'
-  AND user.teacher = $1;
-  AND user.first_name LIKE '%$2%'
-  OR user.last_name LIKE '%$2%'
+  SELECT first_name, last_name, role, district_id
+  FROM users
+  WHERE users.role = 'STUDENT'
+  AND users.id = $1
   `
 
 	var students models.User
-	err = database.DBClient.Get(&students, query, id, queriedName)
+
+	err = database.DBClient.Get(&students, query, id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
-			"error":   true,
+			"error":   err.Error(),
 			"message": "not found",
 		})
 		return

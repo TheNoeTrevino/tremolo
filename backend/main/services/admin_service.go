@@ -10,7 +10,7 @@ import (
 )
 
 func GetTeachers(c *gin.Context) {
-	var posts []models.User
+	var teachers []models.User
 
 	// TODO: use association table here
 	query := `
@@ -21,7 +21,7 @@ func GetTeachers(c *gin.Context) {
   ORDER BY id;
   `
 
-	err := database.DBClient.Select(&posts, query)
+	err := database.DBClient.Select(&teachers, query)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"error":   true,
@@ -30,7 +30,7 @@ func GetTeachers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, posts)
+	c.JSON(http.StatusOK, teachers)
 }
 
 func GetTeacher(c *gin.Context) {
@@ -63,19 +63,19 @@ func GetTeacher(c *gin.Context) {
 	c.JSON(http.StatusOK, post)
 }
 
-func GetDistrictTeachers(c *gin.Context) {
-	// i think this is going to be some sort of left join
-	query := `
-  SELECT id, firsname, lastname 
-  WHERE user.districtID = $1
-  AND user.role = 'STUDENT'
-  `
-}
-
-func GetDistrictStudents(c *gin.Context) {
-	query := `
-  SELECT id, firsname, lastname 
-  WHERE user.districtID = $1
-  AND user.role = 'STUDENT'
-  `
-}
+// func GetDistrictTeachers(c *gin.Context) {
+// 	// i think this is going to be some sort of left join
+// 	query := `
+//   SELECT id, firsname, lastname
+//   WHERE user.districtID = $1
+//   AND user.role = 'STUDENT'
+//   `
+// }
+//
+// func GetDistrictStudents(c *gin.Context) {
+// 	query := `
+//   SELECT id, firsname, lastname
+//   WHERE user.districtID = $1
+//   AND user.role = 'STUDENT'
+//   `
+// }

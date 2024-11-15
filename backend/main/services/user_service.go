@@ -59,12 +59,12 @@ func CreateNoteGameEntry(c *gin.Context) {
 	})
 }
 
-func GetEntriesByUserId(c *gin.Context) {
-	// NOTE: db check passed
-	// TODO: specify columns
-	query := `
-  SELECT *
-  FROM entries
-  where entries.user_id = $1
-  `
-}
+// func GetEntriesByUserId(c *gin.Context) {
+// 	// NOTE: db check passed
+// 	// TODO: specify columns
+// 	query := `
+//   SELECT *
+//   FROM entries
+//   where entries.user_id = $1
+//   `
+// }
