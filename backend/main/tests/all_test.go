@@ -6,7 +6,8 @@ import (
 )
 
 // TODO: validate the error messages
-// Happy path
+
+// NOTE: Happy path
 func TestHappyUserCheckValidation(t *testing.T) {
 	user := &dtos.User{
 		FirstName: "Noe",
@@ -48,7 +49,7 @@ func TestHappyDistrictCheckValidation(t *testing.T) {
 	}
 }
 
-// Sad path
+// NOTE: Sad path
 func TestSadUserCheckValidation(t *testing.T) {
 	user := &dtos.User{
 		FirstName: "Noe1",
@@ -71,6 +72,7 @@ func TestSadEntryCheckValidation(t *testing.T) {
 		CorrectQuestions: 19,
 		UserID:           4,
 	}
+
 	err := entry.ValidateEntry()
 	if err == nil {
 		t.Fatal("There are no errors dectected, this is a sad path")
