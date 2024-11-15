@@ -43,6 +43,6 @@ OpenSheetMusicDisplay - Display the musical files on the web browser
 
 Music21 - Generate the midi and xml files as needed
 
-Django - Complementing the music21 library very well
+Django - Complementing the music21 library very well. Used for the music generations microservice.
 
-...planning on adding java for database interaction and user authentication, and keeping progress of user stats
+Go - sqlx for database interaction and mapping to structs, playground validator for validations. Used for the user tracking microservice
