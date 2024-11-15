@@ -66,7 +66,7 @@ func TestSadUserCheckValidation(t *testing.T) {
 
 func TestSadEntryCheckValidation(t *testing.T) {
 	entry := &dtos.Entry{
-		TimeLength:       "20:30:90",
+		TimeLength:       "29:30:90",
 		Questions:        12,
 		CorrectQuestions: 19,
 		UserID:           4,

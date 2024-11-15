@@ -2,14 +2,14 @@ package services
 
 import (
 	"net/http"
+	dtos "sight-reading/DTOs"
 	"sight-reading/database"
-	"sight-reading/models"
 
 	"github.com/gin-gonic/gin"
 )
 
 func CreateNoteGameEntry(c *gin.Context) {
-	var reqBody models.Entry
+	var reqBody dtos.Entry
 
 	err := c.ShouldBindJSON(&reqBody)
 	if err != nil {
@@ -59,12 +59,23 @@ func CreateNoteGameEntry(c *gin.Context) {
 	})
 }
 
-// func GetEntriesByUserId(c *gin.Context) {
-// 	// NOTE: db check passed
-// 	// TODO: specify columns
-// 	query := `
-//   SELECT *
-//   FROM entries
-//   where entries.user_id = $1
-//   `
-// }
+func GetEntriesByUserId(c *gin.Context) {
+	// NOTE: db check passed
+	// TODO: specify columns
+	query := `
+  SELECT *
+  FROM entries
+  where entries.user_id = $1
+  `
+	var entries []dtos.Entry
+	err := database.DBClient.Select(entries, query, 1)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":   err.Error(),
+			"message": "Invalid request body",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, entries)
+}
