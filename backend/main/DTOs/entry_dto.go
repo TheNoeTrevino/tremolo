@@ -2,7 +2,7 @@ package dtos
 
 import (
 	"errors"
-	"regexp"
+	"sight-reading/validations"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -17,21 +17,10 @@ type Entry struct {
 }
 
 // add an or to the hours to ensure the miliary time and nothing else
-func validateEntryTimeLength(fl validator.FieldLevel) bool {
-	r := regexp.MustCompile("([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]")
-	// -1 returns all matches, so we also need to make sure that is one
-	matches := r.FindAllString(fl.Field().String(), -1)
-
-	if len(matches) != 1 {
-		return false
-	} else {
-		return true
-	}
-}
 
 func (entry *Entry) ValidateEntry() error {
 	validate := validator.New()
-	validate.RegisterValidation("time", validateEntryTimeLength)
+	validate.RegisterValidation("time", validations.EntryTimeLength)
 
 	err := validate.Struct(entry)
 	if err != nil {
@@ -65,7 +54,7 @@ func (entry *Entry) ValidateEntry() error {
 				case "CorrectQuestions":
 					switch fieldErr.Tag() {
 					case "required":
-						errorMessage = append(errorMessage, "CorrectQuestions: Correct questions are required")
+						errorMessage = append(errorMessage, "CorrectQuestions: the amount of correct questions are required")
 					case "number":
 						errorMessage = append(errorMessage, "CorrectQuestions: must be a number")
 					}

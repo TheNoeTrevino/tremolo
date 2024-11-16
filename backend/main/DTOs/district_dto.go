@@ -2,6 +2,7 @@ package dtos
 
 import (
 	"errors"
+	"sight-reading/validations"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -9,16 +10,16 @@ import (
 
 type District struct {
 	ID      *int16 `db:"id"      json:"id"`
-	Title   string `db:"title"   json:"title"    validate:"required,alphanum"`
-	County  string `db:"county"  json:"county"   validate:"required,alpha"`
-	State   string `db:"state"   json:"state"    validate:"required,alpha"`
-	Country string `db:"country" json:"country"  validate:"required,alpha"`
+	Title   string `db:"title"   json:"title"    validate:"required,alphanumunicode,len255"`
+	County  string `db:"county"  json:"county"   validate:"required,alpha,len255"`
+	State   string `db:"state"   json:"state"    validate:"required,alpha,len255"`
+	Country string `db:"country" json:"country"  validate:"required,alpha,len255"`
 }
 
 // TODO: add varchar constraints
 func (district *District) ValidateDistrict() error {
 	validate := validator.New()
-	validate.RegisterValidation("time", validateEntryTimeLength)
+	validate.RegisterValidation("len255", validations.VarChar255Length)
 
 	err := validate.Struct(district)
 	if err != nil {
@@ -33,6 +34,8 @@ func (district *District) ValidateDistrict() error {
 						errorMessage = append(errorMessage, "Title: title is required")
 					case "alphanum":
 						errorMessage = append(errorMessage, "Title: title must be alphanumeric")
+					case "len255":
+						errorMessage = append(errorMessage, "Title: must be shorter than 255 characters")
 					}
 
 				case "County":
@@ -41,6 +44,8 @@ func (district *District) ValidateDistrict() error {
 						errorMessage = append(errorMessage, "County amount is required")
 					case "alpha":
 						errorMessage = append(errorMessage, "County: title must be alpha")
+					case "len255":
+						errorMessage = append(errorMessage, "County: must be shorter than 255 characters")
 					}
 
 				case "State":
@@ -49,6 +54,8 @@ func (district *District) ValidateDistrict() error {
 						errorMessage = append(errorMessage, "State questions are required")
 					case "alpha":
 						errorMessage = append(errorMessage, "State: title must be alpha")
+					case "len255":
+						errorMessage = append(errorMessage, "State: must be shorter than 255 characters")
 					}
 
 				case "Country":
@@ -57,6 +64,8 @@ func (district *District) ValidateDistrict() error {
 						errorMessage = append(errorMessage, "Country is required")
 					case "alpha":
 						errorMessage = append(errorMessage, "Country: title must be alpha")
+					case "len255":
+						errorMessage = append(errorMessage, "Country: must be shorter than 255 characters")
 					}
 				}
 			}
