@@ -59,7 +59,8 @@ func CreateUser(c *gin.Context) {
 	rows, err := database.DBClient.NamedQuery(query, reqBody)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
+			"error":   err.Error(),
+			"message": "The district is most likely not found",
 		})
 		return
 	}
