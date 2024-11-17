@@ -13,6 +13,14 @@ import (
 func main() {
 	database.InitializeDBConnection()
 
+	runPackage := flag.Bool("fake-it", false, "use this flag to generate data")
+
+	flag.Parse()
+
+	if *runPackage {
+		generation.GenerateData()
+	}
+
 	router := gin.Default()
 
 	controllers.SetupTeacherRoutes(router)
@@ -23,11 +31,4 @@ func main() {
 	}
 
 	// faker flag
-	runPackage := flag.Bool("fake-it", false, "use this flag to generate data")
-
-	flag.Parse()
-
-	if *runPackage {
-		generation.GenerateData()
-	}
 }
