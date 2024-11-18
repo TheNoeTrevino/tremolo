@@ -13,10 +13,9 @@ import (
 func main() {
 	database.InitializeDBConnection()
 
+	// faker flag
 	runPackage := flag.Bool("fake-it", false, "use this flag to generate data")
-
 	flag.Parse()
-
 	if *runPackage {
 		generation.GenerateData()
 	}
@@ -29,6 +28,4 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-
-	// faker flag
 }

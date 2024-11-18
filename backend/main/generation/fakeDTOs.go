@@ -7,7 +7,7 @@ import (
 	"github.com/manveru/faker"
 )
 
-type District struct {
+type FakeDistrict struct {
 	// ID      *int16 `db:"id"      json:"id"`
 	Title   string
 	County  string
@@ -15,7 +15,7 @@ type District struct {
 	Country string
 }
 
-type User struct {
+type FakeUser struct {
 	// ID          *int16
 	FirstName   string
 	LastName    string
@@ -24,7 +24,7 @@ type User struct {
 	DistrictID  int16
 }
 
-type Entry struct {
+type FakeEntry struct {
 	// ID               *int16
 	TimeLength       string
 	Questions        int16
@@ -43,8 +43,8 @@ func initFaker() {
 	}
 }
 
-func GenerateFakeDistrict() District {
-	return District{
+func GenerateFakeDistrict() FakeDistrict {
+	return FakeDistrict{
 		Title:   fake.FirstName() + " ISD",
 		County:  fake.City(),
 		State:   fake.State(),
@@ -52,8 +52,8 @@ func GenerateFakeDistrict() District {
 	}
 }
 
-func GenerateFakeTeacher() User {
-	return User{
+func generateFakeTeacher() FakeUser {
+	return FakeUser{
 		FirstName:  fake.FirstName(),
 		LastName:   fake.LastName(),
 		Role:       "TEACHER",
@@ -61,8 +61,8 @@ func GenerateFakeTeacher() User {
 	}
 }
 
-func GenerateFakeStudent() User {
-	return User{
+func generateFakeStudent() FakeUser {
+	return FakeUser{
 		FirstName:  fake.FirstName(),
 		LastName:   fake.LastName(),
 		Role:       "STUDENT",
@@ -70,10 +70,12 @@ func GenerateFakeStudent() User {
 	}
 }
 
-func GenerateFakeEntry() Entry {
-	return Entry{
+func generateFakeEntry() FakeEntry {
+	return FakeEntry{
 		TimeLength:       "",
 		Questions:        int16(rand.IntN(100)),
 		CorrectQuestions: int16(rand.IntN(100)),
+		// UserID: int16, randomize according to a database call? we just need to
+		// make sure it is right
 	}
 }
