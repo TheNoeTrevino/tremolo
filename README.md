@@ -2,7 +2,7 @@
 
 ## Goal
 
-I want a one stop shop where educators can send students to practice their specific music, sight reading, and much more.
+I want to make a one stop shop where educators can send students to practice their specific music, sight reading, and much more.
 
 This project is deigned for music students 6th through 12th in public school.
 
