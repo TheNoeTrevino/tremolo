@@ -47,13 +47,17 @@ func generateFakeSchool() dtos.School {
 }
 
 func generateFakeUser(role dtos.Role, schoolId int16) dtos.User {
-	return dtos.User{
+	user := dtos.User{
 		FirstName: fake.FirstName(),
 		LastName:  fake.LastName(),
 		Role:      role,
 		SchoolID:  schoolId,
 		// SchoolID:  int16(rand.IntN(100)),
 	}
+
+	user.ValidateUser()
+
+	return user
 }
 
 func generateFakeEntry() dtos.Entry {
