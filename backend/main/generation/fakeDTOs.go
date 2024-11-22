@@ -46,7 +46,27 @@ func generateFakeSchool() dtos.School {
 	}
 }
 
-func insertFakeSchool() string {
+func generateFakeUser(role dtos.Role, schoolId int16) dtos.User {
+	return dtos.User{
+		FirstName: fake.FirstName(),
+		LastName:  fake.LastName(),
+		Role:      role,
+		SchoolID:  schoolId,
+		// SchoolID:  int16(rand.IntN(100)),
+	}
+}
+
+func generateFakeEntry() dtos.Entry {
+	return dtos.Entry{
+		TimeLength:       "",
+		Questions:        int16(rand.IntN(100)),
+		CorrectQuestions: int16(rand.IntN(100)),
+		// UserID: int16, randomize according to a database call? we just need to
+		// make sure it is right
+	}
+}
+
+func insertFakeSchools() string {
 	query := `
   INSERT INTO schools (
     title,
@@ -78,7 +98,7 @@ func insertFakeSchool() string {
 	return "school inserted successfully"
 }
 
-func generateFakeTeacherWithStudents() dtos.User {
+func insertFakeTeacherWithStudents() dtos.User {
 	// NOTE: teacher generation
 	query := `
   INSERT INTO users (
@@ -97,12 +117,8 @@ func generateFakeTeacherWithStudents() dtos.User {
     id
   `
 
-	teacher := dtos.User{
-		FirstName: fake.FirstName(),
-		LastName:  fake.LastName(),
-		Role:      "TEACHER",
-		SchoolID:  int16(rand.IntN(100)),
-	}
+	schoolId := int16(rand.IntN(100))
+	teacher := generateFakeUser("TEACHER", schoolId)
 
 	rows, err := database.DBClient.NamedQuery(query, teacher)
 	if err != nil {
@@ -118,7 +134,7 @@ func generateFakeTeacherWithStudents() dtos.User {
 	}
 
 	for i := 0; i < 5; i++ {
-		student := generateFakeUser("STUDENT")
+		student := generateFakeUser("STUDENT", schoolId)
 		rows, err := database.DBClient.NamedQuery(query, student)
 		if err != nil {
 			log.Panic("student was not added to the db", err.Error())
@@ -155,23 +171,4 @@ func generateFakeTeacherWithStudents() dtos.User {
 	}
 
 	return teacher
-}
-
-func generateFakeUser(role dtos.Role) dtos.User {
-	return dtos.User{
-		FirstName: fake.FirstName(),
-		LastName:  fake.LastName(),
-		Role:      role,
-		SchoolID:  int16(rand.IntN(100)),
-	}
-}
-
-func generateFakeEntry() dtos.Entry {
-	return dtos.Entry{
-		TimeLength:       "",
-		Questions:        int16(rand.IntN(100)),
-		CorrectQuestions: int16(rand.IntN(100)),
-		// UserID: int16, randomize according to a database call? we just need to
-		// make sure it is right
-	}
 }

@@ -13,6 +13,6 @@ func GenerateData() {
 	println(strings.Repeat("------------------------------", 2))
 
 	// testing
-	fmt.Println(insertFakeSchool())
-	fmt.Println(generateFakeTeacherWithStudents())
+	fmt.Println(insertFakeSchools())
+	fmt.Println(insertFakeTeacherWithStudents())
 }
