@@ -9,7 +9,7 @@ import (
 func TestHappyEntryCheckValidation(t *testing.T) {
 	entry := &dtos.Entry{
 		TimeLength:       "01:30:30",
-		Questions:        12,
+		TotalQuestions:   12,
 		CorrectQuestions: 11,
 		UserID:           4,
 	}

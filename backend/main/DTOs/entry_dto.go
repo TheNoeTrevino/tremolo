@@ -9,11 +9,12 @@ import (
 )
 
 type Entry struct {
-	ID               *int16 `db:"id"        json:"id"                validate:"id"`
-	TimeLength       string `db:"length"    json:"length"            validate:"required,time"`
-	Questions        int16  `db:"questions" json:"total_questions"   validate:"required,number"`
-	CorrectQuestions int16  `db:"correct"   json:"correct_questions" validate:"required,number"`
-	UserID           int16  `db:"user_id"   json:"user_id"           validate:"required,number"`
+	ID               *int16 `db:"id"                json:"id"`
+	TimeLength       string `db:"time_length"       json:"time_length"       validate:"required,time"`
+	TotalQuestions   int16  `db:"total_questions"   json:"total_questions"   validate:"required,number"`
+	CorrectQuestions int16  `db:"correct_questions" json:"correct_questions" validate:"required,number"`
+	UserID           int16  `db:"user_id"           json:"user_id"           validate:"required,number"`
+	NPM              int8   `db:"notes_per_minute"  json:"notes_per_minute"  validate:"required,number"`
 }
 
 // add an or to the hours to ensure the miliary time and nothing else
@@ -26,7 +27,7 @@ func (entry *Entry) ValidateEntry() error {
 	if err != nil {
 		var errorMessage []string
 
-		if entry.CorrectQuestions > entry.Questions {
+		if entry.CorrectQuestions > entry.TotalQuestions {
 			errorMessage = append(errorMessage, "CorrectQuestions: Correct questions cannot be more than total questions")
 		}
 
