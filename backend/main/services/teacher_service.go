@@ -36,20 +36,20 @@ func CreateUser(c *gin.Context) {
   INSERT INTO users (
     first_name,
     last_name,
-    district_id,
+    school_id,
     role
   )
   VALUES (
     :first_name,
     :last_name,
-    :district_id,
+    :school_id,
     :role
   )
   RETURNING
     first_name,
     last_name,
     role,
-    district_id
+    school_id
   `
 
 	// TODO: dont get confused here, just add the role to the request body in the
@@ -60,7 +60,7 @@ func CreateUser(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":   err.Error(),
-			"message": "The district is most likely not found",
+			"message": "The school is most likely not found",
 		})
 		return
 	}
@@ -96,7 +96,7 @@ func UpdateTeacher(c *gin.Context) {
 // postman passed
 func GetStudents(c *gin.Context) {
 	query := `
-  SELECT first_name, last_name, role, district_id
+  SELECT first_name, last_name, role, school_id
   FROM users
   WHERE role = 'STUDENT'  
   `
@@ -129,7 +129,7 @@ func GetStudent(c *gin.Context) {
 
 	// the and of this is not right
 	query := `
-  SELECT first_name, last_name, role, district_id
+  SELECT first_name, last_name, role, school_id
   FROM users
   WHERE users.role = 'STUDENT'
   AND users.id = $1

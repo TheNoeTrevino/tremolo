@@ -13,7 +13,7 @@ import (
 // postgres passed
 func GetTeachers(c *gin.Context) {
 	query := `
-  SELECT first_name, last_name, role, district_id
+  SELECT first_name, last_name, role, school_id
   FROM users
   WHERE role = 'TEACHER'  
   `
@@ -62,12 +62,12 @@ func GetTeacher(c *gin.Context) {
 	c.JSON(http.StatusOK, post)
 }
 
-func GetDistrictTeachers(c *gin.Context) {
+func GetSchoolTeachers(c *gin.Context) {
 	// i think this is going to be some sort of left join
 	query := `
   SELECT id, firsname, lastname
   FROM users
-  WHERE users.districtID = $1
+  WHERE users.schoolID = $1
   AND user.role = 'TEACHER'
   `
 
@@ -85,11 +85,11 @@ func GetDistrictTeachers(c *gin.Context) {
 	c.JSON(http.StatusOK, teachers)
 }
 
-func GetDistrictStudents(c *gin.Context) {
+func GetSchoolStudents(c *gin.Context) {
 	query := `
   SELECT id, firsname, lastname
   FROM users
-  WHERE users.districtID = $1
+  WHERE users.schoolID = $1
   AND user.role = 'STUDENT'
   `
 
