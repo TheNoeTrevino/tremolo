@@ -8,20 +8,21 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-type District struct {
+type School struct {
 	ID      *int16 `db:"id"      json:"id"`
 	Title   string `db:"title"   json:"title"    validate:"required,alphanumunicode,len255"`
+	City    string `db:"city"  json:"city"   validate:"required,alpha,len255"`
 	County  string `db:"county"  json:"county"   validate:"required,alpha,len255"`
 	State   string `db:"state"   json:"state"    validate:"required,alpha,len255"`
 	Country string `db:"country" json:"country"  validate:"required,alpha,len255"`
 }
 
 // TODO: add varchar constraints
-func (district *District) ValidateDistrict() error {
+func (school *School) ValidateSchool() error {
 	validate := validator.New()
 	validate.RegisterValidation("len255", validations.VarChar255Length)
 
-	err := validate.Struct(district)
+	err := validate.Struct(school)
 	if err != nil {
 		var errorMessage []string
 		if errs, ok := err.(validator.ValidationErrors); ok {

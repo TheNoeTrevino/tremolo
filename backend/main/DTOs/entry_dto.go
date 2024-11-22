@@ -9,11 +9,11 @@ import (
 )
 
 type Entry struct {
-	ID               *int16 `db:"id"         json:"id"`
-	TimeLength       string `db:"length"     json:"length"            validate:"required,time"`
-	Questions        int16  `db:"questions"  json:"total_questions"   validate:"required,number"`
-	CorrectQuestions int16  `db:"correct"    json:"correct_questions" validate:"required,number"`
-	UserID           int16  `db:"user_id"    json:"user_id"           validate:"required,number"`
+	ID               *int16 `db:"id"        json:"id"                validate:"id"`
+	TimeLength       string `db:"length"    json:"length"            validate:"required,time"`
+	Questions        int16  `db:"questions" json:"total_questions"   validate:"required,number"`
+	CorrectQuestions int16  `db:"correct"   json:"correct_questions" validate:"required,number"`
+	UserID           int16  `db:"user_id"   json:"user_id"           validate:"required,number"`
 }
 
 // add an or to the hours to ensure the miliary time and nothing else

@@ -14,7 +14,7 @@ type User struct {
 	LastName    string `db:"last_name"    json:"last_name"    validate:"required,alpha,len255"`
 	Role        Role   `db:"role"         json:"role"         validate:"required,role"`
 	CreatedDate string `db:"created_date" json:"created_date"`
-	DistrictID  int16  `db:"district_id"  json:"district_id"`
+	SchoolID    int16  `db:"school_id" json:"school_id"         validate:"required,number"`
 }
 
 type Role string
