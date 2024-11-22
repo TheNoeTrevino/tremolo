@@ -1,8 +1,10 @@
 package generation
 
 import (
+	"fmt"
 	"log"
 	"math/rand/v2"
+	dtos "sight-reading/DTOs"
 	"sight-reading/database"
 
 	"github.com/manveru/faker"
@@ -34,18 +36,50 @@ func initFaker() {
 	}
 }
 
-func GenerateFakeDistrict() FakeDistrict {
-	return FakeDistrict{
+func generateFakeSchool() dtos.School {
+	return dtos.School{
 		Title:   fake.FirstName() + " ISD",
+		City:    fake.City(),
 		County:  fake.City(),
 		State:   fake.State(),
 		Country: fake.Country(),
 	}
 }
 
-// FIX: take the teacher generation out, so we can have multiple student to
-// multiple teachers
-func generateFakeTeacherWithStudents() FakeUser {
+func insertFakeSchool() string {
+	query := `
+  INSERT INTO schools (
+    title,
+    city,
+    county,
+    state,
+    country
+  )
+  VALUES (
+    :title,
+    :city,
+    :county,
+    :state,
+    :country
+  )
+  RETURNING
+    id
+  `
+	for i := 0; i < 100; i++ {
+		fakeSchool := generateFakeSchool()
+		result, err := database.DBClient.NamedExec(query, fakeSchool)
+		if err != nil {
+			log.Panicf(
+				"an error ocurred inserting the school to the database error: %v,  sql result %v",
+				err.Error(), result,
+			)
+		}
+	}
+	return "school inserted successfully"
+}
+
+func generateFakeTeacherWithStudents() dtos.User {
+	// NOTE: teacher generation
 	query := `
   INSERT INTO users (
     first_name,
@@ -77,7 +111,7 @@ func generateFakeTeacherWithStudents() FakeUser {
 
 	var teacherId int
 	if rows.Next() {
-		err := rows.Scan(teacherId)
+		err := rows.Scan(&teacherId)
 		if err != nil {
 			log.Panic("teacher id was not extracted properly", err.Error())
 		}
@@ -92,7 +126,7 @@ func generateFakeTeacherWithStudents() FakeUser {
 
 		var studentId int
 		if rows.Next() {
-			err := rows.Scan(studentId)
+			err := rows.Scan(&studentId)
 			if err != nil {
 				log.Panic("student id was not extracted properly", err.Error())
 			}
@@ -113,10 +147,11 @@ func generateFakeTeacherWithStudents() FakeUser {
 			StudentID: studentId,
 		}
 
-		rows, err = database.DBClient.NamedQuery(associationQuery, associationIds)
+		result, err := database.DBClient.NamedExec(associationQuery, associationIds)
 		if err != nil {
 			log.Panic("association from teacher to student was not added to db", err.Error())
 		}
+		fmt.Println(result.RowsAffected())
 	}
 
 	return teacher
