@@ -8,34 +8,19 @@ import (
 	"github.com/manveru/faker"
 )
 
-type FakeDistrict struct {
-	// ID      *int16 `db:"id"      json:"id"`
-	Title   string
-	County  string
-	State   string
-	Country string
+type FakeParentToChildAssociation struct {
+	ParentID int `db:"parent_id"`
+	ChildID  int `db:"child_id"`
 }
 
-type FakeUser struct {
-	// ID          *int16
-	FirstName   string
-	LastName    string
-	Role        string
-	CreatedDate string
-	DistrictID  int16
+type FakeTeacherToParent struct {
+	TeacherID int `db:"teacher_id"`
+	ParentID  int `db:"parent_id"`
 }
 
-type FakeEntry struct {
-	// ID               *int16
-	TimeLength       string
-	Questions        int16
-	CorrectQuestions int16
-	UserID           int16
-}
-
-type FakeAssociation struct {
-	ParentID int
-	ChildID  int
+type FakeTeacherToStudent struct {
+	TeacherID int `db:"teacher_id"`
+	StudentID int `db:"student_id"`
 }
 
 var fake *faker.Faker
@@ -65,25 +50,26 @@ func generateFakeTeacherWithStudents() FakeUser {
   INSERT INTO users (
     first_name,
     last_name,
-    district_id,
+    school_id,
     role
   )
   VALUES (
     :first_name,
     :last_name,
-    :district_id,
+    :school_id,
     :role
   )
   RETURNING
     id
   `
 
-	teacher := FakeUser{
-		FirstName:  fake.FirstName(),
-		LastName:   fake.LastName(),
-		Role:       "TEACHER",
-		DistrictID: int16(rand.IntN(100)),
+	teacher := dtos.User{
+		FirstName: fake.FirstName(),
+		LastName:  fake.LastName(),
+		Role:      "TEACHER",
+		SchoolID:  int16(rand.IntN(100)),
 	}
+
 	rows, err := database.DBClient.NamedQuery(query, teacher)
 	if err != nil {
 		log.Panic("teacher was not added to the db", err.Error())
@@ -113,18 +99,18 @@ func generateFakeTeacherWithStudents() FakeUser {
 		}
 
 		associationQuery := `
-      INSERT INTO teacherToStudent (
+      INSERT INTO teacher_to_student (
         teacher_id,
-        user_id,
+        student_id
       )
       VALUES (
         :teacher_id,
-        :user_id,
+        :student_id
       )
     `
-		associationIds := FakeAssociation{
-			ParentID: teacherId,
-			ChildID:  studentId,
+		associationIds := FakeTeacherToStudent{
+			TeacherID: teacherId,
+			StudentID: studentId,
 		}
 
 		rows, err = database.DBClient.NamedQuery(associationQuery, associationIds)
@@ -136,17 +122,17 @@ func generateFakeTeacherWithStudents() FakeUser {
 	return teacher
 }
 
-func generateFakeUser(role string) FakeUser {
-	return FakeUser{
-		FirstName:  fake.FirstName(),
-		LastName:   fake.LastName(),
-		Role:       role,
-		DistrictID: int16(rand.IntN(100)),
+func generateFakeUser(role dtos.Role) dtos.User {
+	return dtos.User{
+		FirstName: fake.FirstName(),
+		LastName:  fake.LastName(),
+		Role:      role,
+		SchoolID:  int16(rand.IntN(100)),
 	}
 }
 
-func generateFakeEntry() FakeEntry {
-	return FakeEntry{
+func generateFakeEntry() dtos.Entry {
+	return dtos.Entry{
 		TimeLength:       "",
 		Questions:        int16(rand.IntN(100)),
 		CorrectQuestions: int16(rand.IntN(100)),
