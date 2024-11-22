@@ -60,16 +60,46 @@ func generateFakeUser(role dtos.Role, schoolId int16) dtos.User {
 	return user
 }
 
-func generateFakeEntry() dtos.Entry {
-	return dtos.Entry{
-		TimeLength:       "",
-		Questions:        int16(rand.IntN(100)),
-		CorrectQuestions: int16(rand.IntN(100)),
-		// UserID: int16, randomize according to a database call? we just need to
-		// make sure it is right
+func generateFakeEntry(userId int16) {
+	// TODO: randomize the time length, created date, created time
+	query := `
+  INSERT INTO note_game_entries (
+    user_id,
+    time_length,
+    total_questions,
+    correct_questions,
+    notes_per_minute
+  )
+  VALUES (
+    :user_id,
+    :time_length,
+    :total_questions,
+    :correct_questions,
+    :notes_per_minute
+  )
+  RETURNING
+    id
+  `
+	correctQuestions := int16(rand.IntN(100))
+	totalQuestions := correctQuestions + int16(rand.IntN(100))
+	entry := dtos.Entry{
+		TimeLength:       "00:20:00",
+		TotalQuestions:   totalQuestions,
+		CorrectQuestions: correctQuestions,
+		NPM:              int8(rand.IntN(100)),
+		UserID:           userId, // randomize according to a database call? we just need to
+	}
+	entry.ValidateEntry() // this is currently causing problems, make sure the random data is valid
+	result, err := database.DBClient.NamedExec(query, entry)
+	if err != nil {
+		log.Panicf(
+			"an error ocurred inserting the entry to the database. Error: %v, \n Sql result: %v",
+			err.Error(), result,
+		)
 	}
 }
 
+// Adds fake schools to the data base
 func insertFakeSchools() string {
 	query := `
   INSERT INTO schools (
@@ -94,7 +124,7 @@ func insertFakeSchools() string {
 		result, err := database.DBClient.NamedExec(query, fakeSchool)
 		if err != nil {
 			log.Panicf(
-				"an error ocurred inserting the school to the database error: %v,  sql result %v",
+				"an error ocurred inserting the school to the database. Error: %v, \n Sql result: %v",
 				err.Error(), result,
 			)
 		}
@@ -150,6 +180,10 @@ func insertFakeTeacherWithStudents() dtos.User {
 			if err != nil {
 				log.Panic("student id was not extracted properly", err.Error())
 			}
+		}
+
+		for i := 0; i < 10+rand.IntN(20); i++ {
+			generateFakeEntry(int16(studentId))
 		}
 
 		associationQuery := `
