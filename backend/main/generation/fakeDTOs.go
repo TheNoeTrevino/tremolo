@@ -62,7 +62,7 @@ func generateFakeUser(role dtos.Role, schoolId int16) dtos.User {
 
 func generateFakeEntry(userId int16) {
 	// TODO: randomize the time length, created date, created time
-	query := `
+	insertEntryQuery := `
   INSERT INTO note_game_entries (
     user_id,
     time_length,
@@ -90,7 +90,7 @@ func generateFakeEntry(userId int16) {
 		UserID:           userId, // randomize according to a database call? we just need to
 	}
 	entry.ValidateEntry() // this is currently causing problems, make sure the random data is valid
-	result, err := database.DBClient.NamedExec(query, entry)
+	result, err := database.DBClient.NamedExec(insertEntryQuery, entry)
 	if err != nil {
 		log.Panicf(
 			"an error ocurred inserting the entry to the database. Error: %v, \n Sql result: %v",
@@ -101,7 +101,7 @@ func generateFakeEntry(userId int16) {
 
 // Adds fake schools to the data base
 func insertFakeSchools() string {
-	query := `
+	insertSchoolQuery := `
   INSERT INTO schools (
     title,
     city,
@@ -121,7 +121,7 @@ func insertFakeSchools() string {
   `
 	for i := 0; i < 100; i++ {
 		fakeSchool := generateFakeSchool()
-		result, err := database.DBClient.NamedExec(query, fakeSchool)
+		result, err := database.DBClient.NamedExec(insertSchoolQuery, fakeSchool)
 		if err != nil {
 			log.Panicf(
 				"an error ocurred inserting the school to the database. Error: %v, \n Sql result: %v",
@@ -133,8 +133,7 @@ func insertFakeSchools() string {
 }
 
 func insertFakeTeacherWithStudents() dtos.User {
-	// NOTE: teacher generation
-	query := `
+	insertUserQuery := `
   INSERT INTO users (
     first_name,
     last_name,
@@ -154,7 +153,7 @@ func insertFakeTeacherWithStudents() dtos.User {
 	schoolId := int16(rand.IntN(100))
 	teacher := generateFakeUser("TEACHER", schoolId)
 
-	rows, err := database.DBClient.NamedQuery(query, teacher)
+	rows, err := database.DBClient.NamedQuery(insertUserQuery, teacher)
 	if err != nil {
 		log.Panic("teacher was not added to the db", err.Error())
 	}
@@ -169,7 +168,7 @@ func insertFakeTeacherWithStudents() dtos.User {
 
 	for i := 0; i < 5; i++ {
 		student := generateFakeUser("STUDENT", schoolId)
-		rows, err := database.DBClient.NamedQuery(query, student)
+		rows, err := database.DBClient.NamedQuery(insertUserQuery, student)
 		if err != nil {
 			log.Panic("student was not added to the db", err.Error())
 		}
