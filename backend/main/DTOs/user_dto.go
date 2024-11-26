@@ -14,7 +14,7 @@ type User struct {
 	LastName    string `db:"last_name"    json:"last_name"    validate:"required,alpha,len255"`
 	Role        Role   `db:"role"         json:"role"         validate:"required,role"`
 	CreatedDate string `db:"created_date" json:"created_date"`
-	SchoolID    int16  `db:"school_id" json:"school_id"         validate:"required,number"`
+	SchoolID    int16  `db:"school_id"    json:"school_id"         validate:"required,number"`
 }
 
 type Role string
@@ -64,6 +64,14 @@ func (user *User) ValidateUser() error {
 						errorMessage = append(errorMessage, "Role: required when making a user")
 					case "role":
 						errorMessage = append(errorMessage, "Role: must be either STUDENT, TEACHER, or ADMIN")
+					}
+
+				case "SchoolID":
+					switch fieldErr.Tag() {
+					case "required":
+						errorMessage = append(errorMessage, "SchoolID: required when making a user")
+					case "number":
+						errorMessage = append(errorMessage, "SchooolID: must be a number")
 					}
 				}
 			}
