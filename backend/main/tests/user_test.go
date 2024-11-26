@@ -12,6 +12,7 @@ func TestHappyUserCheckValidation(t *testing.T) {
 		FirstName: "Noe",
 		LastName:  "Trevino",
 		Role:      "TEACHER",
+		SchoolID:  19,
 	}
 
 	err := user.ValidateUser()
