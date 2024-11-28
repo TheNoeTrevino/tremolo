@@ -105,26 +105,34 @@ func generateFakeEntry(userId int16) {
     time_length,
     total_questions,
     correct_questions,
-    notes_per_minute
+    notes_per_minute,
+    created_date,
+    created_time
   )
   VALUES (
     :user_id,
     :time_length,
     :total_questions,
     :correct_questions,
-    :notes_per_minute
+    :notes_per_minute,
+    :created_date,
+    :created_time
   )
   RETURNING
     id
   `
 	correctQuestions := int16(rand.IntN(100))
 	totalQuestions := correctQuestions + int16(rand.IntN(100))
+	timeLength := generateFakeEntryTimeLength()
+
 	entry := dtos.Entry{
-		TimeLength:       generateFakeEntryTimeLength(),
+		TimeLength:       timeLength,
 		TotalQuestions:   totalQuestions,
 		CorrectQuestions: correctQuestions,
 		NPM:              int8(rand.IntN(100)),
 		UserID:           userId, // randomize according to a database call? we just need to
+		CreatedDate:      generateFakeDateCreated(),
+		CreatedTime:      generateFakeTimeCreated(),
 	}
 	entry.ValidateEntry() // this is currently causing problems, make sure the random data is valid
 	result, err := database.DBClient.NamedExec(insertEntryQuery, entry)
