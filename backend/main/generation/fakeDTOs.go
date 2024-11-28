@@ -120,7 +120,7 @@ func generateFakeEntry(userId int16) {
 	correctQuestions := int16(rand.IntN(100))
 	totalQuestions := correctQuestions + int16(rand.IntN(100))
 	entry := dtos.Entry{
-		TimeLength:       "00:20:00",
+		TimeLength:       generateFakeEntryTimeLength(),
 		TotalQuestions:   totalQuestions,
 		CorrectQuestions: correctQuestions,
 		NPM:              int8(rand.IntN(100)),
