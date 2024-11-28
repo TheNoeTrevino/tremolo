@@ -49,13 +49,16 @@ func generateFakeSchool() dtos.School {
 	}
 }
 
+// TODO: the time and date generation is messing up the database
+// possible date constraint we are not aware of?
 func generateFakeUser(role dtos.Role, schoolId int16) dtos.User {
 	user := dtos.User{
-		FirstName: fake.FirstName(),
-		LastName:  fake.LastName(),
-		Role:      role,
-		SchoolID:  schoolId,
-		// SchoolID:  int16(rand.IntN(100)),
+		FirstName:   fake.FirstName(),
+		LastName:    fake.LastName(),
+		Role:        role,
+		SchoolID:    schoolId,
+		CreatedDate: generateFakeDateCreated(),
+		CreatedTime: generateFakeTimeCreated(),
 	}
 
 	user.ValidateUser()

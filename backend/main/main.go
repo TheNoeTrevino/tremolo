@@ -24,7 +24,7 @@ func main() {
 
 	controllers.SetupTeacherRoutes(router)
 
-	err := router.Run(":5000")
+	err := router.Run(":5001")
 	if err != nil {
 		panic(err.Error())
 	}
