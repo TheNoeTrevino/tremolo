@@ -66,7 +66,6 @@ func generateFakeUser(role dtos.Role, schoolId int16) dtos.User {
 	return user
 }
 
-// TODO: this is not done yet
 func generateFakeEntryTimeLength() string {
 	hourAmount := rand.IntN(1)
 	minutes := rand.IntN(60)
@@ -104,7 +103,6 @@ func generateFakeTimeCreated() sql.NullString {
 }
 
 func generateFakeEntry(userId int16) {
-	// TODO: randomize the time length, created date, created time
 	insertEntryQuery := `
   INSERT INTO note_game_entries (
     user_id,

@@ -9,11 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// created successful, fix validation
 func CreateUser(c *gin.Context) {
 	var reqBody dtos.User
 
-	// validates that the json is valid
 	err := c.ShouldBindJSON(&reqBody)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -93,14 +91,12 @@ func CreateUser(c *gin.Context) {
 func UpdateTeacher(c *gin.Context) {
 }
 
-// postman passed
 func GetStudents(c *gin.Context) {
 	query := `
   SELECT first_name, last_name, role, school_id
   FROM users
   WHERE role = 'STUDENT'  
   `
-	// WHERE users.role = 'STUDENT'
 
 	var students []dtos.User
 
@@ -115,7 +111,6 @@ func GetStudents(c *gin.Context) {
 	c.JSON(http.StatusOK, students)
 }
 
-// postman passed
 func GetStudent(c *gin.Context) {
 	idSrt := c.Param("id")
 	id, err := strconv.Atoi(idSrt)
@@ -131,8 +126,8 @@ func GetStudent(c *gin.Context) {
 	query := `
   SELECT first_name, last_name, role, school_id
   FROM users
-  WHERE users.role = 'STUDENT'
-  AND users.id = $1
+  WHERE role = 'STUDENT'
+  AND id = $1
   `
 
 	var students dtos.User
