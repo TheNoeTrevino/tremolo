@@ -71,6 +71,32 @@ func generateFakeEntryTimeLength() string {
 	return timeFormat
 }
 
+func generateFakeDateCreated() sql.NullString {
+	year := rand.IntN(24) + 2000
+	month := rand.IntN(11) + 1
+	day := rand.IntN(26) + 1
+
+	timeFormat := fmt.Sprintf("%04d-%02d-%02d", year, month, day)
+
+	return sql.NullString{
+		String: timeFormat,
+		Valid:  true,
+	}
+}
+
+func generateFakeTimeCreated() sql.NullString {
+	hourAmount := rand.IntN(24)
+	minutes := rand.IntN(60)
+	seconds := rand.IntN(60)
+
+	timeFormat := fmt.Sprintf("%02d:%02d:%02d", hourAmount, minutes, seconds)
+
+	return sql.NullString{
+		String: timeFormat,
+		Valid:  true,
+	}
+}
+
 func generateFakeEntry(userId int16) {
 	// TODO: randomize the time length, created date, created time
 	insertEntryQuery := `
