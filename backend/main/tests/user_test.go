@@ -12,6 +12,7 @@ func TestHappyUserCheckValidation(t *testing.T) {
 		FirstName: "Noe",
 		LastName:  "Trevino",
 		Role:      "TEACHER",
+		Email:     "noe.trevino@mail.com",
 		SchoolID:  19,
 	}
 

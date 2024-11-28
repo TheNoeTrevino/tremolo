@@ -10,13 +10,14 @@ import (
 )
 
 type User struct {
-	ID          *int16         `db:"id"           json:"id"`
-	FirstName   string         `db:"first_name"   json:"first_name"   validate:"required,alpha,len255"`
-	LastName    string         `db:"last_name"    json:"last_name"    validate:"required,alpha,len255"`
-	Role        Role           `db:"role"         json:"role"         validate:"required,role"`
-	CreatedDate sql.NullString `db:"created_date"`
-	CreatedTime sql.NullString `db:"created_time"`
-	SchoolID    int16          `db:"school_id"    json:"school_id"         validate:"required,number"`
+	ID          *int16         `db:"id" json:"id"`
+	FirstName   string         `db:"first_name" json:"first_name" validate:"required,alpha,len255"`
+	LastName    string         `db:"last_name" json:"last_name" validate:"required,alpha,len255"`
+	Role        Role           `db:"role" json:"role" validate:"required,role"`
+	CreatedDate sql.NullString `db:"created_date" json:"created_date"`
+	CreatedTime sql.NullString `db:"created_time" json:"created_time"`
+	Email       string         `db:"email" json:"email" validate:"required,email,len255"`
+	SchoolID    int16          `db:"school_id" json:"school_id" validate:"required,number"`
 }
 
 type Role string
@@ -66,6 +67,16 @@ func (user *User) ValidateUser() error {
 						errorMessage = append(errorMessage, "Role: required when making a user")
 					case "role":
 						errorMessage = append(errorMessage, "Role: must be either STUDENT, TEACHER, or ADMIN")
+					}
+
+				case "Email":
+					switch fieldErr.Tag() {
+					case "required":
+						errorMessage = append(errorMessage, "Email: email is required")
+					case "email":
+						errorMessage = append(errorMessage, "Email: must be correctly formatted")
+					case "len255":
+						errorMessage = append(errorMessage, "Email: must be shorter than 255 characters")
 					}
 
 				case "SchoolID":
