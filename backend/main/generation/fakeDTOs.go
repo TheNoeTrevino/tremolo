@@ -1,6 +1,7 @@
 package generation
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"math/rand/v2"
@@ -38,11 +39,13 @@ func initFaker() {
 
 func generateFakeSchool() dtos.School {
 	return dtos.School{
-		Title:   fake.FirstName() + " ISD",
-		City:    fake.City(),
-		County:  fake.City(),
-		State:   fake.State(),
-		Country: fake.Country(),
+		Title:       fake.FirstName() + " ISD",
+		City:        fake.City(),
+		County:      fake.City(),
+		State:       fake.State(),
+		Country:     fake.Country(),
+		CreatedDate: generateFakeDateCreated(),
+		CreatedTime: generateFakeTimeCreated(),
 	}
 }
 
@@ -152,14 +155,18 @@ func insertFakeSchools() string {
     city,
     county,
     state,
-    country
+    country,
+    created_time,
+    created_date
   )
   VALUES (
     :title,
     :city,
     :county,
     :state,
-    :country
+    :country,
+    :created_time,
+    :created_date
   )
   RETURNING
     id
