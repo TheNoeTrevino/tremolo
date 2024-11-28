@@ -1,6 +1,7 @@
 package dtos
 
 import (
+	"database/sql"
 	"errors"
 	"sight-reading/validations"
 	"strings"
@@ -9,12 +10,14 @@ import (
 )
 
 type Entry struct {
-	ID               *int16 `db:"id"                json:"id"`
-	TimeLength       string `db:"time_length"       json:"time_length"       validate:"required,time"`
-	TotalQuestions   int16  `db:"total_questions"   json:"total_questions"   validate:"required,number"`
-	CorrectQuestions int16  `db:"correct_questions" json:"correct_questions" validate:"required,number"`
-	UserID           int16  `db:"user_id"           json:"user_id"           validate:"required,number"`
-	NPM              int8   `db:"notes_per_minute"  json:"notes_per_minute"  validate:"required,number"`
+	ID               *int16         `db:"id"                json:"id"`
+	TimeLength       string         `db:"time_length"       json:"time_length"       validate:"required,time"`
+	CreatedDate      sql.NullString `db:"created_date"`
+	CreatedTime      sql.NullString `db:"created_time"`
+	TotalQuestions   int16          `db:"total_questions"   json:"total_questions"   validate:"required,number"`
+	CorrectQuestions int16          `db:"correct_questions" json:"correct_questions" validate:"required,number"`
+	UserID           int16          `db:"user_id"           json:"user_id"           validate:"required,number"`
+	NPM              int8           `db:"notes_per_minute"  json:"notes_per_minute"  validate:"required,number"`
 }
 
 // add an or to the hours to ensure the miliary time and nothing else
