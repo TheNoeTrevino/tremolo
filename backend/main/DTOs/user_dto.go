@@ -14,9 +14,9 @@ type User struct {
 	FirstName   string         `db:"first_name" json:"first_name" validate:"required,alpha,len255"`
 	LastName    string         `db:"last_name" json:"last_name" validate:"required,alpha,len255"`
 	Role        Role           `db:"role" json:"role" validate:"required,role"`
+	Email       string         `db:"email" json:"email" validate:"required,email,len255"`
 	CreatedDate sql.NullString `db:"created_date" json:"created_date"`
 	CreatedTime sql.NullString `db:"created_time" json:"created_time"`
-	Email       string         `db:"email" json:"email" validate:"required,email,len255"`
 	SchoolID    int16          `db:"school_id" json:"school_id" validate:"required,number"`
 }
 

@@ -38,8 +38,22 @@ func initFaker() {
 }
 
 func generateFakeSchool() dtos.School {
+	num := rand.IntN(3)
+
+	prefix := fake.FirstName()
+
+	suffix := " Middle School"
+
+	if num == 0 {
+		suffix = " High School"
+	}
+
+	if num < 2 {
+		prefix += " " + fake.LastName()
+	}
+
 	return dtos.School{
-		Title:       fake.FirstName() + " ISD",
+		Title:       prefix + suffix,
 		City:        fake.City(),
 		County:      fake.City(),
 		State:       fake.State(),
@@ -81,7 +95,7 @@ func generateFakeEntryTimeLength() string {
 }
 
 func generateFakeDateCreated() sql.NullString {
-	year := rand.IntN(24) + 2000
+	year := rand.IntN(2) + 2022
 	month := rand.IntN(11) + 1
 	day := rand.IntN(26) + 1
 
@@ -138,11 +152,11 @@ func generateFakeEntry(userId int16) {
 		TotalQuestions:   totalQuestions,
 		CorrectQuestions: correctQuestions,
 		NPM:              int8(rand.IntN(100)),
-		UserID:           userId, // randomize according to a database call? we just need to
+		UserID:           userId,
 		CreatedDate:      generateFakeDateCreated(),
 		CreatedTime:      generateFakeTimeCreated(),
 	}
-	entry.ValidateEntry() // this is currently causing problems, make sure the random data is valid
+	entry.ValidateEntry()
 	result, err := database.DBClient.NamedExec(insertEntryQuery, entry)
 	if err != nil {
 		log.Panicf(
