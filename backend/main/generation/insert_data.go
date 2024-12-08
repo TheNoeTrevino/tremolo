@@ -1,126 +1,14 @@
 package generation
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"math/rand/v2"
 	dtos "sight-reading/DTOs"
 	"sight-reading/database"
-
-	"github.com/manveru/faker"
 )
 
-type FakeParentToChildAssociation struct {
-	ParentID int `db:"parent_id"`
-	ChildID  int `db:"child_id"`
-}
-
-type FakeTeacherToParent struct {
-	TeacherID int `db:"teacher_id"`
-	ParentID  int `db:"parent_id"`
-}
-
-type FakeTeacherToStudent struct {
-	TeacherID int `db:"teacher_id"`
-	StudentID int `db:"student_id"`
-}
-
-var fake *faker.Faker
-
-func initFaker() {
-	var err error
-	fake, err = faker.New("en")
-	if err != nil {
-		log.Fatal("Did not instantiate faker")
-		panic(err)
-	}
-}
-
-func generateFakeSchool() dtos.School {
-	num := rand.IntN(3)
-
-	prefix := fake.FirstName()
-
-	suffix := " Middle School"
-
-	if num == 0 {
-		suffix = " High School"
-	}
-
-	if num < 2 {
-		prefix += " " + fake.LastName()
-	}
-
-	return dtos.School{
-		Title:       prefix + suffix,
-		City:        fake.City(),
-		County:      fake.City(),
-		State:       fake.State(),
-		Country:     fake.Country(),
-		CreatedDate: generateFakeDateCreated(),
-		CreatedTime: generateFakeTimeCreated(),
-	}
-}
-
-// TODO: the time and date generation is messing up the database
-// possible date constraint we are not aware of?
-func generateFakeUser(role dtos.Role, schoolId int16) dtos.User {
-	fakeFirstName := fake.FirstName()
-	fakeLastName := fake.LastName()
-	fakeEmail := fakeFirstName + "." + fakeLastName + "@email.com"
-	user := dtos.User{
-		FirstName:   fakeFirstName,
-		LastName:    fakeLastName,
-		Email:       fakeEmail,
-		Role:        role,
-		SchoolID:    schoolId,
-		CreatedDate: generateFakeDateCreated(),
-		CreatedTime: generateFakeTimeCreated(),
-	}
-
-	user.ValidateUser()
-
-	return user
-}
-
-func generateFakeEntryTimeLength() string {
-	hourAmount := rand.IntN(1)
-	minutes := rand.IntN(60)
-	seconds := rand.IntN(60)
-
-	timeFormat := fmt.Sprintf("%02d:%02d:%02d", hourAmount, minutes, seconds)
-
-	return timeFormat
-}
-
-func generateFakeDateCreated() sql.NullString {
-	year := rand.IntN(2) + 2022
-	month := rand.IntN(11) + 1
-	day := rand.IntN(26) + 1
-
-	timeFormat := fmt.Sprintf("%04d-%02d-%02d", year, month, day)
-
-	return sql.NullString{
-		String: timeFormat,
-		Valid:  true,
-	}
-}
-
-func generateFakeTimeCreated() sql.NullString {
-	hourAmount := rand.IntN(24)
-	minutes := rand.IntN(60)
-	seconds := rand.IntN(60)
-
-	timeFormat := fmt.Sprintf("%02d:%02d:%02d", hourAmount, minutes, seconds)
-
-	return sql.NullString{
-		String: timeFormat,
-		Valid:  true,
-	}
-}
-
-func generateFakeEntry(userId int16) {
+func insertFakeEntry(userId int16) {
 	insertEntryQuery := `
   INSERT INTO note_game_entries (
     user_id,
@@ -190,7 +78,7 @@ func insertFakeSchools() string {
   RETURNING
     id
   `
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 1000; i++ {
 		fakeSchool := generateFakeSchool()
 		result, err := database.DBClient.NamedExec(insertSchoolQuery, fakeSchool)
 		if err != nil {
@@ -221,7 +109,7 @@ func insertFakeTeacherWithStudents() dtos.User {
     id
   `
 
-	schoolId := int16(rand.IntN(100))
+	schoolId := int16(rand.IntN(1000))
 	teacher := generateFakeUser("TEACHER", schoolId)
 
 	rows, err := database.DBClient.NamedQuery(insertUserQuery, teacher)
@@ -237,7 +125,7 @@ func insertFakeTeacherWithStudents() dtos.User {
 		}
 	}
 
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 20; i++ {
 		student := generateFakeUser("STUDENT", schoolId)
 		rows, err := database.DBClient.NamedQuery(insertUserQuery, student)
 		if err != nil {
@@ -252,8 +140,8 @@ func insertFakeTeacherWithStudents() dtos.User {
 			}
 		}
 
-		for i := 0; i < 10+rand.IntN(20); i++ {
-			generateFakeEntry(int16(studentId))
+		for i := 0; i < 10+rand.IntN(200); i++ {
+			insertFakeEntry(int16(studentId))
 		}
 
 		associationQuery := `
@@ -266,7 +154,7 @@ func insertFakeTeacherWithStudents() dtos.User {
         :student_id
       )
     `
-		associationIds := FakeTeacherToStudent{
+		associationIds := fakeTeacherToStudent{
 			TeacherID: teacherId,
 			StudentID: studentId,
 		}
