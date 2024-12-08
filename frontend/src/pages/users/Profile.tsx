@@ -1,24 +1,30 @@
 import { Box, Button, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   return (
-    <Box>
-      <Typography variant="h3" textAlign="center" sx={{ mt: 10 }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "5rem",
+        margin: "2rem",
+        alignItems: "center",
+      }}
+    >
+      <Typography variant="h3" textAlign="center">
         You are not currently logged in!
       </Typography>
 
-      <Typography variant="h4" textAlign="center" sx={{ mt: 10 }}>
+      <Typography variant="h4" textAlign="center">
         Please Log In Below
       </Typography>
       <Button
-        id="demo-positioned-button"
+        key="login"
+        component={Link}
+        to={"../login"}
         variant="contained"
-        sx={{
-          mt: 10,
-          position: "relative",
-          left: "50%",
-          transform: "translateX(-50%)",
-        }}
+        sx={{ width: "9rem" }}
       >
         Log In
       </Button>
