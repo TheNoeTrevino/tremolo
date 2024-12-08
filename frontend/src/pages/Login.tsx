@@ -36,6 +36,7 @@ const Login = () => {
             // here we are going to what to pass in the password they have at
             // the moment
             // onClick={UserService.loginUser(username, password)}
+            onClick={() => alert("hello")}
             endIcon=<LoginRounded />
           >
             Log In

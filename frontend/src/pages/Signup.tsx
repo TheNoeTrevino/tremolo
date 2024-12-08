@@ -34,8 +34,20 @@ const Signup = () => {
             </Box>
             <TextField required id="outlined-required" label="Email" />
             <TextField required id="outlined-required" label="Username" />
-            <TextField required id="outlined-required" label="Password" />
-            <Button variant="contained">Sign Up</Button>
+            <TextField
+              required
+              id="outlined-password-input"
+              label="Password"
+              type="password"
+            />
+            <Button
+              variant="contained"
+              onClick={() => {
+                alert("hello");
+              }}
+            >
+              Sign Up
+            </Button>
           </Box>
         </Card>
       </Box>
