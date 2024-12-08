@@ -1,6 +1,6 @@
 import { Box, Button, Fade, Paper, Typography } from "@mui/material";
 import { MusicService } from "../../services/MusicService";
-import { useState, MouseEvent } from "react";
+import { useState, MouseEvent, useEffect } from "react";
 import MusicButton from "../../components/musical/MusicButton";
 import {
   eightOptions,
@@ -8,10 +8,8 @@ import {
   scaleOptions,
   sixteenthOptions,
 } from "../../components/musical/MusicalOptions";
-import { musicButtonStyles, sheetMusicStyles } from "../../styles";
+import { generatedMusicStyles } from "../../styles";
 
-// Todo: make the music get fetched as soon as the user clicks an option for
-// speed
 const SheetMusicDisplay = () => {
   const [scaleChoice, setScale] = useState<string>("C");
   const [octaveChoice, setOctaveChoice] = useState<string>("4");
@@ -36,8 +34,6 @@ const SheetMusicDisplay = () => {
     setOctaveChoice(octaveChoice);
   };
 
-  // TODO: add these rythms choices to a list, and display that list on a page
-  // NOTE: for now, we are just sending back a measure of the same one
   const choose16thRhythm = (rhythmChoice: string) => {
     setRhythmChoice(rhythmChoice);
     setRhythmType(16);
@@ -77,94 +73,83 @@ const SheetMusicDisplay = () => {
   const handle8thRhythmClose = () => {
     set8thRhythmAnchorEl(null);
   };
+
+  useEffect(() => {
+    setVisibility(false);
+    if (rhythmChoice && rhythmType) {
+      MusicService.getRhythmMusic({
+        scale: scaleChoice,
+        octave: octaveChoice,
+        rhythm: rhythmChoice,
+        rhythmType: rhythmType,
+      });
+    } else {
+      MusicService.getMaryMusic({
+        scale: scaleChoice,
+        octave: octaveChoice,
+      });
+    }
+    setVisibility(true);
+  }, [scaleChoice, octaveChoice, rhythmChoice, rhythmType]);
+
   return (
     <>
       <Fade in={true} timeout={500}>
         <Box>
-          <Box sx={{ display: "flex" }}>
-            <Paper
-              id="sheet-music-div"
-              elevation={6}
-              sx={{ ...sheetMusicStyles }}
-            >
-              {!isVisible && (
-                <Typography variant="h6" textAlign="center">
-                  Click the button below to open the sheet music
-                </Typography>
-              )}
-            </Paper>
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+            <Box sx={generatedMusicStyles.sheetMusicContainer}>
+              <Paper
+                id="sheet-music-div"
+                elevation={6}
+                sx={generatedMusicStyles.sheetMusic}
+              >
+                {!isVisible && (
+                  <Typography variant="h6" textAlign="center">
+                    Rendering sheet music, pleasse wait...
+                  </Typography>
+                )}
+              </Paper>
+            </Box>
           </Box>
-          <Button
-            sx={{
-              mt: 2,
-              position: "relative",
-              left: "50%",
-              // NOTE: without this it centers based of the left edge,
-              // this centers it pased off the middle
-              transform: "translateX(-50%)",
-            }}
-            variant="contained"
-            onClick={() => {
-              if (rhythmChoice && rhythmType) {
-                // TODO: if they entered rhythms, then call the rhythm function
-                MusicService.getRhythmMusic({
-                  scale: scaleChoice,
-                  octave: octaveChoice,
-                  rhythm: rhythmChoice,
-                  rhythmType: rhythmType,
-                });
-              } else {
-                MusicService.getMaryMusic({
-                  scale: scaleChoice,
-                  octave: octaveChoice,
-                });
-              }
-              setVisibility(true);
-            }}
-          >
-            Open Sheet Music
-          </Button>
 
-          <MusicButton
-            text="Choose Scale"
-            handleClick={handleScaleClick}
-            options={scaleOptions}
-            anchorEl={scaleAnchorEl}
-            open={openScaleOptions}
-            handleClose={handleScaleClose}
-            handleOptionClick={chooseScale}
-            styles={musicButtonStyles}
-          />
-          <MusicButton
-            text="Choose Octave"
-            handleClick={handleOctaveClick}
-            options={octaveOptions}
-            anchorEl={octaveAnchorEl}
-            open={openOctaveOptions}
-            handleClose={handleOctaveClose}
-            handleOptionClick={chooseOctave}
-            styles={musicButtonStyles}
-          />
-          <MusicButton
-            text="16th Note Rhythms"
-            handleClick={handle16thRhythmClick}
-            options={sixteenthOptions}
-            anchorEl={rhythm16thAnchorEl}
-            open={open16thRhythmOptions}
-            handleClose={handle16thRhythmClose}
-            handleOptionClick={choose16thRhythm}
-            styles={musicButtonStyles}
-          />
-          <MusicButton
-            text="8th Note Rhythms"
-            handleClick={handle8thRhythmClick}
-            options={eightOptions}
-            anchorEl={rhythm8thAnchorEl}
-            open={open8thRhythmOptions}
-            handleClose={handle8thRhythmClose}
-            handleOptionClick={choose8thRhythm}
-            styles={musicButtonStyles}
-          />
+          <Box sx={generatedMusicStyles.musicButtonDiv}>
+            <MusicButton
+              text="Choose Scale"
+              handleClick={handleScaleClick}
+              options={scaleOptions}
+              anchorEl={scaleAnchorEl}
+              open={openScaleOptions}
+              handleClose={handleScaleClose}
+              handleOptionClick={chooseScale}
+            />
+            <MusicButton
+              text="Choose Octave"
+              handleClick={handleOctaveClick}
+              options={octaveOptions}
+              anchorEl={octaveAnchorEl}
+              open={openOctaveOptions}
+              handleClose={handleOctaveClose}
+              handleOptionClick={chooseOctave}
+            />
+            <MusicButton
+              text="16th Note Rhythms"
+              handleClick={handle16thRhythmClick}
+              options={sixteenthOptions}
+              anchorEl={rhythm16thAnchorEl}
+              open={open16thRhythmOptions}
+              handleClose={handle16thRhythmClose}
+              handleOptionClick={choose16thRhythm}
+            />
+            <MusicButton
+              text="8th Note Rhythms"
+              handleClick={handle8thRhythmClick}
+              options={eightOptions}
+              anchorEl={rhythm8thAnchorEl}
+              open={open8thRhythmOptions}
+              handleClose={handle8thRhythmClose}
+              handleOptionClick={choose8thRhythm}
+            />
+          </Box>
         </Box>
       </Fade>
     </>

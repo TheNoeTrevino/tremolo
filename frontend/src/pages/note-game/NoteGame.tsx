@@ -1,12 +1,10 @@
 import { Box, Button, ButtonBase, Card, Fade, Typography } from "@mui/material";
-import useSound from "use-sound";
 import { useState, MouseEvent, useEffect, useRef } from "react";
 import { MusicService } from "../../services/MusicService";
-import { musicButtonStyles } from "../../styles";
 import { noteGameStyles } from "./NoteGameStyles";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { noteGameProps } from "../../models/models";
-import { noteToSound } from "./NoteGameUtilities";
+import { keypressToNote, noteToSound } from "./NoteGameUtilities";
 import {
   sharpOptions,
   naturalOptions,
@@ -17,9 +15,11 @@ import {
 import MusicButton from "../../components/musical/MusicButton";
 
 const NoteGame = () => {
-  // use ref keeps the value for the lifecyle of the component, nice
+  const [sound, setSound] = useState<string | undefined>(undefined);
+
   const startTime = useRef<number>(Math.floor(new Date().getTime() / 1000));
   const currentTime = Math.floor(new Date().getTime() / 1000);
+
   const [totalCounter, setTotalcounter] = useState<number>(0);
   const [correctCounter, setCorrectCounter] = useState<number>(0);
 
@@ -30,13 +30,11 @@ const NoteGame = () => {
     noteGameProps | undefined
   >(undefined);
 
-  const [sound, setSound] = useState<string>("c");
-  const [playSound] = useSound(sound);
-
   const [scaleAnchorEl, setScaleAnchorEl] = useState<null | HTMLElement>(null);
   const [octaveAnchorEl, setOctaveAnchorEl] = useState<null | HTMLElement>(
     null,
   );
+
   const handleScaleClick = (event: MouseEvent<HTMLElement>) => {
     setScaleAnchorEl(event.currentTarget);
   };
@@ -66,11 +64,11 @@ const NoteGame = () => {
     );
   }
 
+  // FIX: this is getting ran twice
   useEffect(() => {
     fetchNote();
   }, [scaleChoice, octaveChoice, totalCounter]);
 
-  // since we wait for the previous one to finsish, this will not be undefined
   useEffect(() => {
     if (!noteInformation) {
       console.log("note information not yet fetch");
@@ -81,18 +79,30 @@ const NoteGame = () => {
     }
   }, [noteInformation]);
 
-  const validateInput = (noteKey: string): void => {
+  const validateButtonClick = (noteKey: string): void => {
     setTotalcounter(totalCounter + 1);
     if (noteKey != noteInformation?.noteName) {
       return;
     }
 
     setCorrectCounter(correctCounter + 1);
-    playSound();
+    const audio = new Audio(sound);
+    audio.play();
+  };
+
+  const validateKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    setTotalcounter(totalCounter + 1);
+    if (keypressToNote[event.key] != noteInformation?.noteName) {
+      return;
+    }
+
+    setCorrectCounter(correctCounter + 1);
+    const audio = new Audio(sound);
+    audio.play();
   };
 
   return (
-    <>
+    <div onKeyDown={validateKeyDown} tabIndex={0}>
       <Fade in={true} timeout={500}>
         <Box
           my={"2rem"}
@@ -154,7 +164,7 @@ const NoteGame = () => {
                   open={openScaleOptions}
                   handleClose={handleScaleClose}
                   handleOptionClick={chooseScale}
-                  styles={musicButtonStyles}
+                  styles={{ mt: 2, width: "100%" }}
                   startIcon={<KeyboardArrowDownIcon />}
                 />
                 <MusicButton
@@ -165,7 +175,7 @@ const NoteGame = () => {
                   open={openOctaveOptions}
                   handleClose={handleOctaveClose}
                   handleOptionClick={chooseOctave}
-                  styles={musicButtonStyles}
+                  styles={{ mt: 2, width: "100%" }}
                   startIcon={<KeyboardArrowDownIcon />}
                 />
               </Box>
@@ -179,7 +189,7 @@ const NoteGame = () => {
                     key={option.value}
                     variant="contained"
                     sx={{ ...noteGameStyles.answerButtons }}
-                    onClick={() => validateInput(option.value)}
+                    onClick={() => validateButtonClick(option.value)}
                   >
                     {option.name}
                   </Button>
@@ -189,7 +199,7 @@ const NoteGame = () => {
           </Box>
         </Box>
       </Fade>
-    </>
+    </div>
   );
 };
 

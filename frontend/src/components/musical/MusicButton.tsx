@@ -11,7 +11,7 @@ interface ButtonProps {
   open: boolean;
   handleClose: () => void;
   handleOptionClick: (option: string) => void;
-  styles: SxProps;
+  styles?: SxProps;
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
 }
