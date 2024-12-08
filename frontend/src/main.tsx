@@ -14,6 +14,7 @@ import Dashboard from "./pages/users/Dashboard";
 import Logout from "./pages/users/Logout";
 import Converter from "./pages/Converter.tsx";
 import Login from "./pages/Login.tsx";
+import Signup from "./pages/Signup.tsx";
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: "/account",
         element: <Account />,
+      },
+      {
+        path: "/signup",
+        element: <Signup />,
       },
       {
         path: "/login",
