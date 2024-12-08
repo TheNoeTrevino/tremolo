@@ -1,5 +1,7 @@
-import { LoginRounded } from "@mui/icons-material";
-import { Box, Button, Card, Fade, TextField } from "@mui/material";
+import { LoginRounded, Person, SignalWifi4BarSharp } from "@mui/icons-material";
+import { Box, Button, Card, Fade, TextField, Typography } from "@mui/material";
+import { UserService } from "../services/UserService";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   return (
@@ -29,8 +31,27 @@ const Login = () => {
             label="Password"
             type="password"
           />
-          <Button variant="contained" endIcon=<LoginRounded />>
+          <Button
+            variant="contained"
+            // here we are going to what to pass in the password they have at
+            // the moment
+            // onClick={UserService.loginUser(username, password)}
+            endIcon=<LoginRounded />
+          >
             Log In
+          </Button>
+          <Typography>If you don't have an account: </Typography>
+          <Button
+            key="signup"
+            component={Link}
+            to={"../signup"}
+            variant="contained"
+            // here we are going to what to pass in the password they have at
+            // the moment
+            // onClick={UserService.loginUser(username, password)}
+            endIcon=<Person />
+          >
+            Sign Up
           </Button>
         </Card>
       </Box>
