@@ -12,7 +12,7 @@ import (
 type School struct {
 	ID          *int16         `db:"id"      json:"id"`
 	Title       string         `db:"title"   json:"title"    validate:"required,alphanumunicode,len255"`
-	City        string         `db:"city"  json:"city"   validate:"required,alpha,len255"`
+	City        string         `db:"city"    json:"city"   validate:"required,alpha,len255"`
 	County      string         `db:"county"  json:"county"   validate:"required,alpha,len255"`
 	State       string         `db:"state"   json:"state"    validate:"required,alpha,len255"`
 	Country     string         `db:"country" json:"country"  validate:"required,alpha,len255"`

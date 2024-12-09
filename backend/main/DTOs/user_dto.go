@@ -9,15 +9,16 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// FIX: we need to add username and password here
 type User struct {
 	ID          *int16         `db:"id" json:"id"`
-	FirstName   string         `db:"first_name" json:"first_name" validate:"required,alpha,len255"`
-	LastName    string         `db:"last_name" json:"last_name" validate:"required,alpha,len255"`
+	FirstName   string         `db:"first_name" json:"firstName" validate:"required,alpha,len255"`
+	LastName    string         `db:"last_name" json:"lastName" validate:"required,alpha,len255"`
 	Role        Role           `db:"role" json:"role" validate:"required,role"`
 	Email       string         `db:"email" json:"email" validate:"required,email,len255"`
-	CreatedDate sql.NullString `db:"created_date" json:"created_date"`
-	CreatedTime sql.NullString `db:"created_time" json:"created_time"`
-	SchoolID    int16          `db:"school_id" json:"school_id" validate:"required,number"`
+	CreatedDate sql.NullString `db:"created_date" json:"createdDate"`
+	CreatedTime sql.NullString `db:"created_time" json:"createdTime"`
+	SchoolID    int16          `db:"school_id" json:"schoolId" validate:"required,number"`
 }
 
 type Role string
