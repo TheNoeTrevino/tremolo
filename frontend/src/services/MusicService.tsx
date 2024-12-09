@@ -1,4 +1,3 @@
-import axios from "axios";
 import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
 import {
   generatedMusicProps,
@@ -10,13 +9,13 @@ import {
 export const MusicService = {
   async getMaryMusic({ scale, octave }: generatedMusicProps): Promise<void> {
     try {
-      const response = await axios.post<string>(
-        "http://127.0.0.1:8000/mary",
-        { tonic: scale, octave: octave },
-        { responseType: "text" },
-      );
+      const response = await fetch("http://127.0.0.1:8000/mary", {
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        body: JSON.stringify({ tonic: scale, octave: octave }),
+      });
 
-      const generatedXml = response.data;
+      const generatedXml = await response.text();
       const sheetMusicContainer = document.getElementById("sheet-music-div");
 
       if (!sheetMusicContainer) {
@@ -42,13 +41,17 @@ export const MusicService = {
     rhythm,
   }: rhythmMusicProps): Promise<void> {
     try {
-      const response = await axios.post<string>(
-        "http://127.0.0.1:8000/random",
-        { tonic: scale + octave, rhythmType: rhythmType, rhythm: rhythm },
-        { responseType: "text" },
-      );
+      const response = await fetch("http://127.0.0.1:8000/random", {
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        body: JSON.stringify({
+          tonic: scale + octave,
+          rhythmType: rhythmType,
+          rhythm: rhythm,
+        }),
+      });
 
-      const generatedXml = response.data;
+      const generatedXml = await response.text();
       const sheetMusicContainer = document.getElementById("sheet-music-div");
 
       if (!sheetMusicContainer) {
@@ -67,6 +70,54 @@ export const MusicService = {
     }
   },
 
+  // TODO:
+  // from the backend: return the note name with either the name or value option
+  // (see the options from musical options)
+  // and if is correct, make the elevation green, if wrong, make it bl async getNoteGameXml(
+  async getNoteGameXml(scale: string, octave: string): Promise<noteGameProps> {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/note-game", {
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        body: JSON.stringify({ scale: scale, octave: octave }),
+      });
+
+      const data: NoteGameDTO = await response.json();
+
+      const generatedXml = data.generatedXml;
+      const noteName = data.noteName;
+      const noteOctave = data.noteOctave;
+
+      const sheetMusicContainer = document.getElementById("sheet-music-div");
+
+      if (!sheetMusicContainer) {
+        throw new Error("Could not find the sheet music container");
+      }
+
+      const osmd = new OpenSheetMusicDisplay(
+        sheetMusicContainer as HTMLElement,
+      );
+
+      // alert(`${noteName} ${noteOctave}`);
+
+      await osmd.load(generatedXml);
+      osmd.render();
+
+      const noteInformation: noteGameProps = {
+        noteName: noteName,
+        octave: noteOctave,
+        fullNoteName: noteName + noteOctave,
+      };
+
+      return noteInformation;
+    } catch (error) {
+      throw new Error(
+        `did not get sheet music, params: scale: ${scale}, octave: ${octave} `,
+      );
+    }
+  },
+
+  // Helper functions
   async displayXml(selectedFiles: FileList | null): Promise<void> {
     const sheetMusicContainer = document.getElementById("sheet-music-div");
 
@@ -112,50 +163,5 @@ export const MusicService = {
       reader.onerror = () => reject(reader.error);
       reader.readAsText(file);
     });
-  },
-
-  // TODO:
-  // from the backend: return the note name with either the name or value option
-  // (see the options from musical options)
-  // and if is correct, make the elevation green, if wrong, make it bl async getNoteGameXml(
-  async getNoteGameXml(scale: string, octave: string): Promise<noteGameProps> {
-    try {
-      const response = await axios.post<NoteGameDTO>(
-        "http://127.0.0.1:8000/note-game",
-        { scale: scale, octave: octave },
-        { responseType: "json" },
-      );
-
-      const generatedXml = response.data.generatedXml;
-      const noteName = response.data.noteName;
-      const noteOctave = response.data.noteOctave;
-
-      const sheetMusicContainer = document.getElementById("sheet-music-div");
-
-      if (!sheetMusicContainer) {
-        throw new Error("Could not find the sheet music container");
-      }
-
-      const osmd = new OpenSheetMusicDisplay(
-        sheetMusicContainer as HTMLElement,
-      );
-
-      // alert(`${noteName} ${noteOctave}`);
-
-      await osmd.load(generatedXml);
-      osmd.render();
-
-      const noteInformation: noteGameProps = {
-        noteName: noteName,
-        octave: noteOctave,
-        fullNoteName: noteName + noteOctave,
-      };
-
-      return noteInformation;
-    } catch (error) {
-      throw new Error(
-        `did not get sheet music, params: scale: ${scale}, octave: ${octave} `,
-      );
-    }
   },
 };
