@@ -93,16 +93,16 @@ func GetEntriesByUserId(c *gin.Context) {
 // checked yet
 func IsUser(c *gin.Context) {
 	username := c.Param("username")
-	password := c.Param("password")
+	// password := c.Param("password")
 
 	query := `
   SELECT id from users
   WHERE (username = $1 OR email = $1)
-  AND password = $2
   `
+	// AND password = $2
 	var user dtos.User
 
-	err := database.DBClient.Get(&user, query, username, password)
+	err := database.DBClient.Get(&user, query, username)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"isUser": false,
