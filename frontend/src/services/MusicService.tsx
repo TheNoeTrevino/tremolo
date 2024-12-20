@@ -98,8 +98,6 @@ export const MusicService = {
         sheetMusicContainer as HTMLElement,
       );
 
-      // alert(`${noteName} ${noteOctave}`);
-
       await osmd.load(generatedXml);
       osmd.render();
 
