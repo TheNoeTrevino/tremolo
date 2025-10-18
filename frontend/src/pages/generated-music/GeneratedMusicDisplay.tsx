@@ -1,4 +1,4 @@
-import { Box, Button, Fade, Paper, Typography } from "@mui/material";
+import { Box, Fade, Paper, Typography } from "@mui/material";
 import { MusicService } from "../../services/MusicService";
 import { useState, MouseEvent, useEffect } from "react";
 import MusicButton from "../../components/musical/MusicButton";

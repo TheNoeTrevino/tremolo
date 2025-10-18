@@ -79,7 +79,7 @@ const ThreeLinedGraph = ({
             {
               scaleType: "point",
               data,
-              tickInterval: (index, i) => (i + 1) % 5 === 0,
+              tickInterval: (_, i) => (i + 1) % 5 === 0,
             },
           ]}
           // todo: this needs to come from the api
@@ -131,7 +131,6 @@ const ThreeLinedGraph = ({
           }}
           slotProps={{
             legend: {
-              hidden: true,
             },
           }}
         >
