@@ -7,11 +7,13 @@ import {
   NoteGameDTO,
 } from "../models/models";
 
+const baseUrl = import.meta.env.VITE_BACKEND_MUSIC;
+
 export const MusicService = {
   async getMaryMusic({ scale, octave }: generatedMusicProps): Promise<void> {
     try {
       const response = await axios.post<string>(
-        "http://127.0.0.1:8000/mary",
+        `${baseUrl}/mary`,
         { tonic: scale, octave: octave },
         { responseType: "text" },
       );
@@ -43,7 +45,7 @@ export const MusicService = {
   }: rhythmMusicProps): Promise<void> {
     try {
       const response = await axios.post<string>(
-        "http://127.0.0.1:8000/random",
+        `${baseUrl}/random`,
         { tonic: scale + octave, rhythmType: rhythmType, rhythm: rhythm },
         { responseType: "text" },
       );
@@ -121,7 +123,7 @@ export const MusicService = {
   async getNoteGameXml(scale: string, octave: string): Promise<noteGameProps> {
     try {
       const response = await axios.post<NoteGameDTO>(
-        "http://127.0.0.1:8000/note-game",
+        `${baseUrl}/note-game`,
         { scale: scale, octave: octave },
         { responseType: "json" },
       );
