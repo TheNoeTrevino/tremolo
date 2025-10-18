@@ -12,20 +12,63 @@ This also be a technical exercise for myself as I will be learning a huge amount
 
 https://github.com/user-attachments/assets/63a7100e-a79c-4aca-be35-3089c9ec1d7d
 
-## Install
+## Run the Project Locally
 
-`cd frontend`
+### Environment Setup
 
-`npm install && npm run dev`
+``` bash
+  export DATABASE_URL="postgresql://<user>:<password>@<host>:<port>/<database>"
+  export DATABASE_USER="<username>"
+  export DATABASE_PW="<password>"
 
-`cd backend`
+  export VITE_BACKEND_MAIN="http://localhost:5001" # default local setup
+  export VITE_BACKEND_MUSIC="http://localhost:8000" # default local setup
+```
 
-`python3 -m venv env`
+### Serve it locally
 
-`pip install django djangorestframework django-cors-headers music21`
+> [!NOTE]
+> For each terminal, you must ensure you have the environment variables set in
+> order for the services to communicate with each other.
 
-`python3 main/manage.py migrate `
-`python3 main/manage.py runserver`
+#### Frontend
+
+``` bash
+cd frontend
+
+npm install && npm run dev
+```
+
+#### Music generation microservice
+
+TODO: put deps in requirements.txt
+
+``` bash
+
+cd backend/music
+
+python3 -m venv env
+
+source env/bin/activate
+
+pip install -r requirements.txt
+
+python3 manage.py migrate
+
+python3 manage.py runserver
+
+```
+
+#### User tracking microservice
+
+
+``` bash
+
+cd backend/main
+go run main.go
+
+```
+
 
 ## Technologies used:
 
