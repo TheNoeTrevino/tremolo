@@ -1,22 +1,11 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
-import { Box, createTheme, ThemeProvider } from "@mui/material";
-
-// https://colorhunt.co/palette/1e201e3c3d37697565ecdfcc
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#1E201E",
-    },
-    secondary: {
-      main: "#3C3D37",
-    },
-  },
-});
+import { Box } from "@mui/material";
+import { ThemeContextProvider } from "./contexts/ThemeContext";
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeContextProvider>
       <Box
         sx={{
           display: "flex",
@@ -29,7 +18,7 @@ function App() {
           <Outlet />
         </div>
       </Box>
-    </ThemeProvider>
+    </ThemeContextProvider>
   );
 }
 export default App;
