@@ -53,7 +53,7 @@ const About = () => {
                 <Typography variant="body1" sx={{ mb: 2, lineHeight: 1.8 }}>
                   When I was teaching, I always wished for a tool like this. An
                   application that could be configured to repetitively practice
-                  tough patterns—both rhythmically and harmonically—while
+                  tough patterns, both rhythmically and harmonically, while
                   maintaining the element of genuine reading rather than
                   memorization.
                 </Typography>
@@ -62,7 +62,7 @@ const About = () => {
                   fails under pressure. True sight-reading skills, however, remain
                   strong even when nerves kick in. This application forces
                   students to develop real reading skills by preventing
-                  memorization through dynamic, ever-changing exercises.
+                  memorization through dynamic, changing exercises.
                 </Typography>
               </Box>
             </Box>
