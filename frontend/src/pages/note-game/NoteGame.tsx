@@ -1,4 +1,4 @@
-import { Box, Button, ButtonBase, Card, Fade, Typography } from "@mui/material";
+import { Box, Button, ButtonBase, Card, Fade, Typography, useTheme, useMediaQuery } from "@mui/material";
 import { useState, MouseEvent, useEffect, useRef } from "react";
 import { MusicService } from "../../services/MusicService";
 import { noteGameStyles } from "./NoteGameStyles";
@@ -15,6 +15,9 @@ import {
 import MusicButton from "../../components/musical/MusicButton";
 
 const NoteGame = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   const [sound, setSound] = useState<string | undefined>(undefined);
 
   const startTime = useRef<number>(Math.floor(new Date().getTime() / 1000));
@@ -105,98 +108,177 @@ const NoteGame = () => {
     <div onKeyDown={validateKeyDown} tabIndex={0}>
       <Fade in={true} timeout={500}>
         <Box
-          my={"2rem"}
+          my={isMobile ? "0" : "2rem"}
           sx={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
+            paddingBottom: isMobile ? "140px" : "0",
           }}
         >
-          <Box id="main" sx={noteGameStyles.mainDiv}>
-            <ButtonBase
-              centerRipple={true}
-              component={Card}
-              elevation={6}
-              sx={noteGameStyles.optionButtonsCard}
-            >
-              {isNaN(correctCounter / totalCounter) ? (
-                <Card sx={noteGameStyles.scoreboardContainer} elevation={3}>
-                  <Typography m={"1rem"}>Answer to start a session!</Typography>
-                </Card>
-              ) : (
-                <Box sx={noteGameStyles.scoreboardContainer}>
-                  <Card sx={noteGameStyles.scoreboardItems} elevation={3}>
-                    <Typography m={"1rem"}>
-                      Accurracy
+          {/* NOTE: just use different layouts for mobile and desktop for simplicity */}
+          {isMobile ? (
+            <>
+              <Box sx={noteGameStyles.mobileScoreboardStrip}>
+                {isNaN(correctCounter / totalCounter) ? (
+                  <Typography fontSize="0.875rem" textAlign="center">
+                    Answer to start!
+                  </Typography>
+                ) : (
+                  <>
+                    <Typography fontSize="0.875rem" fontWeight="500">
                       {correctCounter / totalCounter === 1
-                        ? ": 100%"
-                        : `: ${Math.round((correctCounter / totalCounter) * 100)}%`}
+                        ? "100%"
+                        : `${Math.round((correctCounter / totalCounter) * 100)}%`}
                     </Typography>
-                  </Card>
-                  <Card sx={noteGameStyles.scoreboardItems} elevation={3}>
-                    <Typography m={"1rem"}>
-                      Fraction: {correctCounter}/{totalCounter}
+                    <Typography fontSize="0.875rem">
+                      {correctCounter}/{totalCounter}
                     </Typography>
-                  </Card>
-                  <Card sx={noteGameStyles.scoreboardItems} elevation={3}>
-                    <Typography m={"1rem"}>
-                      {`NPM:
-                      ${Math.floor(
-                        (totalCounter / (currentTime - startTime.current)) *
-                          100,
-                      )}`}
+                    <Typography fontSize="0.875rem">
+                      NPM: {Math.floor(
+                        (totalCounter / (currentTime - startTime.current)) * 100,
+                      )}
                     </Typography>
-                  </Card>
-                </Box>
-              )}
-            </ButtonBase>
-            <Card sx={noteGameStyles.musicContainer} elevation={6}>
-              <Box id="sheet-music-div" sx={noteGameStyles.musicDisplay}></Box>
-            </Card>
-            <Card elevation={6} sx={noteGameStyles.optionButtonsCard}>
-              <Box sx={noteGameStyles.optionButtonsContainer}>
+                  </>
+                )}
+              </Box>
+
+              <Card sx={noteGameStyles.mobileMusicContainer} elevation={6}>
+                <Box id="sheet-music-div" sx={noteGameStyles.mobileMusicDisplay}></Box>
+              </Card>
+
+              <Box sx={noteGameStyles.mobileAnswerButtonsContainer}>
+                {totalOptions.map((optionList, index) => (
+                  <Box key={index} sx={noteGameStyles.mobileButtonRow}>
+                    {optionList.map((option) => (
+                      <Button
+                        key={option.value}
+                        variant="contained"
+                        sx={noteGameStyles.mobileAnswerButton}
+                        onClick={() => validateButtonClick(option.value)}
+                      >
+                        {option.name}
+                      </Button>
+                    ))}
+                  </Box>
+                ))}
+              </Box>
+
+              <Box sx={noteGameStyles.stickyControlsBar}>
                 <MusicButton
-                  text="Choose Scale"
+                  text="Scale"
                   handleClick={handleScaleClick}
                   options={scaleOptions}
                   anchorEl={scaleAnchorEl}
                   open={openScaleOptions}
                   handleClose={handleScaleClose}
                   handleOptionClick={chooseScale}
-                  styles={{ mt: 2, width: "100%" }}
+                  styles={{ flex: 1, height: "48px" }}
                   startIcon={<KeyboardArrowDownIcon />}
                 />
                 <MusicButton
-                  text="Choose Octave"
+                  text="Octave"
                   handleClick={handleOctaveClick}
                   options={octaveOptions}
                   anchorEl={octaveAnchorEl}
                   open={openOctaveOptions}
                   handleClose={handleOctaveClose}
                   handleOptionClick={chooseOctave}
-                  styles={{ mt: 2, width: "100%" }}
+                  styles={{ flex: 1, height: "48px" }}
                   startIcon={<KeyboardArrowDownIcon />}
                 />
               </Box>
-            </Card>
-          </Box>
-          <Box id="options">
-            {totalOptions.map((optionList) => (
-              <Box width={"100%"}>
-                {optionList.map((option) => (
-                  <Button
-                    key={option.value}
-                    variant="contained"
-                    sx={{ ...noteGameStyles.answerButtons }}
-                    onClick={() => validateButtonClick(option.value)}
-                  >
-                    {option.name}
-                  </Button>
+            </>
+          ) : (
+            // Desktop Layout
+            <>
+              <Box id="main" sx={noteGameStyles.mainDiv}>
+                <ButtonBase
+                  centerRipple={true}
+                  component={Card}
+                  elevation={6}
+                  sx={noteGameStyles.optionButtonsCard}
+                >
+                  {isNaN(correctCounter / totalCounter) ? (
+                    <Card sx={noteGameStyles.scoreboardContainer} elevation={3}>
+                      <Typography m={"1rem"}>Answer to start a session!</Typography>
+                    </Card>
+                  ) : (
+                    <Box sx={noteGameStyles.scoreboardContainer}>
+                      <Card sx={noteGameStyles.scoreboardItems} elevation={3}>
+                        <Typography m={"1rem"}>
+                          Accuracy
+                          {correctCounter / totalCounter === 1
+                            ? ": 100%"
+                            : `: ${Math.round((correctCounter / totalCounter) * 100)}%`}
+                        </Typography>
+                      </Card>
+                      <Card sx={noteGameStyles.scoreboardItems} elevation={3}>
+                        <Typography m={"1rem"}>
+                          Fraction: {correctCounter}/{totalCounter}
+                        </Typography>
+                      </Card>
+                      <Card sx={noteGameStyles.scoreboardItems} elevation={3}>
+                        <Typography m={"1rem"}>
+                          {`NPM:
+                          ${Math.floor(
+                            (totalCounter / (currentTime - startTime.current)) *
+                              100,
+                          )}`}
+                        </Typography>
+                      </Card>
+                    </Box>
+                  )}
+                </ButtonBase>
+                <Card sx={noteGameStyles.musicContainer} elevation={6}>
+                  <Box id="sheet-music-div" sx={noteGameStyles.musicDisplay}></Box>
+                </Card>
+                <Card elevation={6} sx={noteGameStyles.optionButtonsCard}>
+                  <Box sx={noteGameStyles.optionButtonsContainer}>
+                    <MusicButton
+                      text="Choose Scale"
+                      handleClick={handleScaleClick}
+                      options={scaleOptions}
+                      anchorEl={scaleAnchorEl}
+                      open={openScaleOptions}
+                      handleClose={handleScaleClose}
+                      handleOptionClick={chooseScale}
+                      styles={{ mt: 2, width: "100%" }}
+                      startIcon={<KeyboardArrowDownIcon />}
+                    />
+                    <MusicButton
+                      text="Choose Octave"
+                      handleClick={handleOctaveClick}
+                      options={octaveOptions}
+                      anchorEl={octaveAnchorEl}
+                      open={openOctaveOptions}
+                      handleClose={handleOctaveClose}
+                      handleOptionClick={chooseOctave}
+                      styles={{ mt: 2, width: "100%" }}
+                      startIcon={<KeyboardArrowDownIcon />}
+                    />
+                  </Box>
+                </Card>
+              </Box>
+              <Box id="options">
+                {totalOptions.map((optionList, index) => (
+                  <Box key={index} width={"100%"}>
+                    {optionList.map((option) => (
+                      <Button
+                        key={option.value}
+                        variant="contained"
+                        sx={{ ...noteGameStyles.answerButtons }}
+                        onClick={() => validateButtonClick(option.value)}
+                      >
+                        {option.name}
+                      </Button>
+                    ))}
+                  </Box>
                 ))}
               </Box>
-            ))}
-          </Box>
+            </>
+          )}
         </Box>
       </Fade>
     </div>
