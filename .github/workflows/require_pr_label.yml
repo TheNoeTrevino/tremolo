@@ -2,7 +2,7 @@ name: Require PR Label
 
 on:
   pull_request:
-    types: [opened, edited]
+    types: [opened, edited, labeled, unlabeled, synchronize]
 
 jobs:
   check_label:

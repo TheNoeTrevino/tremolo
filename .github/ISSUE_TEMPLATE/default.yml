@@ -10,4 +10,6 @@ body:
       value: |
         **Description**
         Describe goal here
-
+  - type: textarea
+    attributes:
+      label: "What's wrong?"
