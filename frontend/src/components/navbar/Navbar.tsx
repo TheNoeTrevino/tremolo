@@ -39,7 +39,15 @@ function NavBar() {
       <AppBar position="static">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <MusicNoteIcon sx={navbarStyles.musicNoteIcon} />
+            <IconButton
+              component={Link}
+              to="/"
+              sx={navbarStyles.musicNoteIcon}
+              color="inherit"
+              aria-label="home"
+            >
+              <MusicNoteIcon />
+            </IconButton>
             <Box sx={navbarStyles.menuIconButton}>
               <IconButton
                 size="large"
@@ -68,7 +76,12 @@ function NavBar() {
                 sx={navbarStyles.menu}
               >
                 {pages.map((page) => (
-                  <MenuItem key={page.name} onClick={handleCloseNavMenu}>
+                  <MenuItem
+                    key={page.name}
+                    component={Link}
+                    to={page.path}
+                    onClick={handleCloseNavMenu}
+                  >
                     <Typography sx={{ textAlign: "center" }}>
                       {page.name}
                     </Typography>
@@ -79,11 +92,11 @@ function NavBar() {
             <Typography
               variant="h5"
               noWrap
-              component="a"
-              href="#app-bar-with-responsive-menu"
+              component={Link}
+              to="/"
               sx={navbarStyles.logoTypography}
             >
-              LOGO
+              Tremolo
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               {pages.map((page) => (
