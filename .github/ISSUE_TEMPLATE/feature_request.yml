@@ -1,0 +1,36 @@
+name: Feature Request
+about: Suggest a new feature or improvement
+title: "[FEATURE] "
+labels: feature request
+assignees: TheNoeTrevino
+projects: "Tremolonotes"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Describe the feature**
+        A clear and concise description of what you want to happen.
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation / Use Case
+      description: Why is this feature needed? What problem does it solve?
+      placeholder: "Explain the motivation..."
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe how you envision this feature working
+      placeholder: "Describe your solution..."
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Other options you considered and why they were rejected
+      placeholder: "Describe alternatives..."
+      required: false

@@ -1,0 +1,12 @@
+name: Ticket Template
+about: Default template for new issues
+title: "[ISSUE]"
+assignees: TheNoeTrevino
+projects: "Tremolonotes"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Description**
+        Describe goal here
+
