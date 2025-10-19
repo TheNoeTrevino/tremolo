@@ -224,3 +224,4 @@ yarn.lock
 yarn.lock
 # package.json
 frontend/src/Secret.tsx
+staticfiles/
