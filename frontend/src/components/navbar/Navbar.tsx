@@ -13,6 +13,7 @@ import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import { Link } from "react-router-dom";
 import { navbarStyles } from "../../styles";
 import UserOptions from "./UserOptions";
+import ThemeToggle from "./ThemeToggle";
 import Slide from "@mui/material/Slide/Slide";
 import { useState } from "react";
 
@@ -111,7 +112,8 @@ function NavBar() {
                 </Button>
               ))}
             </Box>
-            <Box sx={{ flexGrow: 0 }}>
+            <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center", gap: 1 }}>
+              <ThemeToggle />
               <UserOptions />
             </Box>
           </Toolbar>
