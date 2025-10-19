@@ -1,6 +1,6 @@
 name: Feature Request
 description: Suggest a new feature or improvement
-title: "[FEATURE] "
+title: "[FEATURE]"
 labels: [enhancement]
 assignees:
   - TheNoeTrevino
@@ -17,6 +17,7 @@ body:
       label: Motivation / Use Case
       description: Why is this feature needed? What problem does it solve?
       placeholder: "Explain the motivation..."
+    validations:
       required: true
 
   - type: textarea
@@ -25,7 +26,8 @@ body:
       label: Proposed Solution
       description: Describe how you envision this feature working
       placeholder: "Describe your solution..."
-      required: false
+    validations:
+      required: true
 
   - type: textarea
     id: alternatives
@@ -33,4 +35,5 @@ body:
       label: Alternatives Considered
       description: Other options you considered and why they were rejected
       placeholder: "Describe alternatives..."
+    validations:
       required: false

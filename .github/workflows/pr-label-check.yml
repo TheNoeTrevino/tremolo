@@ -2,7 +2,7 @@ name: Require at least one label
 
 on:
   issues:
-    types: [opened, edited]
+    types: [opened, edited, labeled, unlabeled]
 
 jobs:
   check_label:
@@ -21,4 +21,5 @@ jobs:
                 issue_number: issue.number,
                 body: '⚠️ Please add at least one label to this issue. No labels were found. ⚠️'
               });
+              core.setFailed('Issue requires at least one label.');
             }
