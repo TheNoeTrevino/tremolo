@@ -1,8 +1,12 @@
 {
-  "dependencies": {
-    "@emotion/react": "^11.13.3",
-    "@emotion/styled": "^11.13.0",
-    "@mui/icons-material": "^6.1.6",
-    "@mui/material": "^6.1.6"
-  }
+	"name": "sight-reading-app",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"prepare": "husky"
+	},
+	"devDependencies": {
+		"husky": "^9.1.7",
+		"lint-staged": "^16.2.4"
+	}
 }
