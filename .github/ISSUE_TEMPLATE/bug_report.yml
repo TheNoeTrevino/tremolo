@@ -1,9 +1,9 @@
 name: Bug Report
 description: Report a bug in the project
 title: "[BUG]"
-labels: bug
-assignees: TheNoeTrevino
-projects: "Tremolonotes"
+labels: [bug]
+assignees:
+  - TheNoeTrevino
 body:
   - type: markdown
     attributes:

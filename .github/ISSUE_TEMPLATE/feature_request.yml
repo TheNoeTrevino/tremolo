@@ -1,9 +1,9 @@
 name: Feature Request
-about: Suggest a new feature or improvement
+description: Suggest a new feature or improvement
 title: "[FEATURE] "
-labels: feature request
-assignees: TheNoeTrevino
-projects: "Tremolonotes"
+labels: [enhancement]
+assignees:
+  - TheNoeTrevino
 body:
   - type: markdown
     attributes:

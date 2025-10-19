@@ -1,8 +1,9 @@
 name: Ticket Template
-about: Default template for new issues
+description: Default template for new issues
 title: "[ISSUE]"
-assignees: TheNoeTrevino
-projects: "Tremolonotes"
+labels: [general]
+assignees:
+  - TheNoeTrevino
 body:
   - type: markdown
     attributes:
