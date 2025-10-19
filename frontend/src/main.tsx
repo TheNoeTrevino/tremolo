@@ -15,53 +15,53 @@ import Logout from "./pages/users/Logout";
 import Converter from "./pages/Converter.tsx";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "/",
-        element: <HomePage />,
-      },
-      {
-        path: "/about",
-        element: <About />,
-      },
-      {
-        path: "/convert",
-        element: <Converter />,
-      },
-      {
-        path: "/note-game",
-        element: <NoteGame />,
-      },
-      {
-        path: "/sheet-music",
-        element: <SheetMusicDisplay />,
-      },
-      {
-        path: "/profile",
-        element: <Profile />,
-      },
-      {
-        path: "/dashboard",
-        element: <Dashboard />,
-      },
-      {
-        path: "/account",
-        element: <Account />,
-      },
-      {
-        path: "/logout",
-        element: <Logout />,
-      },
-    ],
-  },
+	{
+		path: "/",
+		element: <App />,
+		errorElement: <ErrorPage />,
+		children: [
+			{
+				path: "/",
+				element: <HomePage />,
+			},
+			{
+				path: "/about",
+				element: <About />,
+			},
+			{
+				path: "/convert",
+				element: <Converter />,
+			},
+			{
+				path: "/note-game",
+				element: <NoteGame />,
+			},
+			{
+				path: "/sheet-music",
+				element: <SheetMusicDisplay />,
+			},
+			{
+				path: "/profile",
+				element: <Profile />,
+			},
+			{
+				path: "/dashboard",
+				element: <Dashboard />,
+			},
+			{
+				path: "/account",
+				element: <Account />,
+			},
+			{
+				path: "/logout",
+				element: <Logout />,
+			},
+		],
+	},
 ]);
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
+	<StrictMode>
+		<RouterProvider router={router} />
+	</StrictMode>,
 );
