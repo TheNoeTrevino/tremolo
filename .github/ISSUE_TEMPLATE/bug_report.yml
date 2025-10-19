@@ -11,12 +11,13 @@ body:
         **Describe the bug**
         A clear and concise description of what the bug is.
 
-  - type: input
+  - type: textarea
     id: steps-to-reproduce
     attributes:
       label: Steps to reproduce
       description: Describe the steps to reproduce the bug
       placeholder: "1. Go to...\n2. Click on this..."
+    validations:
       required: true
 
   - type: textarea
