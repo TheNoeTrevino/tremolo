@@ -22,26 +22,26 @@ const noteGameStyles: Record<string, SxProps> = {
     alignItems: "center",
     width: "100%",
     gap: "2rem",
-    px: "2rem",
+    px: { xs: "1rem", md: "2rem" },
     mb: "2rem",
   },
 
   musicContainer: {
     flex: "2",
     display: "flex",
-    width: "50%",
-    height: "50%",
+    width: { xs: "100%", md: "50%" },
+    minHeight: { xs: "300px", md: "400px" },
     alignItems: "center",
     justifyContent: "center",
     borderRadius: "10px",
   },
 
   musicDisplay: {
-    width: "50%",
-    height: "20rem",
+    width: { xs: "90%", md: "50%" },
+    height: { xs: "15rem", md: "20rem" },
     justifyItems: "center",
     alignItems: "center",
-    pl: "2rem",
+    pl: { xs: "0", md: "2rem" },
   },
 
   optionButtonsCard: {
@@ -62,7 +62,7 @@ const noteGameStyles: Record<string, SxProps> = {
   answerButtons: {
     m: "1rem",
     textTransform: "none",
-    width: "9rem",
+    width: { xs: "100%", sm: "9rem" },
     height: "3rem",
   },
 };
