@@ -1,5 +1,7 @@
 import { SxProps } from "@mui/material";
 
+// TODO: change ALL of the box shadown to simply fade to a lighter gray on
+// hover
 const navbarStyles: Record<string, SxProps> = {
 	musicNoteIcon: {
 		display: { xs: "none", md: "flex" },
@@ -45,8 +47,7 @@ const generatedMusicStyles: Record<string, SxProps> = {
 	},
 	sheetMusic: {
 		width: "100%",
-		height: "500px",
-		border: "1px solid grey",
+		height: "35rem",
 		alignContent: "center",
 		justifyContent: "center",
 	},
@@ -163,9 +164,10 @@ const landingPageStyles: Record<string, SxProps> = {
 		p: 3,
 		height: "100%",
 		textAlign: "center",
-		transition: "transform 0.2s",
+		transition: "transform 0.2s, box-shadow 0.2s",
 		"&:hover": {
-			transform: "scale(1.05)",
+			transform: "translateY(-8px)",
+			boxShadow: 6,
 		},
 	},
 };
