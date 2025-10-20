@@ -13,7 +13,7 @@ jobs:
       - name: Move linked issues to Code Review
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PROJECT_TOKEN }}
           script: |
             const pr = context.payload.pull_request;
             // search both title and body
@@ -61,6 +61,8 @@ jobs:
                 const projectItemResult = await github.graphql(projectItemQuery, {
                   issueId: issue.data.node_id
                 });
+                
+                console.log(`Project items for issue #${issueNumber}:`, JSON.stringify(projectItemResult.node.projectItems, null, 2));
                 
                 const projectItem = projectItemResult.node.projectItems.nodes.find(
                   item => item.project.id === PROJECT_ID
