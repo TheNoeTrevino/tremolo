@@ -6,6 +6,13 @@ on:
     paths:
       - "backend/music/**"
   pull_request:
+    branches: [main, prod]
+    paths:
+      - "backend/music/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint-and-build:
@@ -22,6 +29,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: backend/music/requirements.txt
 
       - name: Install dependencies
         run: |

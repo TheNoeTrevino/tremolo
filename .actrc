@@ -1,0 +1,17 @@
+# act configuration for local GitHub Actions testing
+# See: https://github.com/nektos/act
+
+# Use medium-sized container image (includes Node.js, Python, Go)
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
+
+# Load secrets from .secrets file (don't commit this file!)
+--secret-file .github/act-secrets
+
+# Use .env file for environment variables
+--env-file .env
+
+# Verbose output for debugging
+-v
+
+# Bind Docker socket for workflows that use Docker
+--container-daemon-socket -

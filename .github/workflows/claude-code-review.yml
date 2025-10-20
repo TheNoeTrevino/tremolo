@@ -4,12 +4,14 @@ on:
   pull_request:
     branches: [main, prod]
     types: [opened, synchronize]
-    # Optional: Only run on specific file changes
-    # paths:
-    #   - "src/**/*.ts"
-    #   - "src/**/*.tsx"
-    #   - "src/**/*.js"
-    #   - "src/**/*.jsx"
+    paths-ignore:
+      - "**.md"
+      - ".github/workflows/**"
+      - ".husky/**"
+      - ".gitignore"
+      - "*.json"
+      - "*.yml"
+      - "*.yaml"
 
 jobs:
   claude-review:

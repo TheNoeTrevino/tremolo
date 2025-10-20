@@ -211,6 +211,9 @@ build/
 .env.test.local
 .env.production.local
 
+# act (GitHub Actions local testing) secrets
+.github/act-secrets
+
 # Coverage reports
 coverage/
 lcov-report/
