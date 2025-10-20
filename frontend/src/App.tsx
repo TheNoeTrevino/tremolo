@@ -16,14 +16,22 @@ const theme = createTheme({
 		MuiCard: {
 			defaultProps: {
 				variant: "outlined",
-				style: { marginTop: 8 },
+			},
+			styleOverrides: {
+				root: {
+					marginTop: 8,
+				},
 			},
 		},
 		MuiButton: {
 			defaultProps: {
 				disableElevation: true,
 				variant: "outlined",
-				style: { marginTop: 8 },
+			},
+			styleOverrides: {
+				root: {
+					marginTop: 8,
+				},
 			},
 		},
 	},
