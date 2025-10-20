@@ -89,3 +89,12 @@ Music21 - Generate the midi and xml files as needed
 Django - Complementing the music21 library very well. Used for the music generations microservice.
 
 Go - sqlx for database interaction and mapping to structs, playground validator for validations. Used for the user tracking microservice
+
+## Deployment
+
+
+``` bash
+git config alias.deploy "push origin main:prod"
+
+git deploy
+```
