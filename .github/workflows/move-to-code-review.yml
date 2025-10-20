@@ -28,7 +28,7 @@ jobs:
 
             for (const ref of issueRefs) {
               const issueNumber = parseInt(ref.replace("#", ""));
-              console.log(`Processing issue #${issueNumber}`);
+              console.log(`Processing #${issueNumber}`);
               
               try {
                 // Get the issue node ID
@@ -37,6 +37,12 @@ jobs:
                   repo: context.repo.repo,
                   issue_number: issueNumber
                 });
+                
+                // Skip if this is a pull request, not an issue
+                if (issue.data.pull_request) {
+                  console.log(`#${issueNumber} is a pull request, skipping`);
+                  continue;
+                }
                 
                 console.log(`Issue #${issueNumber} node_id: ${issue.data.node_id}`);
                 
@@ -61,6 +67,12 @@ jobs:
                 const projectItemResult = await github.graphql(projectItemQuery, {
                   issueId: issue.data.node_id
                 });
+                
+                // Check if projectItems exists and has data
+                if (!projectItemResult.node.projectItems || !projectItemResult.node.projectItems.nodes) {
+                  console.log(`Issue #${issueNumber} has no project items, skipping`);
+                  continue;
+                }
                 
                 console.log(`Project items for issue #${issueNumber}:`, JSON.stringify(projectItemResult.node.projectItems, null, 2));
                 
