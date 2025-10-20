@@ -1,0 +1,44 @@
+name: Django Checks
+
+on:
+  push:
+    branches: [main, prod]
+    paths:
+      - "backend/music/**"
+  pull_request:
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/music
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint with flake8
+        run: |
+          echo "🧪 Running flake8..."
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics  # catch syntax errors
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+
+      - name: Check code formatting with Black
+        run: |
+          echo "🧹 Checking code format..."
+          black --check .
+
+      # TODO: we really need to make some basic tests! 
+      # - name: Run Django tests
+      #   run: python manage.py test

@@ -8,12 +8,14 @@ const noteGameStyles: Record<string, SxProps> = {
 		flexDirection: "column",
 		justifyContent: "space-evenly",
 		gap: 3,
+		padding: "3rem",
 	},
 
 	scoreboardItems: {
 		display: "flex",
 		flexDirection: "column",
 		justifyContent: "center",
+		padding: "1rem",
 	},
 
 	mainDiv: {

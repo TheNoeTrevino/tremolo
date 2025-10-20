@@ -1,4 +1,4 @@
-import { Box, Fade, Paper, Typography } from "@mui/material";
+import { Box, Card, Fade, Paper, Typography } from "@mui/material";
 import InputFileUpload from "./FileUpload";
 import { useState } from "react";
 import { MusicService } from "../services/MusicService";
@@ -13,7 +13,7 @@ const Converter = () => {
 		<Fade in={true} timeout={500}>
 			<Box>
 				<Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-					<Box sx={generatedMusicStyles.sheetMusicContainer}>
+					<Card sx={generatedMusicStyles.sheetMusicContainer}>
 						<Paper
 							id="sheet-music-div"
 							elevation={6}
@@ -27,7 +27,7 @@ const Converter = () => {
 								</Box>
 							)}
 						</Paper>
-					</Box>
+					</Card>
 				</Box>
 
 				<Box>

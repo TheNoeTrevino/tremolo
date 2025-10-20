@@ -221,7 +221,7 @@ const NoteGame = () => {
 											</Typography>
 										</Card>
 									) : (
-										<Box sx={noteGameStyles.scoreboardContainer}>
+										<Card sx={noteGameStyles.scoreboardContainer}>
 											<Card sx={noteGameStyles.scoreboardItems} elevation={3}>
 												<Typography m={"1rem"}>
 													Accuracy
@@ -244,7 +244,7 @@ const NoteGame = () => {
 													)}`}
 												</Typography>
 											</Card>
-										</Box>
+										</Card>
 									)}
 								</ButtonBase>
 								<Card sx={noteGameStyles.musicContainer} elevation={6}>
@@ -255,6 +255,7 @@ const NoteGame = () => {
 								</Card>
 								<Card elevation={6} sx={noteGameStyles.optionButtonsCard}>
 									<Box sx={noteGameStyles.optionButtonsContainer}>
+										{/* TODO: rename this to something with options */}
 										<MusicButton
 											text="Choose Scale"
 											handleClick={handleScaleClick}
@@ -287,6 +288,7 @@ const NoteGame = () => {
 											<Button
 												key={option.value}
 												variant="contained"
+												disableElevation
 												sx={{ ...noteGameStyles.answerButtons }}
 												onClick={() => validateButtonClick(option.value)}
 											>
