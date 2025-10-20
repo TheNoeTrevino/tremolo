@@ -1,4 +1,4 @@
-name: Move issue to "Dev Done" when merged to dev
+name: Move issue to "Dev Done" when merged to main
 
 # This workflow requires a Personal Access Token (PAT) with project permissions
 # because the default GITHUB_TOKEN does not have access to GitHub Projects V2.
