@@ -3,6 +3,8 @@ name: Prettier formatting check
 on:
   pull_request:
     branches: [main, prod]
+    paths:
+      - "frontend/**"
 
 jobs:
   prettier:
