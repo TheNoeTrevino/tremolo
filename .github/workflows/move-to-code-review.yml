@@ -16,7 +16,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const pr = context.payload.pull_request;
-            const issueRefs = pr.body ? pr.body.match(/#(\d+)/g) || [] : [];
+            // search both title and body
+            const textToSearch = `${pr.title || ''} ${pr.body || ''}`;
+            const issueRefs = textToSearch.match(/#(\d+)/g) || [];
 
             const PROJECT_ID = "PVT_kwHOCJZzqc4AoJ-p";
             const STATUS_FIELD_ID = "PVTSSF_lAHOCJZzqc4AoJ-pzgfxfns";
