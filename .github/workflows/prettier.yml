@@ -1,4 +1,4 @@
-name: Prettier formatting check
+name: Frontend Formatting Check
 
 on:
   pull_request:
