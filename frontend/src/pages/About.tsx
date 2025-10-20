@@ -151,6 +151,7 @@ const About = () => {
 						</Box>
 					</Box>
 
+					{/* TODO: this should be one of the colors in our pallete, the bg color */}
 					<Card
 						elevation={3}
 						sx={{ mt: 6, mb: 4, bgcolor: "grey.50", p: 4, textAlign: "center" }}

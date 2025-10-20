@@ -1,4 +1,4 @@
-import { Box, Fade, Paper, Typography } from "@mui/material";
+import { Box, Card, Fade, Paper, Typography } from "@mui/material";
 import { MusicService } from "../../services/MusicService";
 import { useState, MouseEvent, useEffect } from "react";
 import MusicButton from "../../components/musical/MusicButton";
@@ -98,7 +98,7 @@ const SheetMusicDisplay = () => {
 				<Box>
 					<Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
 						<Box sx={generatedMusicStyles.sheetMusicContainer}>
-							<Paper
+							<Card
 								id="sheet-music-div"
 								elevation={6}
 								sx={generatedMusicStyles.sheetMusic}
@@ -108,7 +108,7 @@ const SheetMusicDisplay = () => {
 										Rendering sheet music, pleasse wait...
 									</Typography>
 								)}
-							</Paper>
+							</Card>
 						</Box>
 					</Box>
 

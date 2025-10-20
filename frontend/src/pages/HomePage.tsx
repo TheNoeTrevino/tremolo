@@ -163,7 +163,7 @@ const HomePage = () => {
 						<Grid container spacing={4}>
 							{audiences.map((audience, index) => (
 								<Grid item xs={12} md={4} key={index}>
-									<Card elevation={2} sx={landingPageStyles.audienceCard}>
+									<Card sx={landingPageStyles.audienceCard}>
 										<Avatar
 											sx={{
 												...landingPageStyles.featureIcon,
