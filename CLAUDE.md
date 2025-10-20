@@ -125,3 +125,4 @@ Database connection is initialized in `backend/main/database/database.go` using 
 - Axios is used for all HTTP requests
 - Environment variables set via Vite's `import.meta.env`
 - CORS must be configured in Django settings for local development
+this us a test
