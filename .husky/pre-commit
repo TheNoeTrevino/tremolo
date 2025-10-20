@@ -7,14 +7,19 @@ fi
 
 if git diff --cached --name-only | grep -q "^backend/music/"; then
   echo "🐍 Checking Python code formatting..."
-  cd backend/music
 
-  if [ -f "env/bin/activate" ]; then
-    . env/bin/activate
+  # Get staged Python files before changing directory
+  STAGED_PY_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep "^backend/music/.*\.py$")
 
-    STAGED_PY_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep "^backend/music/.*\.py$" | sed 's|^backend/music/||')
+  if [ -n "$STAGED_PY_FILES" ]; then
+    cd backend/music
 
-    if [ -n "$STAGED_PY_FILES" ]; then
+    if [ -f "env/bin/activate" ]; then
+      . env/bin/activate
+
+      # Remove the backend/music/ prefix from file paths
+      STAGED_PY_FILES=$(echo "$STAGED_PY_FILES" | sed 's|^backend/music/||')
+
       echo "Running Black on staged Python files..."
       black $STAGED_PY_FILES
 
@@ -38,9 +43,9 @@ if git diff --cached --name-only | grep -q "^backend/music/"; then
       done
 
       echo "✅ Python code checks passed!"
+    else
+      echo "⚠️  Virtual environment not found. Skipping Python checks."
+      echo "    Run: cd backend/music && python3 -m venv env && source env/bin/activate && pip install -r requirements.txt"
     fi
-  else
-    echo "⚠️  Virtual environment not found. Skipping Python checks."
-    echo "    Run: cd backend/music && python3 -m venv env && source env/bin/activate && pip install -r requirements.txt"
   fi
 fi
