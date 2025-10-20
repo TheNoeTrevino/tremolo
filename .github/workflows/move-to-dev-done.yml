@@ -17,13 +17,14 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const pr = context.payload.pull_request;
-            const issueRefs = pr.body ? pr.body.match(/#(\d+)/g) || [] : [];
+            const textToSearch = `${pr.title || ''} ${pr.body || ''}`;
+            const issueRefs = textToSearch.match(/#(\d+)/g) || [];
 
             const PROJECT_ID = "PVT_kwHOCJZzqc4AoJ-p";
             const STATUS_FIELD_ID = "PVTSSF_lAHOCJZzqc4AoJ-pzgfxfns";
             const DEV_DONE_OPTION_ID = "1f78e38d";
 
-            console.log(`Found ${issueRefs.length} issue references in PR body`);
+            console.log(`Found ${issueRefs.length} issue references in PR title and body`);
 
             for (const ref of issueRefs) {
               const issueNumber = parseInt(ref.replace("#", ""));
