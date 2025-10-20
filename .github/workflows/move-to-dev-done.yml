@@ -1,10 +1,18 @@
-name: Move issue to "Dev Done" when merged into main
+name: Move issue to "Dev Done" when merged to dev
+
+# This workflow requires a Personal Access Token (PAT) with project permissions
+# because the default GITHUB_TOKEN does not have access to GitHub Projects V2.
+#
+# Setup:
+# 1. Create a PAT at https://github.com/settings/tokens with scopes: repo, project, read:project
+# 2. Add it as a repository secret named PROJECT_TOKEN:
+#    gh secret set PROJECT_TOKEN --body "<your-token>"
 
 on:
   pull_request:
     types: [closed]
     branches:
-      - main
+      - dev
 
 jobs:
   move_to_dev_done:
@@ -14,16 +22,17 @@ jobs:
       - name: Move linked issues to Dev Done
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PROJECT_TOKEN }}
           script: |
             const pr = context.payload.pull_request;
-            const issueRefs = pr.body ? pr.body.match(/#(\d+)/g) || [] : [];
+            const textToSearch = `${pr.title || ''} ${pr.body || ''}`;
+            const issueRefs = textToSearch.match(/#(\d+)/g) || [];
 
             const PROJECT_ID = "PVT_kwHOCJZzqc4AoJ-p";
             const STATUS_FIELD_ID = "PVTSSF_lAHOCJZzqc4AoJ-pzgfxfns";
             const DEV_DONE_OPTION_ID = "1f78e38d";
 
-            console.log(`Found ${issueRefs.length} issue references in PR body`);
+            console.log(`Found ${issueRefs.length} issue references in PR title and body`);
 
             for (const ref of issueRefs) {
               const issueNumber = parseInt(ref.replace("#", ""));
