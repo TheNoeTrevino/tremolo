@@ -288,6 +288,7 @@ const NoteGame = () => {
 											<Button
 												key={option.value}
 												variant="contained"
+												disableElevation
 												sx={{ ...noteGameStyles.answerButtons }}
 												onClick={() => validateButtonClick(option.value)}
 											>
