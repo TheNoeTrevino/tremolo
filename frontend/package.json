@@ -12,7 +12,7 @@
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx,css,md,json}": [
 			"echo '🧹 Running Prettier on staged files...'",
-			"prettier --write"
+			"npx prettier --write"
 		]
 	},
 	"dependencies": {
