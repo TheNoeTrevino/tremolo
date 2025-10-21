@@ -2,6 +2,7 @@ package services
 
 import (
 	"net/http"
+
 	dtos "sight-reading/DTOs"
 	"sight-reading/database"
 
@@ -57,9 +58,22 @@ func CreateNoteGameEntry(c *gin.Context) {
 
 	var entryID int64
 	if rows.Next() {
-		rows.Scan(&entryID)
+		err = rows.Scan(&entryID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
 	}
-	rows.Close()
+
+	err = rows.Close()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
 
 	c.JSON(http.StatusCreated, gin.H{
 		"body":    reqBody,

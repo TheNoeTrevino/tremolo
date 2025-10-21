@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand/v2"
+
 	dtos "sight-reading/DTOs"
 	"sight-reading/database"
 )
@@ -44,7 +45,13 @@ func insertFakeEntry(userId int16) {
 		CreatedDate:      generateFakeDateCreated(),
 		CreatedTime:      generateFakeTimeCreated(),
 	}
-	entry.ValidateEntry()
+	err := entry.ValidateEntry()
+	if err != nil {
+		log.Panicf(
+			"an error ocurred validating the entry. Error: %v", err.Error(),
+		)
+	}
+
 	result, err := database.DBClient.NamedExec(insertEntryQuery, entry)
 	if err != nil {
 		log.Panicf(

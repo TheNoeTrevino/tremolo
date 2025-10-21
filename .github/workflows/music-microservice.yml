@@ -6,6 +6,9 @@ on:
     paths:
       - "backend/music/**"
   pull_request:
+    branches: [main, prod]
+    paths:
+      - "backend/music/**"
 
 jobs:
   lint-and-build:
@@ -21,7 +24,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
@@ -39,6 +42,6 @@ jobs:
           echo "🧹 Checking code format..."
           black --check .
 
-      # TODO: we really need to make some basic tests! 
+      # TODO: we really need to make some basic tests!
       # - name: Run Django tests
       #   run: python manage.py test

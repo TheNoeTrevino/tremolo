@@ -5,20 +5,21 @@ import (
 	"fmt"
 	"log"
 	"math/rand/v2"
+
 	dtos "sight-reading/DTOs"
 
 	"github.com/manveru/faker"
 )
 
-type fakeParentToChildAssociation struct {
-	ParentID int `db:"parent_id"`
-	ChildID  int `db:"child_id"`
-}
-
-type fakeTeacherToParent struct {
-	TeacherID int `db:"teacher_id"`
-	ParentID  int `db:"parent_id"`
-}
+// type fakeParentToChildAssociation struct {
+// 	ParentID int `db:"parent_id"`
+// 	ChildID  int `db:"child_id"`
+// }
+//
+// type fakeTeacherToParent struct {
+// 	TeacherID int `db:"teacher_id"`
+// 	ParentID  int `db:"parent_id"`
+// }
 
 type fakeTeacherToStudent struct {
 	TeacherID int `db:"teacher_id"`
@@ -76,7 +77,12 @@ func generateFakeUser(role dtos.Role, schoolId int16) dtos.User {
 		CreatedTime: generateFakeTimeCreated(),
 	}
 
-	user.ValidateUser()
+	err := user.ValidateUser()
+	if err != nil {
+		// TODO: better error handling
+		log.Printf("User validation failed: %v", err)
+		return dtos.User{}
+	}
 
 	return user
 }

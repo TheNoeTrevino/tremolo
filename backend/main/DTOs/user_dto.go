@@ -3,8 +3,9 @@ package dtos
 import (
 	"database/sql"
 	"errors"
-	"sight-reading/validations"
 	"strings"
+
+	"sight-reading/validations"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -31,10 +32,18 @@ const (
 
 func (user *User) ValidateUser() error {
 	validate := validator.New()
-	validate.RegisterValidation("role", validations.UserRole)
-	validate.RegisterValidation("len255", validations.VarChar255Length)
+	err := validate.RegisterValidation("role", validations.UserRole)
+	if err != nil {
+		// TODO: json response
+		return err
+	}
+	err = validate.RegisterValidation("len255", validations.VarChar255Length)
+	if err != nil {
+		// TODO: json response
+		return err
+	}
 
-	err := validate.Struct(user)
+	err = validate.Struct(user)
 	if err != nil {
 		var errorMessage []string
 		if errs, ok := err.(validator.ValidationErrors); ok {
