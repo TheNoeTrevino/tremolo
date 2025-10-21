@@ -2,9 +2,10 @@ package services
 
 import (
 	"net/http"
+	"strconv"
+
 	dtos "sight-reading/DTOs"
 	"sight-reading/database"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,8 +16,9 @@ func CreateUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&reqBody)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"error":   true,
-			"message": "Invalid json body",
+			"error":    true,
+			"message":  "Invalid json body",
+			"scenario": "TS.1",
 		})
 		return
 	}
@@ -24,8 +26,9 @@ func CreateUser(c *gin.Context) {
 	err = reqBody.ValidateUser()
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"error":   reqBody.ValidateUser().Error(),
-			"message": "Information invalid",
+			"error":    reqBody.ValidateUser().Error(),
+			"message":  "Information invalid",
+			"scenario": "TS.2",
 		})
 		return
 	}
@@ -57,8 +60,9 @@ func CreateUser(c *gin.Context) {
 	rows, err := database.DBClient.NamedQuery(query, reqBody)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":   err.Error(),
-			"message": "The school is most likely not found",
+			"error":    err.Error(),
+			"message":  "The school is most likely not found",
+			"scenario": "TS.3",
 		})
 		return
 	}
@@ -72,14 +76,23 @@ func CreateUser(c *gin.Context) {
 		err := rows.StructScan(&teacherValidation)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": err.Error(),
-				"help":  "this is at the database level",
+				"error":    err.Error(),
+				"help":     "this is at the database level",
+				"scenario": "TS.4",
 			})
 			return
 		}
 	}
 
-	rows.Close()
+	err = rows.Close()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":    err.Error(),
+			"help":     "this is at the database level. ",
+			"scenario": "TS.5",
+		})
+		return
+	}
 
 	c.JSON(http.StatusCreated, gin.H{
 		"body":   teacherValidation,

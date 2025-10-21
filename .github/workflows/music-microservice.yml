@@ -8,7 +8,7 @@ on:
   pull_request:
     branches: [main, prod]
     paths:
-      - "backend/main/**"
+      - "backend/music/**"
 
 jobs:
   lint-and-build:
