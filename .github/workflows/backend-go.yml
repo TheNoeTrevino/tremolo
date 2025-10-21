@@ -2,13 +2,20 @@ name: Go Backend CI
 
 on:
   push:
-    branches: [main, prod]
+    branches:
+      - main
+      - prod
     paths:
       - "backend/main/**"
   pull_request:
-    branches: [main, prod]
+    branches:
+      - main
+      - prod
     paths:
       - "backend/main/**"
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -16,6 +23,7 @@ concurrency:
 
 jobs:
   go-checks:
+    name: lint-and-test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -23,12 +31,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
-          go-version: '1.23.2'
+          go-version: "1.23.2"
           cache: true
           cache-dependency-path: backend/main/go.sum
 
@@ -47,6 +55,12 @@ jobs:
           echo "🔍 Running go vet..."
           go vet ./...
           echo "✅ go vet passed"
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.1
+          working-directory: backend/main
 
       - name: Run tests
         run: |
