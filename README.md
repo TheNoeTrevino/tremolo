@@ -69,6 +69,17 @@ go run main.go
 
 ```
 
+#### Scripts
+
+Install dependencies script, nice if you use worktrees/different directories:
+
+``` bash
+chmod +x ./scripts/install-deps.sh
+./scripts/install-deps.sh
+```
+
+TODO: add tmux script we made
+
 
 ## Technologies used:
 
