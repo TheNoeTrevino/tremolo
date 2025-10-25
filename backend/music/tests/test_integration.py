@@ -1,5 +1,4 @@
 import pytest
-from fastapi import status
 
 
 @pytest.mark.integration
@@ -72,24 +71,35 @@ class TestMultipleRequestsHandling:
         """Multiple sequential requests to /random should all succeed"""
         for i in range(5):
             response = client.post(
-                "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"}
+                "/random",
+                json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"},
             )
             assert response.status_code == 200, f"Request {i} failed"
 
     def test_note_game_multiple_sequential_requests(self, client):
         """Multiple sequential requests to /note-game should all succeed"""
         for i in range(5):
-            response = client.post("/note-game", json={"scale": "C", "octave": "4"})
+            response = client.post(
+                "/note-game", json={"scale": "C", "octave": "4"}
+            )
             assert response.status_code == 200, f"Request {i} failed"
 
     def test_mixed_endpoint_requests(self, client):
         """Should be able to call different endpoints in sequence"""
         payloads = [
             ("post", "/mary", {"tonic": "C", "octave": 4}),
-            ("post", "/random", {"rhythm": "1111", "rhythmType": 16, "tonic": "C"}),
+            (
+                "post",
+                "/random",
+                {"rhythm": "1111", "rhythmType": 16, "tonic": "C"},
+            ),
             ("post", "/note-game", {"scale": "C", "octave": "4"}),
             ("post", "/mary", {"tonic": "G", "octave": 5}),
-            ("post", "/random", {"rhythm": "11", "rhythmType": 8, "tonic": "G"}),
+            (
+                "post",
+                "/random",
+                {"rhythm": "11", "rhythmType": 8, "tonic": "G"},
+            ),
         ]
 
         for method, endpoint, payload in payloads:
@@ -115,7 +125,8 @@ class TestResponseConsistency:
         """Multiple /random calls should have consistent response format"""
         for _ in range(3):
             response = client.post(
-                "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"}
+                "/random",
+                json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"},
             )
             assert response.status_code == 200
             assert response.headers["content-type"] == "application/xml"
@@ -124,7 +135,9 @@ class TestResponseConsistency:
     def test_note_game_consistent_response_format(self, client):
         """Multiple /note-game calls should have consistent response format"""
         for _ in range(3):
-            response = client.post("/note-game", json={"scale": "C", "octave": "4"})
+            response = client.post(
+                "/note-game", json={"scale": "C", "octave": "4"}
+            )
             assert response.status_code == 200
             assert "application/json" in response.headers["content-type"]
 
@@ -178,7 +191,8 @@ class TestConcurrentLikeRequests:
         responses = []
         for _ in range(10):
             response = client.post(
-                "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"}
+                "/random",
+                json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"},
             )
             assert response.status_code == 200
             responses.append(response)
@@ -190,7 +204,9 @@ class TestConcurrentLikeRequests:
         """Rapid sequential requests to /note-game"""
         responses = []
         for _ in range(10):
-            response = client.post("/note-game", json={"scale": "C", "octave": "4"})
+            response = client.post(
+                "/note-game", json={"scale": "C", "octave": "4"}
+            )
             assert response.status_code == 200
             responses.append(response)
 

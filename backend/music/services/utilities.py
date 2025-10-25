@@ -1,7 +1,6 @@
-from enum import Enum
-import enum
 from pathlib import Path
-import os, tempfile
+import os
+import tempfile
 from typing import Union
 
 from music21 import instrument, metadata

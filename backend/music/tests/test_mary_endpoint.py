@@ -42,8 +42,6 @@ class TestMaryEndpointHappyPath:
         response = client.post("/mary", json={"tonic": "C", "octave": 4})
         assert response.status_code == 200
 
-        root = ET.fromstring(response.content)
-
         # Check for key musical elements
         # Note: exact tag names depend on MusicXML schema
         # We're looking for score/part/measure/note structure
@@ -70,7 +68,9 @@ class TestMaryEndpointHappyPath:
         """Test mary with various octaves"""
         octaves = [2, 3, 4, 5, 6]
         for octave in octaves:
-            response = client.post("/mary", json={"tonic": "C", "octave": octave})
+            response = client.post(
+                "/mary", json={"tonic": "C", "octave": octave}
+            )
             assert response.status_code == 200, f"Failed for octave {octave}"
             assert response.headers["content-type"] == "application/xml"
             ET.fromstring(response.content)
@@ -112,7 +112,9 @@ class TestMaryEndpointErrorHandling:
 
     def test_mary_invalid_octave_type(self, client):
         """Non-integer octave should fail validation"""
-        response = client.post("/mary", json={"tonic": "C", "octave": "not_a_number"})
+        response = client.post(
+            "/mary", json={"tonic": "C", "octave": "not_a_number"}
+        )
         assert response.status_code in [
             400,
             422,
@@ -122,7 +124,9 @@ class TestMaryEndpointErrorHandling:
         """Very high/low octaves should either work or return 400"""
         octaves = [-10, 99, 100]
         for octave in octaves:
-            response = client.post("/mary", json={"tonic": "C", "octave": octave})
+            response = client.post(
+                "/mary", json={"tonic": "C", "octave": octave}
+            )
             # Should return 200 or 400, not 500
             assert response.status_code in [
                 200,

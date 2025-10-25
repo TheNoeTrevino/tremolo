@@ -14,7 +14,9 @@ from datetime import datetime
 
 
 class PerformanceReporter:
-    def __init__(self, fastapi_url: str = "http://localhost:8000", drf_url: str = ""):
+    def __init__(
+        self, fastapi_url: str = "http://localhost:8000", drf_url: str = ""
+    ):
         self.fastapi_url = fastapi_url
         self.drf_url = drf_url or fastapi_url
         self.results = {}

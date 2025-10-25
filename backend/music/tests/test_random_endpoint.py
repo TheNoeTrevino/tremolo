@@ -11,7 +11,9 @@ from fastapi import status
 class TestRandomEndpointHappyPath:
     """Test /random endpoint with valid inputs"""
 
-    def test_random_valid_inputs_return_200(self, client, valid_random_payloads):
+    def test_random_valid_inputs_return_200(
+        self, client, valid_random_payloads
+    ):
         """All valid payloads should return 200 OK"""
         for payload in valid_random_payloads:
             response = client.post("/random", json=payload)
@@ -45,7 +47,8 @@ class TestRandomEndpointHappyPath:
         patterns = ["1111", "112", "121", "211", "0111"]
         for pattern in patterns:
             response = client.post(
-                "/random", json={"rhythm": pattern, "rhythmType": 16, "tonic": "C"}
+                "/random",
+                json={"rhythm": pattern, "rhythmType": 16, "tonic": "C"},
             )
             assert response.status_code == 200, f"Failed for pattern {pattern}"
             assert response.headers["content-type"] == "application/xml"
@@ -56,7 +59,8 @@ class TestRandomEndpointHappyPath:
         patterns = ["11", "01", "10"]
         for pattern in patterns:
             response = client.post(
-                "/random", json={"rhythm": pattern, "rhythmType": 8, "tonic": "C"}
+                "/random",
+                json={"rhythm": pattern, "rhythmType": 8, "tonic": "C"},
             )
             assert response.status_code == 200, f"Failed for pattern {pattern}"
             assert response.headers["content-type"] == "application/xml"
@@ -68,7 +72,8 @@ class TestRandomEndpointHappyPath:
         tonics = ["C", "G", "F", "D-", "A", "B-"]
         for tonic in tonics:
             response = client.post(
-                "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": tonic}
+                "/random",
+                json={"rhythm": "1111", "rhythmType": 16, "tonic": tonic},
             )
             assert response.status_code == 200, f"Failed for tonic {tonic}"
             ET.fromstring(response.content)
@@ -159,7 +164,11 @@ class TestRandomEndpointErrorHandling:
         for rhythm_type in invalid_types:
             response = client.post(
                 "/random",
-                json={"rhythm": "1111", "rhythmType": rhythm_type, "tonic": "C"},
+                json={
+                    "rhythm": "1111",
+                    "rhythmType": rhythm_type,
+                    "tonic": "C",
+                },
             )
             assert (
                 response.status_code == status.HTTP_400_BAD_REQUEST
@@ -204,7 +213,8 @@ class TestRandomEndpointRandomnessValidation:
         responses = []
         for _ in range(5):
             response = client.post(
-                "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"}
+                "/random",
+                json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"},
             )
             assert response.status_code == 200
             assert len(response.content) > 0
@@ -331,7 +341,8 @@ class TestRandomEndpointDifferentPatterns:
         for pattern in patterns:
             for tonic in tonics:
                 response = client.post(
-                    "/random", json={"rhythm": pattern, "rhythmType": 8, "tonic": tonic}
+                    "/random",
+                    json={"rhythm": pattern, "rhythmType": 8, "tonic": tonic},
                 )
                 assert (
                     response.status_code == 200
@@ -345,7 +356,8 @@ class TestRandomEndpointDifferentPatterns:
 
         for tonic in tonics_with_accidentals:
             response = client.post(
-                "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": tonic}
+                "/random",
+                json={"rhythm": "1111", "rhythmType": 16, "tonic": tonic},
             )
             # Should either work (200) or return sensible error (400)
             assert response.status_code in [

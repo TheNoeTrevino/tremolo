@@ -1,6 +1,5 @@
 import pytest
 import xml.etree.ElementTree as ET
-from fastapi import status
 import json
 
 
@@ -176,7 +175,10 @@ class TestNoteGameResponseFormat:
         data = response.json()
 
         note_name = data["noteName"]
-        assert len(note_name) in [1, 2], f"Invalid note name length: {note_name}"
+        assert len(note_name) in [
+            1,
+            2,
+        ], f"Invalid note name length: {note_name}"
         assert note_name[0] in "ABCDEFG", f"Invalid note base: {note_name}"
         if len(note_name) == 2:
             assert note_name[1] in "#-", f"Invalid accidental: {note_name}"

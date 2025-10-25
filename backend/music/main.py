@@ -14,7 +14,9 @@ LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 app = FastAPI(
     title="Music21 Microservice",
-    description="FastAPI microservice for generating music exercises using music21",
+    description=(
+        "FastAPI microservice for generating music exercises using music21"
+    ),
     version="2.0.0",
     debug=DEBUG,
 )

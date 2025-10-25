@@ -10,7 +10,6 @@ This configuration is optimized for:
 
 import os
 import multiprocessing
-from pathlib import Path
 
 # Get environment variables
 ENVIRONMENT = os.getenv("ENVIRONMENT", "production")
@@ -46,7 +45,9 @@ tmp_upload_dir = None
 accesslog = "-"  # Log to stdout
 errorlog = "-"  # Log to stderr
 loglevel = LOG_LEVEL
-access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" %(D)s'
+access_log_format = (
+    '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" %(D)s'
+)
 
 # Process Naming
 proc_name = "music-service"

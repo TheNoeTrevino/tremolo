@@ -1,7 +1,6 @@
 import pytest
 import xml.etree.ElementTree as ET
 from fastapi import status
-import json
 
 
 class TestNoteGameEndpointHappyPath:
@@ -43,9 +42,13 @@ class TestNoteGameEndpointHappyPath:
         assert "noteOctave" in data, "Missing noteOctave field"
 
         # Verify types
-        assert isinstance(data["generatedXml"], str), "generatedXml should be string"
+        assert isinstance(
+            data["generatedXml"], str
+        ), "generatedXml should be string"
         assert isinstance(data["noteName"], str), "noteName should be string"
-        assert isinstance(data["noteOctave"], str), "noteOctave should be string"
+        assert isinstance(
+            data["noteOctave"], str
+        ), "noteOctave should be string"
 
     def test_note_game_xml_is_valid(self, client):
         """The generatedXml field should contain valid XML"""
@@ -71,17 +74,24 @@ class TestNoteGameEndpointHappyPath:
         note_name = data["noteName"]
 
         # Valid notes are A-G, optionally with # or -
-        assert len(note_name) in [1, 2], f"Invalid note name length: {note_name}"
+        assert len(note_name) in [
+            1,
+            2,
+        ], f"Invalid note name length: {note_name}"
         assert note_name[0] in "ABCDEFG", f"Invalid note name: {note_name}"
         if len(note_name) == 2:
-            assert note_name[1] in "#-", f"Invalid accidental in note: {note_name}"
+            assert (
+                note_name[1] in "#-"
+            ), f"Invalid accidental in note: {note_name}"
 
     def test_note_game_octave_matches_request(self, client):
         """The noteOctave should match the requested octave"""
         octaves = ["2", "3", "4", "5", "6"]
 
         for octave in octaves:
-            response = client.post("/note-game", json={"scale": "C", "octave": octave})
+            response = client.post(
+                "/note-game", json={"scale": "C", "octave": octave}
+            )
             assert response.status_code == 200
 
             data = response.json()
@@ -94,7 +104,9 @@ class TestNoteGameEndpointHappyPath:
         scales = ["C", "G", "F", "D-", "E-"]
 
         for scale in scales:
-            response = client.post("/note-game", json={"scale": scale, "octave": "4"})
+            response = client.post(
+                "/note-game", json={"scale": scale, "octave": "4"}
+            )
             assert response.status_code == 200, f"Failed for scale {scale}"
 
             data = response.json()
@@ -181,7 +193,9 @@ class TestNoteGameRandomness:
 
         notes_generated = set()
         for _ in range(20):
-            response = client.post("/note-game", json={"scale": "C", "octave": "4"})
+            response = client.post(
+                "/note-game", json={"scale": "C", "octave": "4"}
+            )
             assert response.status_code == 200
             data = response.json()
             note = data["noteName"]
@@ -204,7 +218,9 @@ class TestNoteGameErrorHandling:
         invalid_scales = ["H", "Z", "X", "Q"]
 
         for scale in invalid_scales:
-            response = client.post("/note-game", json={"scale": scale, "octave": "4"})
+            response = client.post(
+                "/note-game", json={"scale": scale, "octave": "4"}
+            )
             assert (
                 response.status_code == status.HTTP_400_BAD_REQUEST
             ), f"Expected 400 for scale {scale}, got {response.status_code}"
@@ -220,7 +236,9 @@ class TestNoteGameErrorHandling:
         invalid_octaves = ["99", "-1", "100", "0"]
 
         for octave in invalid_octaves:
-            response = client.post("/note-game", json={"scale": "C", "octave": octave})
+            response = client.post(
+                "/note-game", json={"scale": "C", "octave": octave}
+            )
             # Should be 400 or 200 depending on music21 support
             assert response.status_code in [
                 200,

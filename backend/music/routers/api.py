@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 from fastapi.responses import Response, JSONResponse
 
-from models import MaryInput, RandomInput, NoteGameInput, NoteGameResponse
+from models import MaryInput, RandomInput, NoteGameInput
 from services.library import get_notes, note_game
 from services.dynamic_mary import DiatonicInformation
 
@@ -28,7 +28,9 @@ async def get_mary_had(payload: MaryInput):
         Returns: MusicXML
     """
     try:
-        music = DiatonicInformation(payload.tonic, payload.octave).get_mary_had()
+        music = DiatonicInformation(
+            payload.tonic, payload.octave
+        ).get_mary_had()
     except Exception as e:
         return Response(
             content=f"The note {e} is not currently supported, reconsider you root note",
@@ -87,7 +89,9 @@ async def get_random_notes(payload: RandomInput):
 @router.post(
     "/note-game",
     response_class=JSONResponse,
-    responses={200: {"description": "Single random note for identification game"}},
+    responses={
+        200: {"description": "Single random note for identification game"}
+    },
     tags=["Music Generation"],
 )
 async def get_note_game(payload: NoteGameInput):

@@ -1,6 +1,5 @@
 import pytest
 from fastapi import status
-import json
 
 
 @pytest.mark.unit
@@ -99,7 +98,12 @@ class TestMaryErrorHandling:
         """Multiple extra fields should be ignored"""
         response = client.post(
             "/mary",
-            json={"tonic": "C", "octave": 4, "extra1": "value1", "extra2": "value2"},
+            json={
+                "tonic": "C",
+                "octave": 4,
+                "extra1": "value1",
+                "extra2": "value2",
+            },
         )
         assert response.status_code == 200
 
@@ -190,7 +194,9 @@ class TestRandomErrorHandling:
 
     def test_random_missing_tonic_returns_422(self, client):
         """Missing 'tonic' field returns 422"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": 16})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": 16}
+        )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_random_empty_payload_returns_422(self, client):
@@ -231,7 +237,12 @@ class TestRandomErrorHandling:
         """Extra fields should be ignored"""
         response = client.post(
             "/random",
-            json={"rhythm": "1111", "rhythmType": 16, "tonic": "C", "extra": "field"},
+            json={
+                "rhythm": "1111",
+                "rhythmType": 16,
+                "tonic": "C",
+                "extra": "field",
+            },
         )
         assert response.status_code == 200
 
@@ -267,13 +278,17 @@ class TestNoteGameErrorHandling:
 
     def test_note_game_invalid_octave_string_99_returns_400(self, client):
         """Very high octave "99" may return 400"""
-        response = client.post("/note-game", json={"scale": "C", "octave": "99"})
+        response = client.post(
+            "/note-game", json={"scale": "C", "octave": "99"}
+        )
         # May be supported or not
         assert response.status_code in [200, 400]
 
     def test_note_game_invalid_octave_negative_returns_400(self, client):
         """Negative octave "-1" may return 400"""
-        response = client.post("/note-game", json={"scale": "C", "octave": "-1"})
+        response = client.post(
+            "/note-game", json={"scale": "C", "octave": "-1"}
+        )
         assert response.status_code in [200, 400]
 
     def test_note_game_octave_as_int_returns_422(self, client):
@@ -283,7 +298,9 @@ class TestNoteGameErrorHandling:
 
     def test_note_game_octave_non_numeric_string_returns_400(self, client):
         """Octave as non-numeric string returns 400 or 422"""
-        response = client.post("/note-game", json={"scale": "C", "octave": "four"})
+        response = client.post(
+            "/note-game", json={"scale": "C", "octave": "four"}
+        )
         assert response.status_code in [400, 422]
 
     def test_note_game_missing_scale_returns_422(self, client):
@@ -303,12 +320,16 @@ class TestNoteGameErrorHandling:
 
     def test_note_game_null_scale_returns_422(self, client):
         """Null scale returns 422"""
-        response = client.post("/note-game", json={"scale": None, "octave": "4"})
+        response = client.post(
+            "/note-game", json={"scale": None, "octave": "4"}
+        )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_note_game_null_octave_returns_422(self, client):
         """Null octave returns 422"""
-        response = client.post("/note-game", json={"scale": "C", "octave": None})
+        response = client.post(
+            "/note-game", json={"scale": "C", "octave": None}
+        )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_note_game_empty_scale_string_returns_400_or_422(self, client):

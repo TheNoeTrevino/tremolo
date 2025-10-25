@@ -1,6 +1,5 @@
 from typing import Tuple, Any
-from music21 import key, note, duration, meter
-from music21.meter.base import TimeSignature
+from music21 import key, note, duration
 import random
 
 from music21.stream.base import Stream
