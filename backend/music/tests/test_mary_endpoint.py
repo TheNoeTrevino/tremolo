@@ -15,8 +15,9 @@ class TestMaryEndpointHappyPath:
         """All valid payloads should return 200 OK"""
         for payload in valid_mary_payloads:
             response = client.post("/mary", json=payload)
-            assert response.status_code == status.HTTP_200_OK, \
-                f"Failed for payload {payload}: got {response.status_code}"
+            assert (
+                response.status_code == status.HTTP_200_OK
+            ), f"Failed for payload {payload}: got {response.status_code}"
 
     def test_mary_returns_xml_content_type(self, client):
         """Response should have application/xml content type"""
@@ -47,8 +48,9 @@ class TestMaryEndpointHappyPath:
         # Note: exact tag names depend on MusicXML schema
         # We're looking for score/part/measure/note structure
         xml_str = response.text
-        assert "score" in xml_str.lower() or "scorepartwise" in xml_str.lower(), \
-            "XML missing score element"
+        assert (
+            "score" in xml_str.lower() or "scorepartwise" in xml_str.lower()
+        ), "XML missing score element"
         assert "part" in xml_str.lower(), "XML missing part element"
         assert "measure" in xml_str.lower(), "XML missing measure element"
         assert "note" in xml_str.lower(), "XML missing note element"
@@ -82,33 +84,39 @@ class TestMaryEndpointErrorHandling:
         invalid_notes = ["H", "Z", "X", "Q"]
         for note in invalid_notes:
             response = client.post("/mary", json={"tonic": note, "octave": 4})
-            assert response.status_code == status.HTTP_400_BAD_REQUEST, \
-                f"Expected 400 for note {note}, got {response.status_code}"
+            assert (
+                response.status_code == status.HTTP_400_BAD_REQUEST
+            ), f"Expected 400 for note {note}, got {response.status_code}"
 
             # Verify error message format
             error_msg = response.text
-            assert mary_error_pattern in error_msg, \
-                f"Error message '{error_msg}' doesn't contain '{mary_error_pattern}'"
+            assert (
+                mary_error_pattern in error_msg
+            ), f"Error message '{error_msg}' doesn't contain '{mary_error_pattern}'"
 
     def test_mary_missing_required_fields(self, client, invalid_mary_payloads):
         """Missing required fields should return validation error"""
         invalid_payloads_missing = [
             {"tonic": "C"},  # Missing octave
-            {"octave": 4},   # Missing tonic
-            {},              # Missing both
+            {"octave": 4},  # Missing tonic
+            {},  # Missing both
         ]
 
         for payload in invalid_payloads_missing:
             response = client.post("/mary", json=payload)
             # Should be 422 (validation error) or 400
-            assert response.status_code in [400, 422], \
-                f"Expected 400/422 for payload {payload}, got {response.status_code}"
+            assert response.status_code in [
+                400,
+                422,
+            ], f"Expected 400/422 for payload {payload}, got {response.status_code}"
 
     def test_mary_invalid_octave_type(self, client):
         """Non-integer octave should fail validation"""
         response = client.post("/mary", json={"tonic": "C", "octave": "not_a_number"})
-        assert response.status_code in [400, 422], \
-            f"Expected validation error for invalid octave type, got {response.status_code}"
+        assert response.status_code in [
+            400,
+            422,
+        ], f"Expected validation error for invalid octave type, got {response.status_code}"
 
     def test_mary_extreme_octaves(self, client):
         """Very high/low octaves should either work or return 400"""
@@ -116,8 +124,10 @@ class TestMaryEndpointErrorHandling:
         for octave in octaves:
             response = client.post("/mary", json={"tonic": "C", "octave": octave})
             # Should return 200 or 400, not 500
-            assert response.status_code in [200, 400], \
-                f"Unexpected status {response.status_code} for octave {octave}"
+            assert response.status_code in [
+                200,
+                400,
+            ], f"Unexpected status {response.status_code} for octave {octave}"
 
 
 class TestMaryResponseStructure:

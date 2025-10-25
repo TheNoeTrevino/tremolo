@@ -30,7 +30,9 @@ origins = [
 # Allow additional origins from environment variable
 env_origins = os.getenv("ALLOWED_ORIGINS", "")
 if env_origins:
-    origins.extend([origin.strip() for origin in env_origins.split(",") if origin.strip()])
+    origins.extend(
+        [origin.strip() for origin in env_origins.split(",") if origin.strip()]
+    )
 
 app.add_middleware(
     CORSMiddleware,

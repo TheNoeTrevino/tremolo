@@ -2,6 +2,7 @@ import pytest
 from fastapi import status
 import json
 
+
 @pytest.mark.unit
 class TestMaryErrorHandling:
     """Comprehensive error handling for /mary endpoint"""
@@ -51,8 +52,10 @@ class TestMaryErrorHandling:
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         error_detail = response.json().get("detail", [])
         # Should mention 'tonic' in error
-        assert any("tonic" in str(e).lower() for e in error_detail) or \
-               "tonic" in response.text.lower()
+        assert (
+            any("tonic" in str(e).lower() for e in error_detail)
+            or "tonic" in response.text.lower()
+        )
 
     def test_mary_missing_octave_returns_422(self, client):
         """Missing 'octave' field returns 422"""
@@ -60,8 +63,10 @@ class TestMaryErrorHandling:
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         # Should mention 'octave' in error
         error_detail = response.json().get("detail", [])
-        assert any("octave" in str(e).lower() for e in error_detail) or \
-               "octave" in response.text.lower()
+        assert (
+            any("octave" in str(e).lower() for e in error_detail)
+            or "octave" in response.text.lower()
+        )
 
     def test_mary_empty_payload_returns_422(self, client):
         """Empty JSON object should return 422"""
@@ -85,17 +90,17 @@ class TestMaryErrorHandling:
 
     def test_mary_extra_field_ignored(self, client):
         """Extra fields should be ignored gracefully"""
-        response = client.post("/mary", json={"tonic": "C", "octave": 4, "extra": "field"})
+        response = client.post(
+            "/mary", json={"tonic": "C", "octave": 4, "extra": "field"}
+        )
         assert response.status_code == 200
 
     def test_mary_extra_fields_multiple_ignored(self, client):
         """Multiple extra fields should be ignored"""
-        response = client.post("/mary", json={
-            "tonic": "C",
-            "octave": 4,
-            "extra1": "value1",
-            "extra2": "value2"
-        })
+        response = client.post(
+            "/mary",
+            json={"tonic": "C", "octave": 4, "extra1": "value1", "extra2": "value2"},
+        )
         assert response.status_code == 200
 
     def test_mary_case_sensitivity_for_notes(self, client):
@@ -106,53 +111,70 @@ class TestMaryErrorHandling:
         assert response_lower.status_code in [200, 400]
         assert response_upper.status_code in [200, 400]
 
+
 @pytest.mark.unit
 class TestRandomErrorHandling:
     """Comprehensive error handling for /random endpoint"""
 
     def test_random_invalid_rhythm_with_digit_9(self, client):
         """Rhythm with invalid digit '9' should return 400"""
-        response = client.post("/random", json={"rhythm": "9999", "rhythmType": 16, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "9999", "rhythmType": 16, "tonic": "C"}
+        )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "something is not right" in response.text.lower()
 
     def test_random_invalid_rhythm_with_digit_2(self, client):
         """Rhythm with digit '2' - may be valid depending on interpretation"""
-        response = client.post("/random", json={"rhythm": "2222", "rhythmType": 16, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "2222", "rhythmType": 16, "tonic": "C"}
+        )
         # Digit '2' may be interpreted as valid by music21
         assert response.status_code in [200, 400]
 
     def test_random_invalid_rhythm_with_letter(self, client):
         """Rhythm with letters should return 400"""
-        response = client.post("/random", json={"rhythm": "ABCD", "rhythmType": 16, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "ABCD", "rhythmType": 16, "tonic": "C"}
+        )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_random_invalid_rhythm_type_32(self, client):
         """Invalid rhythmType 32 should return 400"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": 32, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": 32, "tonic": "C"}
+        )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_random_invalid_rhythm_type_8_with_wrong_pattern(self, client):
         """Type 8 with 4-digit pattern - may be accepted"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": 8, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": 8, "tonic": "C"}
+        )
         # Pattern length may not be strictly validated
         assert response.status_code in [200, 400]
 
     def test_random_invalid_rhythm_type_16_with_wrong_pattern(self, client):
         """Type 16 with 2-digit pattern - may be accepted"""
-        response = client.post("/random", json={"rhythm": "11", "rhythmType": 16, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "11", "rhythmType": 16, "tonic": "C"}
+        )
         # Pattern length may not be strictly validated
         assert response.status_code in [200, 400]
 
     def test_random_rhythm_type_as_string_returns_422(self, client):
         """rhythmType as string - FastAPI may coerce to int"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": "16", "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": "16", "tonic": "C"}
+        )
         # FastAPI may coerce "16" to int 16
         assert response.status_code in [200, 400, 422]
 
     def test_random_invalid_tonic_h_returns_400(self, client):
         """Invalid tonic 'H' should return 400"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "H"})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "H"}
+        )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "something is not right" in response.text.lower()
 
@@ -178,44 +200,55 @@ class TestRandomErrorHandling:
 
     def test_random_null_rhythm_returns_422(self, client):
         """Null rhythm returns 422"""
-        response = client.post("/random", json={"rhythm": None, "rhythmType": 16, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": None, "rhythmType": 16, "tonic": "C"}
+        )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_random_null_rhythm_type_returns_422(self, client):
         """Null rhythmType returns 422"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": None, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": None, "tonic": "C"}
+        )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_random_null_tonic_returns_422(self, client):
         """Null tonic returns 422"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": None})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": None}
+        )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_random_empty_rhythm_string_returns_400_or_422(self, client):
         """Empty rhythm string - may be accepted by music21"""
-        response = client.post("/random", json={"rhythm": "", "rhythmType": 16, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "", "rhythmType": 16, "tonic": "C"}
+        )
         # Empty string may create empty score
         assert response.status_code in [200, 400, 422]
 
     def test_random_extra_fields_ignored(self, client):
         """Extra fields should be ignored"""
-        response = client.post("/random", json={
-            "rhythm": "1111",
-            "rhythmType": 16,
-            "tonic": "C",
-            "extra": "field"
-        })
+        response = client.post(
+            "/random",
+            json={"rhythm": "1111", "rhythmType": 16, "tonic": "C", "extra": "field"},
+        )
         assert response.status_code == 200
 
     def test_random_rhythm_type_0_returns_400(self, client):
         """rhythmType 0 should return 400"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": 0, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": 0, "tonic": "C"}
+        )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_random_rhythm_type_negative_returns_400(self, client):
         """Negative rhythmType should return 400"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": -1, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": -1, "tonic": "C"}
+        )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
 
 @pytest.mark.unit
 class TestNoteGameErrorHandling:
@@ -290,11 +323,9 @@ class TestNoteGameErrorHandling:
 
     def test_note_game_extra_fields_ignored(self, client):
         """Extra fields should be ignored"""
-        response = client.post("/note-game", json={
-            "scale": "C",
-            "octave": "4",
-            "extra": "field"
-        })
+        response = client.post(
+            "/note-game", json={"scale": "C", "octave": "4", "extra": "field"}
+        )
         assert response.status_code == 200
 
     def test_note_game_scale_lowercase_c(self, client):
@@ -302,6 +333,7 @@ class TestNoteGameErrorHandling:
         response = client.post("/note-game", json={"scale": "c", "octave": "4"})
         # May support both or only uppercase
         assert response.status_code in [200, 400]
+
 
 @pytest.mark.unit
 class TestErrorMessageFormat:
@@ -318,7 +350,9 @@ class TestErrorMessageFormat:
 
     def test_random_error_format_contains_exception(self, client):
         """Random error should follow DRF error format"""
-        response = client.post("/random", json={"rhythm": "9999", "rhythmType": 16, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "9999", "rhythmType": 16, "tonic": "C"}
+        )
         assert response.status_code == 400
         error_msg = response.text
         assert "something is not right" in error_msg.lower()
@@ -329,6 +363,7 @@ class TestErrorMessageFormat:
         assert response.status_code == 400
         error_msg = response.text
         assert "something is not right" in error_msg.lower()
+
 
 @pytest.mark.unit
 class TestBoundaryConditions:
@@ -346,13 +381,17 @@ class TestBoundaryConditions:
 
     def test_random_shortest_type_16_pattern(self, client):
         """Shortest valid type 16 pattern"""
-        response = client.post("/random", json={"rhythm": "0", "rhythmType": 16, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "0", "rhythmType": 16, "tonic": "C"}
+        )
         # May or may not be valid
         assert response.status_code in [200, 400]
 
     def test_random_shortest_type_8_pattern(self, client):
         """Shortest valid type 8 pattern"""
-        response = client.post("/random", json={"rhythm": "0", "rhythmType": 8, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "0", "rhythmType": 8, "tonic": "C"}
+        )
         # Single note/rest may or may not be valid
         assert response.status_code in [200, 400]
 

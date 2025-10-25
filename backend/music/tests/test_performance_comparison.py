@@ -8,6 +8,7 @@ import requests
 FASTAPI_BASE_URL = "http://localhost:8000"
 DRF_BASE_URL = "http://localhost:8000"  # Change to actual DRF URL if different
 
+
 @pytest.mark.performance
 class TestPerformanceComparison:
     """Compare FastAPI performance against Django REST Framework"""
@@ -42,7 +43,9 @@ class TestPerformanceComparison:
         print(f"  Stdev: {stdev:.2f}ms")
 
         # Assert reasonable response time
-        assert avg_time < 500, f"Average response time {avg_time}ms exceeds 500ms threshold"
+        assert (
+            avg_time < 500
+        ), f"Average response time {avg_time}ms exceeds 500ms threshold"
 
     def test_random_response_time_fastapi(self, client):
         """Measure /random endpoint response time in FastAPI"""
@@ -72,7 +75,9 @@ class TestPerformanceComparison:
         print(f"  Max: {max_time:.2f}ms")
         print(f"  Stdev: {stdev:.2f}ms")
 
-        assert avg_time < 500, f"Average response time {avg_time}ms exceeds 500ms threshold"
+        assert (
+            avg_time < 500
+        ), f"Average response time {avg_time}ms exceeds 500ms threshold"
 
     def test_note_game_response_time_fastapi(self, client):
         """Measure /note-game endpoint response time in FastAPI"""
@@ -102,7 +107,10 @@ class TestPerformanceComparison:
         print(f"  Max: {max_time:.2f}ms")
         print(f"  Stdev: {stdev:.2f}ms")
 
-        assert avg_time < 500, f"Average response time {avg_time}ms exceeds 500ms threshold"
+        assert (
+            avg_time < 500
+        ), f"Average response time {avg_time}ms exceeds 500ms threshold"
+
 
 @pytest.mark.performance
 class TestThroughputBenchmark:
@@ -165,6 +173,7 @@ class TestThroughputBenchmark:
         print(f"  Duration: {duration:.2f}s")
         print(f"  Throughput: {throughput:.2f} req/s")
 
+
 @pytest.mark.performance
 class TestMemoryProfile:
     """Memory usage profile during requests"""
@@ -209,6 +218,7 @@ class TestMemoryProfile:
                 print(f"  Completed {i} requests")
 
         print(f"\nMemory test: 100 /note-game requests completed successfully")
+
 
 @pytest.mark.performance
 class TestLoadHandling:

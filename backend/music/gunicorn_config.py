@@ -44,37 +44,44 @@ tmp_upload_dir = None
 
 # Logging
 accesslog = "-"  # Log to stdout
-errorlog = "-"   # Log to stderr
+errorlog = "-"  # Log to stderr
 loglevel = LOG_LEVEL
 access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" %(D)s'
 
 # Process Naming
 proc_name = "music-service"
 
+
 # Server Hooks
 def post_fork(server, worker):
     """Called after worker process has been forked."""
     server.log.info("Worker spawned (pid: %s)", worker.pid)
 
+
 def pre_fork(server, worker):
     """Called before worker process is forked."""
     pass
+
 
 def pre_exec(server):
     """Called before the new master process is forked."""
     server.log.info("Forking new master process")
 
+
 def when_ready(server):
     """Called when the server is ready. Logs startup message."""
     server.log.info("Server is ready. Spawning workers")
+
 
 def worker_int(worker):
     """Called when a worker receives the SIGINT signal."""
     worker.log.info("Worker received INT")
 
+
 def worker_abort(worker):
     """Called when a worker receives the SIGABRT signal."""
     worker.log.info("Worker received SIGABRT")
+
 
 # Environment-specific settings
 if ENVIRONMENT == "development":

@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from fastapi import status
 import json
 
+
 class TestNoteGameEndpointHappyPath:
     """Test /note-game endpoint with valid inputs"""
 
@@ -19,8 +20,9 @@ class TestNoteGameEndpointHappyPath:
 
         for payload in valid_payloads:
             response = client.post("/note-game", json=payload)
-            assert response.status_code == status.HTTP_200_OK, \
-                f"Failed for payload {payload}: got {response.status_code}"
+            assert (
+                response.status_code == status.HTTP_200_OK
+            ), f"Failed for payload {payload}: got {response.status_code}"
 
     def test_note_game_returns_json_content_type(self, client):
         """Response should have application/json content type"""
@@ -83,8 +85,9 @@ class TestNoteGameEndpointHappyPath:
             assert response.status_code == 200
 
             data = response.json()
-            assert data["noteOctave"] == octave, \
-                f"Expected octave {octave}, got {data['noteOctave']}"
+            assert (
+                data["noteOctave"] == octave
+            ), f"Expected octave {octave}, got {data['noteOctave']}"
 
     def test_note_game_different_scales(self, client):
         """Test with various scale notes"""
@@ -97,6 +100,7 @@ class TestNoteGameEndpointHappyPath:
             data = response.json()
             assert "noteName" in data
             assert len(data["noteName"]) in [1, 2]
+
 
 class TestNoteGameResponseFormat:
     """Test /note-game response format and structure"""
@@ -142,8 +146,10 @@ class TestNoteGameResponseFormat:
         actual_fields = set(data.keys())
 
         # Should not have unexpected fields
-        assert actual_fields == expected_fields, \
-            f"Unexpected fields: {actual_fields - expected_fields}"
+        assert (
+            actual_fields == expected_fields
+        ), f"Unexpected fields: {actual_fields - expected_fields}"
+
 
 class TestNoteGameRandomness:
     """Test /note-game randomness and variety"""
@@ -155,15 +161,18 @@ class TestNoteGameRandomness:
 
         notes = []
         for _ in range(10):
-            response = client.post("/note-game", json={"scale": scale, "octave": octave})
+            response = client.post(
+                "/note-game", json={"scale": scale, "octave": octave}
+            )
             assert response.status_code == 200
             data = response.json()
             notes.append(data["noteName"])
 
         # With 7 diatonic notes, we should see at least some variation
         unique_notes = set(notes)
-        assert len(unique_notes) > 1, \
-            f"Expected variation in generated notes, got only: {unique_notes}"
+        assert (
+            len(unique_notes) > 1
+        ), f"Expected variation in generated notes, got only: {unique_notes}"
 
     def test_note_game_respects_scale_tonality(self, client):
         """Generated notes should be diatonic to the requested scale"""
@@ -182,8 +191,10 @@ class TestNoteGameRandomness:
             notes_generated.add(base_note)
 
         # All base notes should be from C major scale
-        assert notes_generated.issubset(c_major_notes), \
-            f"Generated notes not in C major scale: {notes_generated}"
+        assert notes_generated.issubset(
+            c_major_notes
+        ), f"Generated notes not in C major scale: {notes_generated}"
+
 
 class TestNoteGameErrorHandling:
     """Test /note-game error handling"""
@@ -194,13 +205,15 @@ class TestNoteGameErrorHandling:
 
         for scale in invalid_scales:
             response = client.post("/note-game", json={"scale": scale, "octave": "4"})
-            assert response.status_code == status.HTTP_400_BAD_REQUEST, \
-                f"Expected 400 for scale {scale}, got {response.status_code}"
+            assert (
+                response.status_code == status.HTTP_400_BAD_REQUEST
+            ), f"Expected 400 for scale {scale}, got {response.status_code}"
 
             # Verify error message contains expected pattern
             error_msg = response.text
-            assert "something is not right" in error_msg.lower(), \
-                f"Error message doesn't match expected pattern: {error_msg}"
+            assert (
+                "something is not right" in error_msg.lower()
+            ), f"Error message doesn't match expected pattern: {error_msg}"
 
     def test_note_game_invalid_octave_returns_400(self, client):
         """Invalid octaves should return 400"""
@@ -209,38 +222,47 @@ class TestNoteGameErrorHandling:
         for octave in invalid_octaves:
             response = client.post("/note-game", json={"scale": "C", "octave": octave})
             # Should be 400 or 200 depending on music21 support
-            assert response.status_code in [200, 400], \
-                f"Unexpected status {response.status_code} for octave {octave}"
+            assert response.status_code in [
+                200,
+                400,
+            ], f"Unexpected status {response.status_code} for octave {octave}"
 
     def test_note_game_invalid_octave_type_returns_422(self, client):
         """Non-string octave should fail validation"""
         response = client.post("/note-game", json={"scale": "C", "octave": 4})
-        assert response.status_code in [400, 422], \
-            f"Expected validation error for octave as int, got {response.status_code}"
+        assert response.status_code in [
+            400,
+            422,
+        ], f"Expected validation error for octave as int, got {response.status_code}"
 
     def test_note_game_missing_scale_returns_422(self, client):
         """Missing scale field should return validation error"""
         response = client.post("/note-game", json={"octave": "4"})
-        assert response.status_code == 422, \
-            f"Expected 422 for missing scale, got {response.status_code}"
+        assert (
+            response.status_code == 422
+        ), f"Expected 422 for missing scale, got {response.status_code}"
 
     def test_note_game_missing_octave_returns_422(self, client):
         """Missing octave field should return validation error"""
         response = client.post("/note-game", json={"scale": "C"})
-        assert response.status_code == 422, \
-            f"Expected 422 for missing octave, got {response.status_code}"
+        assert (
+            response.status_code == 422
+        ), f"Expected 422 for missing octave, got {response.status_code}"
 
     def test_note_game_empty_payload_returns_422(self, client):
         """Empty payload should return validation error"""
         response = client.post("/note-game", json={})
-        assert response.status_code == 422, \
-            f"Expected 422 for empty payload, got {response.status_code}"
+        assert (
+            response.status_code == 422
+        ), f"Expected 422 for empty payload, got {response.status_code}"
 
     def test_note_game_extra_fields_ignored(self, client):
         """Extra fields should be ignored"""
-        response = client.post("/note-game", json={"scale": "C", "octave": "4", "extra": "field"})
-        assert response.status_code == 200, \
-            "Extra fields should be ignored"
+        response = client.post(
+            "/note-game", json={"scale": "C", "octave": "4", "extra": "field"}
+        )
+        assert response.status_code == 200, "Extra fields should be ignored"
+
 
 class TestNoteGameContentType:
     """Test /note-game content type handling"""

@@ -1,6 +1,7 @@
 import pytest
 from fastapi import status
 
+
 @pytest.mark.integration
 class TestAllEndpointsAccessible:
     """Test that all endpoints are accessible"""
@@ -12,13 +13,16 @@ class TestAllEndpointsAccessible:
 
     def test_random_endpoint_accessible(self, client):
         """Verify /random endpoint exists and accepts requests"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"}
+        )
         assert response.status_code != 404
 
     def test_note_game_endpoint_accessible(self, client):
         """Verify /note-game endpoint exists and accepts requests"""
         response = client.post("/note-game", json={"scale": "C", "octave": "4"})
         assert response.status_code != 404
+
 
 @pytest.mark.integration
 class TestEndpointErrorConsistency:
@@ -34,8 +38,9 @@ class TestEndpointErrorConsistency:
 
         for endpoint, expected_status in endpoints:
             response = client.post(endpoint, json={})
-            assert response.status_code == expected_status, \
-                f"Endpoint {endpoint} returned {response.status_code}, expected {expected_status}"
+            assert (
+                response.status_code == expected_status
+            ), f"Endpoint {endpoint} returned {response.status_code}, expected {expected_status}"
 
     def test_all_endpoints_return_errors_not_500(self, client):
         """All endpoints should return 400/422, not 500 for bad input"""
@@ -47,8 +52,11 @@ class TestEndpointErrorConsistency:
 
         for endpoint, payload in test_cases:
             response = client.post(endpoint, json=payload)
-            assert response.status_code in [400, 422], \
-                f"Endpoint {endpoint} returned {response.status_code} for bad input, expected 400/422"
+            assert response.status_code in [
+                400,
+                422,
+            ], f"Endpoint {endpoint} returned {response.status_code} for bad input, expected 400/422"
+
 
 @pytest.mark.integration
 class TestMultipleRequestsHandling:
@@ -63,7 +71,9 @@ class TestMultipleRequestsHandling:
     def test_random_multiple_sequential_requests(self, client):
         """Multiple sequential requests to /random should all succeed"""
         for i in range(5):
-            response = client.post("/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"})
+            response = client.post(
+                "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"}
+            )
             assert response.status_code == 200, f"Request {i} failed"
 
     def test_note_game_multiple_sequential_requests(self, client):
@@ -84,8 +94,10 @@ class TestMultipleRequestsHandling:
 
         for method, endpoint, payload in payloads:
             response = client.post(endpoint, json=payload)
-            assert response.status_code == 200, \
-                f"Failed to call {endpoint} with {payload}"
+            assert (
+                response.status_code == 200
+            ), f"Failed to call {endpoint} with {payload}"
+
 
 @pytest.mark.integration
 class TestResponseConsistency:
@@ -102,7 +114,9 @@ class TestResponseConsistency:
     def test_random_consistent_response_format(self, client):
         """Multiple /random calls should have consistent response format"""
         for _ in range(3):
-            response = client.post("/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"})
+            response = client.post(
+                "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"}
+            )
             assert response.status_code == 200
             assert response.headers["content-type"] == "application/xml"
             assert isinstance(response.content, bytes)
@@ -119,6 +133,7 @@ class TestResponseConsistency:
             assert "noteName" in data
             assert "noteOctave" in data
 
+
 @pytest.mark.integration
 class TestEndpointIndependence:
     """Test that endpoints don't interfere with each other"""
@@ -130,7 +145,9 @@ class TestEndpointIndependence:
         assert response1.status_code == 200
 
         # Call /random
-        response2 = client.post("/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"})
+        response2 = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"}
+        )
         assert response2.status_code == 200
 
         # Call /mary again with different input
@@ -139,6 +156,7 @@ class TestEndpointIndependence:
 
         # First and third responses should be different (different input)
         assert response1.content != response3.content
+
 
 @pytest.mark.integration
 class TestConcurrentLikeRequests:
@@ -159,7 +177,9 @@ class TestConcurrentLikeRequests:
         """Rapid sequential requests to /random"""
         responses = []
         for _ in range(10):
-            response = client.post("/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"})
+            response = client.post(
+                "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"}
+            )
             assert response.status_code == 200
             responses.append(response)
 

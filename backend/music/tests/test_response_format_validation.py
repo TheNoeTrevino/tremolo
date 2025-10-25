@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from fastapi import status
 import json
 
+
 @pytest.mark.unit
 class TestMaryResponseFormat:
     """Validate /mary response format details"""
@@ -61,26 +62,33 @@ class TestMaryResponseFormat:
             content_length = int(response.headers["content-length"])
             assert content_length == len(response.content)
 
+
 @pytest.mark.unit
 class TestRandomResponseFormat:
     """Validate /random response format details"""
 
     def test_random_response_content_type_exactly_xml(self, client):
         """Content-Type should be application/xml"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"}
+        )
         assert response.status_code == 200
         ct = response.headers.get("content-type", "")
         assert ct == "application/xml"
 
     def test_random_response_is_bytes_not_string(self, client):
         """Response content should be bytes"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"}
+        )
         assert response.status_code == 200
         assert isinstance(response.content, bytes)
 
     def test_random_xml_is_well_formed(self, client):
         """XML must be well-formed"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"}
+        )
         assert response.status_code == 200
         try:
             ET.fromstring(response.content)
@@ -89,7 +97,9 @@ class TestRandomResponseFormat:
 
     def test_random_xml_size_reasonable(self, client):
         """Response size should be reasonable"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"}
+        )
         assert response.status_code == 200
         size = len(response.content)
         assert size > 100, "Response too small"
@@ -97,10 +107,13 @@ class TestRandomResponseFormat:
 
     def test_random_xml_has_root_element(self, client):
         """XML should have valid root element"""
-        response = client.post("/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"})
+        response = client.post(
+            "/random", json={"rhythm": "1111", "rhythmType": 16, "tonic": "C"}
+        )
         assert response.status_code == 200
         root = ET.fromstring(response.content)
         assert root is not None
+
 
 @pytest.mark.unit
 class TestNoteGameResponseFormat:
@@ -131,8 +144,9 @@ class TestNoteGameResponseFormat:
 
         required_keys = {"generatedXml", "noteName", "noteOctave"}
         actual_keys = set(data.keys())
-        assert actual_keys == required_keys, \
-            f"Keys mismatch. Expected {required_keys}, got {actual_keys}"
+        assert (
+            actual_keys == required_keys
+        ), f"Keys mismatch. Expected {required_keys}, got {actual_keys}"
 
     def test_note_game_all_fields_are_strings(self, client):
         """All fields should be strings"""

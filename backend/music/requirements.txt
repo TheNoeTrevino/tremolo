@@ -1,5 +1,5 @@
 fastapi
-"fastapi[standard]"
+fastapi[standard]
 uvicorn
 music21
 pydantic
@@ -7,6 +7,6 @@ pytest
 httpx
 black
 flake8
-python-dotenv
-pytest-cov
+python - dotenv
+pytest - cov
 gunicorn

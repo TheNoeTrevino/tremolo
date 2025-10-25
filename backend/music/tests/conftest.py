@@ -14,6 +14,7 @@ def client():
     Creates a fresh client for each test to ensure isolation.
     """
     from main import app
+
     return TestClient(app)
 
 
@@ -76,10 +77,18 @@ def invalid_payloads():
             {"rhythm": "9999", "rhythmType": 16, "tonic": "C"},  # Invalid rhythm (9s)
             {"rhythm": "2222", "rhythmType": 16, "tonic": "C"},  # Invalid rhythm (2s)
             {"rhythm": "1111", "rhythmType": 32, "tonic": "C"},  # Invalid rhythmType
-            {"rhythm": "111", "rhythmType": 16, "tonic": "C"},  # Wrong length for type 16
+            {
+                "rhythm": "111",
+                "rhythmType": 16,
+                "tonic": "C",
+            },  # Wrong length for type 16
             {"rhythm": "1111", "rhythmType": 16},  # Missing tonic
             {},  # Missing all fields
-            {"rhythm": "11", "rhythmType": 16, "tonic": "C"},  # Wrong length for type 16
+            {
+                "rhythm": "11",
+                "rhythmType": 16,
+                "tonic": "C",
+            },  # Wrong length for type 16
         ],
         "note_game": [
             {"scale": "H", "octave": "4"},  # Invalid scale
@@ -112,13 +121,27 @@ def valid_note_names():
     Set of valid note names (natural, flat, sharp) for validation.
     """
     return {
-        "C", "C#", "C-",
-        "D", "D#", "D-",
-        "E", "E#", "E-",
-        "F", "F#", "F-",
-        "G", "G#", "G-",
-        "A", "A#", "A-",
-        "B", "B#", "B-",
+        "C",
+        "C#",
+        "C-",
+        "D",
+        "D#",
+        "D-",
+        "E",
+        "E#",
+        "E-",
+        "F",
+        "F#",
+        "F-",
+        "G",
+        "G#",
+        "G-",
+        "A",
+        "A#",
+        "A-",
+        "B",
+        "B#",
+        "B-",
     }
 
 
@@ -196,8 +219,16 @@ def invalid_random_payloads():
         {"rhythm": "1111", "rhythmType": 32, "tonic": "C"},  # Invalid rhythmType
         {"rhythm": "1111", "rhythmType": 16},  # Missing tonic
         {"rhythm": "1111", "rhythmType": 16, "tonic": "H"},  # Invalid tonic
-        {"rhythm": "111", "rhythmType": 16, "tonic": "C"},  # Wrong rhythm length for type 16
-        {"rhythm": "111", "rhythmType": 8, "tonic": "C"},  # Wrong rhythm length for type 8
+        {
+            "rhythm": "111",
+            "rhythmType": 16,
+            "tonic": "C",
+        },  # Wrong rhythm length for type 16
+        {
+            "rhythm": "111",
+            "rhythmType": 8,
+            "tonic": "C",
+        },  # Wrong rhythm length for type 8
         {},  # Missing all fields
     ]
 
