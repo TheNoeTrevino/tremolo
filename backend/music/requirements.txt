@@ -1,7 +1,12 @@
-django
-djangorestframework
-django-cors-headers
+fastapi
+"fastapi[standard]"
+uvicorn
 music21
-gunicorn
+pydantic
+pytest
+httpx
 black
 flake8
+python-dotenv
+pytest-cov
+gunicorn
