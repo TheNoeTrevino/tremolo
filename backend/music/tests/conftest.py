@@ -74,9 +74,21 @@ def invalid_payloads():
             {"octave": 4},  # Missing tonic
         ],
         "random": [
-            {"rhythm": "9999", "rhythmType": 16, "tonic": "C"},  # Invalid rhythm (9s)
-            {"rhythm": "2222", "rhythmType": 16, "tonic": "C"},  # Invalid rhythm (2s)
-            {"rhythm": "1111", "rhythmType": 32, "tonic": "C"},  # Invalid rhythmType
+            {
+                "rhythm": "9999",
+                "rhythmType": 16,
+                "tonic": "C",
+            },  # Invalid rhythm (9s)
+            {
+                "rhythm": "2222",
+                "rhythmType": 16,
+                "tonic": "C",
+            },  # Invalid rhythm (2s)
+            {
+                "rhythm": "1111",
+                "rhythmType": 32,
+                "tonic": "C",
+            },  # Invalid rhythmType
             {
                 "rhythm": "111",
                 "rhythmType": 16,
@@ -215,8 +227,16 @@ def invalid_mary_payloads():
 def invalid_random_payloads():
     """Invalid payloads for /random endpoint"""
     return [
-        {"rhythm": "9999", "rhythmType": 16, "tonic": "C"},  # Invalid rhythm digits
-        {"rhythm": "1111", "rhythmType": 32, "tonic": "C"},  # Invalid rhythmType
+        {
+            "rhythm": "9999",
+            "rhythmType": 16,
+            "tonic": "C",
+        },  # Invalid rhythm digits
+        {
+            "rhythm": "1111",
+            "rhythmType": 32,
+            "tonic": "C",
+        },  # Invalid rhythmType
         {"rhythm": "1111", "rhythmType": 16},  # Missing tonic
         {"rhythm": "1111", "rhythmType": 16, "tonic": "H"},  # Invalid tonic
         {
