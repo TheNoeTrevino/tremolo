@@ -41,8 +41,6 @@ npm install && npm run dev
 
 #### Music generation microservice
 
-TODO: put deps in requirements.txt
-
 ``` bash
 
 cd backend/music
@@ -53,9 +51,7 @@ source env/bin/activate
 
 pip install -r requirements.txt
 
-python3 manage.py migrate
-
-python3 manage.py runserver
+fastapi dev main.py 
 
 ```
 

@@ -1,7 +1,6 @@
-from enum import Enum
-import enum
 from pathlib import Path
-import os, tempfile
+import os
+import tempfile
 from typing import Union
 
 from music21 import instrument, metadata
@@ -10,7 +9,7 @@ from music21.stream.base import Stream
 
 
 def get_xml_file(stream: Stream) -> bytes:
-    """Takes in a stream and converts it to xml, which is returned"""
+    """Takes in a stream, returns it as xml"""
     stream = clean_stream(stream)
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as tmp_file:
@@ -35,7 +34,7 @@ def midi_to_xml(file: Union[bytes, Path]):
     return get_xml_file(score)
 
 
-# NOTE: not used, as xml is all we really need
+# NOTE: not used, xml is all we really need
 def get_midi_file(stream: Stream) -> bytes:
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mid") as tmp_file:
