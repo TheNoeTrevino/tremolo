@@ -1,10 +1,12 @@
 #!/bin/sh
 
+# Frontend Precommit
 if git diff --cached --name-only | grep -q "^frontend/"; then
   echo "🧹 Running Prettier on frontend files..."
   cd frontend && npx lint-staged
 fi
 
+# Music Service Precommit
 if git diff --cached --name-only | grep -q "^backend/music/"; then
   echo "🐍 Checking Python code formatting..."
 
@@ -47,6 +49,7 @@ if git diff --cached --name-only | grep -q "^backend/music/"; then
   fi
 fi
 
+# User Service Precommit
 if git diff --cached --name-only | grep -q "^backend/main/"; then
   echo "🔧 Checking Go code formatting..."
 
