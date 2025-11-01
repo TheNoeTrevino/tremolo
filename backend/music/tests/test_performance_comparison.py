@@ -218,7 +218,6 @@ class TestMemoryProfile:
         print("\nMemory test: 100 /note-game requests completed successfully")
 
 
-
 @pytest.mark.performance
 class TestLoadHandling:
     """Test behavior under load"""
