@@ -3,22 +3,22 @@ package dtos
 import (
 	"database/sql"
 	"errors"
-	"strings"
-
 	"sight-reading/validations"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 )
 
 type User struct {
-	ID          *int16         `db:"id" json:"id"`
-	FirstName   string         `db:"first_name" json:"first_name" validate:"required,alpha,len255"`
-	LastName    string         `db:"last_name" json:"last_name" validate:"required,alpha,len255"`
-	Role        Role           `db:"role" json:"role" validate:"required,role"`
-	Email       string         `db:"email" json:"email" validate:"required,email,len255"`
-	CreatedDate sql.NullString `db:"created_date" json:"created_date"`
-	CreatedTime sql.NullString `db:"created_time" json:"created_time"`
-	SchoolID    int16          `db:"school_id" json:"school_id" validate:"required,number"`
+	ID           *int16         `db:"id" json:"id"`
+	FirstName    string         `db:"first_name" json:"first_name" validate:"required,alpha,len255"`
+	LastName     string         `db:"last_name" json:"last_name" validate:"required,alpha,len255"`
+	Role         Role           `db:"role" json:"role" validate:"required,role"`
+	Email        string         `db:"email" json:"email" validate:"required,email,len255"`
+	PasswordHash string         `db:"password" json:"-"`
+	CreatedDate  sql.NullString `db:"created_date" json:"created_date"`
+	CreatedTime  sql.NullString `db:"created_time" json:"created_time"`
+	SchoolID     int16          `db:"school_id" json:"school_id" validate:"required,number"`
 }
 
 type Role string
