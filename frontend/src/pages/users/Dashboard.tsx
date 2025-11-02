@@ -8,14 +8,22 @@ import {
 	OutlinedInput,
 	SxProps,
 	Typography,
+	Chip,
+	Button,
+	Container,
 } from "@mui/material";
 import ThreeLinedGraph from "../../components/data-visualization/ThreeLinedGraph";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+
+// TODO: use the charts.js package instead of the mui charts. Like monkey type
+// Also go an uninstall/install the packages
 
 const mainDiv: SxProps = {
 	display: "flex",
 	flexDirection: "column",
-	p: "1rem",
+	p: { xs: "0.5rem", sm: "1rem", md: "2rem" },
 };
 
 const graphStyles: SxProps = {
@@ -40,56 +48,137 @@ const dataLineThree = [
 ];
 
 const Dashboard = () => {
+	const { currentUser, logout } = useAuth();
+	const navigate = useNavigate();
+
+	const handleLogout = () => {
+		logout();
+		navigate("/login");
+	};
+
+	const getRoleColor = (
+		role: string,
+	): "primary" | "secondary" | "success" | "error" | "info" | "warning" => {
+		switch (role) {
+			case "teacher":
+				return "primary";
+			case "student":
+				return "success";
+			case "parent":
+				return "info";
+			default:
+				return "secondary";
+		}
+	};
+
 	return (
 		<Fade in={true}>
-			<Box sx={mainDiv}>
-				<Typography variant={"h1"}>Name</Typography>
-				<div>Dashboard</div>
-				<Box
-					sx={{
-						display: "flex",
-						flexDirection: "row",
-						justifyContent: "space-evenly",
-						gap: "1rem",
-					}}
-				>
-					<ThreeLinedGraph
-						sx={graphStyles}
-						lineOne={dataLineOne}
-						lineTwo={dataLineTwo}
-						lineThree={dataLineThree}
-					/>
-					<Card variant="outlined" sx={graphStyles}>
-						<CardContent>
-							<Typography>Hello</Typography>
-						</CardContent>
-					</Card>
-				</Box>
-				<Box>
-					<Typography variant="h4">
-						Name: xxx, Number of students: xxx
+			<Container maxWidth="xl">
+				<Box sx={mainDiv}>
+					{currentUser && (
+						<Box
+							sx={{
+								mb: 3,
+								display: "flex",
+								flexDirection: { xs: "column", sm: "row" },
+								justifyContent: "space-between",
+								alignItems: { xs: "flex-start", sm: "center" },
+								gap: 2,
+							}}
+						>
+							<Box>
+								<Typography
+									variant="h3"
+									sx={{
+										fontWeight: 600,
+										mb: 1,
+										fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+									}}
+								>
+									Welcome, {currentUser.first_name} {currentUser.last_name}!
+								</Typography>
+								<Chip
+									label={currentUser.role.toUpperCase()}
+									color={getRoleColor(currentUser.role)}
+									size="medium"
+									sx={{ fontWeight: 600 }}
+								/>
+							</Box>
+							<Button
+								variant="outlined"
+								color="error"
+								onClick={handleLogout}
+								sx={{ alignSelf: { xs: "stretch", sm: "center" } }}
+							>
+								Logout
+							</Button>
+						</Box>
+					)}
+
+					<Typography variant="h5" sx={{ mb: 2, fontWeight: 500 }}>
+						Dashboard
 					</Typography>
-				</Box>
-				<FormControl
-					sx={{ width: { xs: "100%", md: "25ch" } }}
-					variant="outlined"
-				>
-					<OutlinedInput
-						size="small"
-						id="search"
-						placeholder="Search…"
-						sx={{ flexGrow: 1 }}
-						startAdornment={
-							<InputAdornment position="start" sx={{ color: "text.primary" }}>
-								<SearchRoundedIcon fontSize="small" />
-							</InputAdornment>
-						}
-						inputProps={{
-							"aria-label": "search",
+
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: { xs: "column", md: "row" },
+							justifyContent: "space-evenly",
+							gap: "1rem",
+							mb: 3,
 						}}
-					/>
-				</FormControl>
-			</Box>
+					>
+						<ThreeLinedGraph
+							sx={graphStyles}
+							lineOne={dataLineOne}
+							lineTwo={dataLineTwo}
+							lineThree={dataLineThree}
+						/>
+						<Card variant="outlined" sx={graphStyles}>
+							<CardContent>
+								<Typography variant="h6" gutterBottom>
+									Quick Stats
+								</Typography>
+								<Typography variant="body2" color="text.secondary">
+									More features coming soon...
+								</Typography>
+							</CardContent>
+						</Card>
+					</Box>
+
+					{currentUser && currentUser.role === "teacher" && (
+						<Box sx={{ mb: 3 }}>
+							<Typography variant="h6" sx={{ mb: 1 }}>
+								Teacher Dashboard
+							</Typography>
+							<Typography variant="body1" color="text.secondary">
+								Name: {currentUser.first_name} {currentUser.last_name} | Number
+								of students: Coming soon
+							</Typography>
+						</Box>
+					)}
+
+					<FormControl
+						sx={{ width: { xs: "100%", md: "25ch" } }}
+						variant="outlined"
+					>
+						<OutlinedInput
+							size="small"
+							id="search"
+							placeholder="Search…"
+							sx={{ flexGrow: 1 }}
+							startAdornment={
+								<InputAdornment position="start" sx={{ color: "text.primary" }}>
+									<SearchRoundedIcon fontSize="small" />
+								</InputAdornment>
+							}
+							inputProps={{
+								"aria-label": "search",
+							}}
+						/>
+					</FormControl>
+				</Box>
+			</Container>
 		</Fade>
 	);
 };
