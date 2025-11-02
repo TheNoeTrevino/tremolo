@@ -1,3 +1,5 @@
+// Package logger container the configuration for the global logger.
+// Uses environment variable to set the log level, and format.
 package logger
 
 import (

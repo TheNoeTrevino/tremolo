@@ -1,3 +1,5 @@
+// Package validations contains any form of validations that the application
+// uses. This is currently not true and maybe we need to rename this module
 package validations
 
 import (
@@ -26,7 +28,7 @@ func VarChar255Length(fl validator.FieldLevel) bool {
 	}
 }
 
-// youtube custom validation
+// UserRole youtube custom validation
 func UserRole(fl validator.FieldLevel) bool {
 	switch fl.Field().String() {
 	case "TEACHER", "STUDENT", "ADMIN":

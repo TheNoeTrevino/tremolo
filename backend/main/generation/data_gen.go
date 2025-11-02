@@ -1,3 +1,4 @@
+// Package generation contains the scripting to generate mock data for our local database
 package generation
 
 import (

@@ -1,3 +1,6 @@
+// Package middleware contains all the middleware that the application uses.
+// Current middleware:
+// - JWT Auth
 package middleware
 
 import (

@@ -1,3 +1,5 @@
+// Package dtos contains most of the Data Transfer Objects in this application.
+// TODO: move validation out of this package into its own package
 package dtos
 
 import (
