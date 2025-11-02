@@ -7,6 +7,7 @@ import (
 	"math/rand/v2"
 
 	dtos "sight-reading/DTOs"
+	"sight-reading/services"
 
 	"github.com/manveru/faker"
 )
@@ -63,21 +64,30 @@ func generateFakeSchool() dtos.School {
 	}
 }
 
-func generateFakeUser(role dtos.Role, schoolId int16) dtos.User {
+func generateFakeUser(role dtos.Role, schoolID int16) dtos.User {
 	fakeFirstName := fake.FirstName()
-	fakeLastName := fake.LastName()
+	fakeLastName := fake.LastName() + "x" // TODO: why is this empty sometimes?
 	fakeEmail := fakeFirstName + "." + fakeLastName + "@email.com"
-	user := dtos.User{
-		FirstName:   fakeFirstName,
-		LastName:    fakeLastName,
-		Email:       fakeEmail,
-		Role:        role,
-		SchoolID:    schoolId,
-		CreatedDate: generateFakeDateCreated(),
-		CreatedTime: generateFakeTimeCreated(),
+
+	// Hash the default password "password123" for all fake users
+	passwordHash, err := services.HashPassword("password123")
+	if err != nil {
+		log.Printf("Failed to hash password: %v", err)
+		return dtos.User{}
 	}
 
-	err := user.ValidateUser()
+	user := dtos.User{
+		FirstName:    fakeFirstName,
+		LastName:     fakeLastName,
+		Email:        fakeEmail,
+		PasswordHash: passwordHash,
+		Role:         role,
+		SchoolID:     schoolID,
+		CreatedDate:  generateFakeDateCreated(),
+		CreatedTime:  generateFakeTimeCreated(),
+	}
+
+	err = user.ValidateUser()
 	if err != nil {
 		// TODO: better error handling
 		log.Printf("User validation failed: %v", err)
@@ -88,7 +98,7 @@ func generateFakeUser(role dtos.Role, schoolId int16) dtos.User {
 }
 
 func generateFakeEntryTimeLength() string {
-	hourAmount := rand.IntN(1)
+	hourAmount := rand.IntN(2)
 	minutes := rand.IntN(60)
 	seconds := rand.IntN(60)
 
