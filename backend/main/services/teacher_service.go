@@ -2,10 +2,10 @@ package services
 
 import (
 	"net/http"
+	"sight-reading/database"
 	"strconv"
 
 	dtos "sight-reading/DTOs"
-	"sight-reading/database"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,6 +33,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
+	// language: sql
 	query := `
   INSERT INTO users (
     first_name,
