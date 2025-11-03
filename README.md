@@ -23,6 +23,11 @@ https://github.com/user-attachments/assets/63a7100e-a79c-4aca-be35-3089c9ec1d7d
 
   export VITE_BACKEND_MAIN="http://localhost:5001" # default local setup
   export VITE_BACKEND_MUSIC="http://localhost:8000" # default local setup
+
+  export LOG_LEVEL=DEBUG # or WARN/ERROR/DEBUG
+  export LOG_FORMAT=json # or text  
+
+  export JWT_SECRET="your-very-secure-random-string-at-least-32-characters"
 ```
 
 ### Serve it locally

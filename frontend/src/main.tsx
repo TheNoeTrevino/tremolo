@@ -13,6 +13,9 @@ import Profile from "./pages/users/Profile";
 import Dashboard from "./pages/users/Dashboard";
 import Logout from "./pages/users/Logout";
 import Converter from "./pages/Converter.tsx";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const router = createBrowserRouter([
 	{
@@ -23,6 +26,14 @@ const router = createBrowserRouter([
 			{
 				path: "/",
 				element: <HomePage />,
+			},
+			{
+				path: "/login",
+				element: <LoginPage />,
+			},
+			{
+				path: "/signup",
+				element: <SignupPage />,
 			},
 			{
 				path: "/about",
@@ -42,15 +53,27 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/profile",
-				element: <Profile />,
+				element: (
+					<ProtectedRoute>
+						<Profile />
+					</ProtectedRoute>
+				),
 			},
 			{
 				path: "/dashboard",
-				element: <Dashboard />,
+				element: (
+					<ProtectedRoute>
+						<Dashboard />
+					</ProtectedRoute>
+				),
 			},
 			{
 				path: "/account",
-				element: <Account />,
+				element: (
+					<ProtectedRoute>
+						<Account />
+					</ProtectedRoute>
+				),
 			},
 			{
 				path: "/logout",

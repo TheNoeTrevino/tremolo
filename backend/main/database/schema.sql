@@ -14,8 +14,9 @@ create table users (
     first_name varchar(255) not null,
     last_name varchar(255) not null,
     role varchar(255),
-    email varchar(255),
-    school_id int references schools (id) not null,
+    email varchar(255) unique,
+    password varchar(255) not null,
+    school_id int references schools (id),
     created_date date default current_date,
     created_time time default current_time
 );
@@ -31,19 +32,20 @@ create table note_game_entries (
     created_time time default current_time
 );
 
-create table teacher_to_parent (
+-- join tables
+create table teacher_parent (
     teacher_id int not null references users (id),
     parent_id int not null references users (id),
     primary key (teacher_id, parent_id)
 );
 
-create table teacher_to_student (
+create table teacher_student (
     teacher_id int not null references users (id),
     student_id int not null references users (id),
     primary key (teacher_id, student_id)
 );
 
-create table parent_to_child (
+create table parent_child (
     parent_id int not null references users (id),
     child_id int not null references users (id),
     primary key (parent_id, child_id)

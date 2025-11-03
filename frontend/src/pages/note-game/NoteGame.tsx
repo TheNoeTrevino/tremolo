@@ -8,7 +8,7 @@ import {
 	useTheme,
 	useMediaQuery,
 } from "@mui/material";
-import { useState, MouseEvent, useEffect, useRef } from "react";
+import { useState, MouseEvent, useEffect, useRef, useCallback } from "react";
 import { MusicService } from "../../services/MusicService";
 import { noteGameStyles } from "./NoteGameStyles";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -70,16 +70,16 @@ const NoteGame = () => {
 	const openOctaveOptions = Boolean(octaveAnchorEl);
 	const totalOptions = [sharpOptions, naturalOptions, flatOptions];
 
-	async function fetchNote(): Promise<void> {
+	const fetchNote = useCallback(async (): Promise<void> => {
 		setNoteInformation(
 			await MusicService.getNoteGameXml(scaleChoice, octaveChoice),
 		);
-	}
+	}, [scaleChoice, octaveChoice]);
 
 	// FIX: this is getting ran twice
 	useEffect(() => {
 		fetchNote();
-	}, [scaleChoice, octaveChoice, totalCounter]);
+	}, [scaleChoice, octaveChoice, totalCounter, fetchNote]);
 
 	useEffect(() => {
 		if (!noteInformation) {

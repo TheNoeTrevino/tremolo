@@ -5,8 +5,9 @@ import (
 	"log"
 	"math/rand/v2"
 
-	dtos "sight-reading/DTOs"
 	"sight-reading/database"
+
+	dtos "sight-reading/DTOs"
 )
 
 func insertFakeEntry(userId int16) {
@@ -39,7 +40,7 @@ func insertFakeEntry(userId int16) {
 	entry := dtos.Entry{
 		TimeLength:       timeLength,
 		TotalQuestions:   totalQuestions,
-		CorrectQuestions: correctQuestions,
+		CorrectQuestions: correctQuestions + 1, // FIXME: why does this give us a null error sometimes without the +1? requires vs not null?
 		NPM:              int8(rand.IntN(100)),
 		UserID:           userId,
 		CreatedDate:      generateFakeDateCreated(),
@@ -85,7 +86,7 @@ func insertFakeSchools() string {
   RETURNING
     id
   `
-	for i := 0; i < 1000; i++ {
+	for range 1000 {
 		fakeSchool := generateFakeSchool()
 		result, err := database.DBClient.NamedExec(insertSchoolQuery, fakeSchool)
 		if err != nil {
@@ -104,55 +105,60 @@ func insertFakeTeacherWithStudents() dtos.User {
     first_name,
     last_name,
     school_id,
-    role
+    role,
+    email,
+    password
   )
   VALUES (
     :first_name,
     :last_name,
     :school_id,
-    :role
+    :role,
+    :email,
+    :password
   )
   RETURNING
     id
   `
 
-	schoolId := int16(rand.IntN(1000))
-	teacher := generateFakeUser("TEACHER", schoolId)
+	schoolID := int16(rand.IntN(1000))
+	teacher := generateFakeUser("TEACHER", schoolID)
 
 	rows, err := database.DBClient.NamedQuery(insertUserQuery, teacher)
 	if err != nil {
 		log.Panic("teacher was not added to the db", err.Error())
 	}
 
-	var teacherId int
+	var teacherID int
 	if rows.Next() {
-		err := rows.Scan(&teacherId)
+		err := rows.Scan(&teacherID)
 		if err != nil {
 			log.Panic("teacher id was not extracted properly", err.Error())
 		}
 	}
 
-	for i := 0; i < 20; i++ {
-		student := generateFakeUser("STUDENT", schoolId)
+	for range 20 {
+		student := generateFakeUser("STUDENT", schoolID)
+		log.Printf("student: %v", student.LastName)
 		rows, err := database.DBClient.NamedQuery(insertUserQuery, student)
 		if err != nil {
 			log.Panic("student was not added to the db", err.Error())
 		}
 
-		var studentId int
+		var studentID int
 		if rows.Next() {
-			err := rows.Scan(&studentId)
+			err := rows.Scan(&studentID)
 			if err != nil {
 				log.Panic("student id was not extracted properly", err.Error())
 			}
 		}
 
 		for i := 0; i < 10+rand.IntN(200); i++ {
-			insertFakeEntry(int16(studentId))
+			insertFakeEntry(int16(studentID))
 		}
 
 		associationQuery := `
-      INSERT INTO teacher_to_student (
+      INSERT INTO teacher_student (
         teacher_id,
         student_id
       )
@@ -162,8 +168,8 @@ func insertFakeTeacherWithStudents() dtos.User {
       )
     `
 		associationIds := fakeTeacherToStudent{
-			TeacherID: teacherId,
-			StudentID: studentId,
+			TeacherID: teacherID,
+			StudentID: studentID,
 		}
 
 		result, err := database.DBClient.NamedExec(associationQuery, associationIds)
