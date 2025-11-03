@@ -37,3 +37,14 @@ func UserRole(fl validator.FieldLevel) bool {
 
 	return false
 }
+
+func PasswordComplexity(fl validator.FieldLevel) bool {
+	password := fl.Field().String()
+
+	hasUpper := regexp.MustCompile(`[A-Z]`).MatchString(password)
+	hasLower := regexp.MustCompile(`[a-z]`).MatchString(password)
+	hasNumber := regexp.MustCompile(`[0-9]`).MatchString(password)
+	hasSpecial := regexp.MustCompile(`[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]`).MatchString(password)
+
+	return hasUpper && hasLower && hasNumber && hasSpecial
+}
