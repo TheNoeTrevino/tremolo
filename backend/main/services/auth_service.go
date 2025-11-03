@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"sight-reading/database"
 	"sight-reading/logger"
@@ -54,7 +55,7 @@ func Login(c *gin.Context) {
 		PasswordHash sql.NullString `db:"password"`
 	}
 
-	err = database.DBClient.Get(&user, query, reqBody.Email)
+	err = database.DBClient.Get(&user, query, normalizeEmail(reqBody.Email))
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// User not found - return generic error for security
@@ -187,7 +188,7 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	exists, err := checkIfUserExists(reqBody.Email)
+	exists, err := checkIfUserExists(normalizeEmail(reqBody.Email))
 	if err != nil {
 		logger.Error("Database error. Scenario: AS.2", "error", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -221,7 +222,7 @@ func Register(c *gin.Context) {
 
 	var newUser dtos.UserResponse
 	err = database.DBClient.QueryRowx(insertQuery,
-		reqBody.Email,
+		normalizeEmail(reqBody.Email), // lowercase it
 		passwordHash,
 		reqBody.FirstName,
 		reqBody.LastName,
@@ -235,7 +236,6 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	// Prepare response
 	response := dtos.RegisterResponse{
 		Message: "User created successfully",
 		User:    newUser,
@@ -259,4 +259,9 @@ func checkIfUserExists(email string) (bool, error) {
 		return false, fmt.Errorf("database error: %w", err)
 	}
 	return false, nil
+}
+
+// emails with different cases are considered different
+func normalizeEmail(email string) string {
+	return strings.ToLower(email)
 }
