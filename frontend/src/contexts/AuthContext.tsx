@@ -1,26 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { User } from "../models/models";
 import { AuthService } from "../services/AuthService";
-
-interface AuthContextType {
-	currentUser: User | null;
-	isAuthenticated: boolean;
-	loading: boolean;
-	login: (email: string, password: string) => Promise<void>;
-	logout: () => void;
-	refreshUser: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// FIXME: there is a linting error here
-export const useAuth = () => {
-	const context = useContext(AuthContext);
-	if (!context) {
-		throw new Error("useAuth must be used within an AuthProvider");
-	}
-	return context;
-};
+import { AuthContext, AuthContextType } from "./AuthContextDefinition";
 
 interface AuthProviderProps {
 	children: React.ReactNode;

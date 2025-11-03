@@ -15,7 +15,7 @@ import {
 	Link as MuiLink,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 
 const LoginPage: React.FC = () => {

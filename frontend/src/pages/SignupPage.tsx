@@ -21,7 +21,7 @@ import {
 	SelectChangeEvent,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthService } from "../services/AuthService";
 import { UserRole } from "../models/models";
@@ -435,7 +435,12 @@ const SignupPage: React.FC = () => {
 										<LinearProgress
 											variant="determinate"
 											value={passwordStrength}
-											color={getPasswordStrengthColor(passwordStrength) as any}
+											color={
+												getPasswordStrengthColor(passwordStrength) as
+													| "error"
+													| "warning"
+													| "success"
+											}
 											sx={{ height: 6, borderRadius: 1 }}
 										/>
 									</Box>

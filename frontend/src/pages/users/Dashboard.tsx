@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import ThreeLinedGraph from "../../components/data-visualization/ThreeLinedGraph";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 // TODO: use the charts.js package instead of the mui charts. Like monkey type
