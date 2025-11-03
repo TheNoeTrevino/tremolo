@@ -23,6 +23,10 @@ func InitJWTSecret() {
 		log.Panic("JWT Secret not found. Please read the README and add one.")
 	}
 
+	if len(secretStr) < 32 {
+		log.Panic("JWT_SECRET must be at least 32 characters long for security purposes: " + fmt.Sprint(len(secretStr)))
+	}
+
 	jwtSecret = []byte(secretStr)
 }
 
