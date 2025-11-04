@@ -14,6 +14,7 @@ import (
 	dtos "sight-reading/DTOs"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -89,11 +90,20 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Generate JWT token
-	token, err := middleware.GenerateToken(user.ID)
+	// Generate access token
+	accessToken, err := middleware.GenerateAccessToken(user.ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to generate token",
+			"error": "Failed to generate access token",
+		})
+		return
+	}
+
+	// Generate refresh token
+	refreshToken, err := middleware.GenerateRefreshToken(user.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to generate refresh token",
 		})
 		return
 	}
@@ -107,7 +117,8 @@ func Login(c *gin.Context) {
 			LastName:  user.LastName,
 			Role:      user.Role,
 		},
-		Token: token,
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 	}
 
 	c.JSON(http.StatusOK, response)
@@ -264,4 +275,56 @@ func checkIfUserExists(email string) (bool, error) {
 // emails with different cases are considered different
 func normalizeEmail(email string) string {
 	return strings.ToLower(email)
+}
+
+// RefreshToken validates a refresh token and generates a new access token
+func RefreshToken(c *gin.Context) {
+	var reqBody struct {
+		RefreshToken string `json:"refresh_token" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Refresh token is required",
+		})
+		return
+	}
+
+	// Parse and validate refresh token
+	claims := &middleware.Claims{}
+	token, err := jwt.ParseWithClaims(reqBody.RefreshToken, claims, func(token *jwt.Token) (interface{}, error) {
+		// Verify signing method
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return middleware.GetJWTSecret(), nil
+	})
+
+	if err != nil || !token.Valid {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Invalid refresh token",
+		})
+		return
+	}
+
+	// Verify it's actually a refresh token
+	if claims.TokenType != "refresh" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Invalid token type",
+		})
+		return
+	}
+
+	// Generate new access token
+	newAccessToken, err := middleware.GenerateAccessToken(claims.UserID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to generate access token",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"access_token": newAccessToken,
+	})
 }

@@ -66,8 +66,9 @@ type UserResponse struct {
 
 // LoginResponse represents the response body for successful login
 type LoginResponse struct {
-	User  UserResponse `json:"user"`
-	Token string       `json:"token"`
+	User         UserResponse `json:"user"`
+	AccessToken  string       `json:"access_token"`
+	RefreshToken string       `json:"refresh_token"`
 }
 
 // RegisterRequest represents the request body for user registration

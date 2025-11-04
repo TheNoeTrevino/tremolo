@@ -9,7 +9,8 @@ import {
 } from "../models/models";
 
 const baseUrl = import.meta.env.VITE_BACKEND_MAIN;
-const TOKEN_KEY = "auth_token";
+const ACCESS_TOKEN_KEY = "access_token";
+const REFRESH_TOKEN_KEY = "refresh_token";
 
 export const AuthService = {
 	async login(email: string, password: string): Promise<LoginResponse> {
@@ -20,8 +21,9 @@ export const AuthService = {
 				loginData,
 			);
 
-			if (response.data.token) {
-				localStorage.setItem(TOKEN_KEY, response.data.token);
+			if (response.data.access_token && response.data.refresh_token) {
+				localStorage.setItem(ACCESS_TOKEN_KEY, response.data.access_token);
+				localStorage.setItem(REFRESH_TOKEN_KEY, response.data.refresh_token);
 			}
 
 			return response.data;
@@ -87,14 +89,73 @@ export const AuthService = {
 
 	// helper methods
 	logout(): void {
-		localStorage.removeItem(TOKEN_KEY);
+		localStorage.removeItem(ACCESS_TOKEN_KEY);
+		localStorage.removeItem(REFRESH_TOKEN_KEY);
 	},
 
 	getToken(): string | null {
-		return localStorage.getItem(TOKEN_KEY);
+		return localStorage.getItem(ACCESS_TOKEN_KEY);
+	},
+
+	getRefreshToken(): string | null {
+		return localStorage.getItem(REFRESH_TOKEN_KEY);
+	},
+
+	async refreshAccessToken(): Promise<string> {
+		const refreshToken = this.getRefreshToken();
+		if (!refreshToken) {
+			throw new Error("No refresh token available");
+		}
+
+		try {
+			const response = await axios.post<{ access_token: string }>(
+				`${baseUrl}/api/auth/refresh`,
+				{ refresh_token: refreshToken },
+			);
+
+			const newAccessToken = response.data.access_token;
+			localStorage.setItem(ACCESS_TOKEN_KEY, newAccessToken);
+
+			return newAccessToken;
+		} catch (error) {
+			// If refresh fails, logout and redirect to login
+			this.logout();
+			throw new Error("Session expired. Please login again.");
+		}
 	},
 
 	isAuthenticated(): boolean {
 		return !!this.getToken();
 	},
 };
+
+// Setup axios interceptor for automatic token refresh
+axios.interceptors.response.use(
+	(response) => response,
+	async (error) => {
+		const originalRequest = error.config;
+
+		// If 401 error and haven't already retried this request
+		if (error.response?.status === 401 && !originalRequest._retry) {
+			originalRequest._retry = true;
+
+			try {
+				// Try to refresh the access token
+				const newAccessToken = await AuthService.refreshAccessToken();
+
+				// Update the failed request with new token
+				originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
+				// Retry the original request with new token
+				return axios(originalRequest);
+			} catch (refreshError) {
+				// Refresh failed - logout and redirect to login
+				AuthService.logout();
+				window.location.href = "/login";
+				return Promise.reject(refreshError);
+			}
+		}
+
+		return Promise.reject(error);
+	},
+);

@@ -75,14 +75,6 @@ const LoginPage: React.FC = () => {
 		e.preventDefault();
 		setError("");
 
-		// Validate inputs
-		const isEmailValid = validateEmail(email);
-		const isPasswordValid = validatePassword(password);
-
-		if (!isEmailValid || !isPasswordValid) {
-			return;
-		}
-
 		setIsLoading(true);
 
 		try {
