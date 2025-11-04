@@ -29,6 +29,9 @@ https://github.com/user-attachments/assets/63a7100e-a79c-4aca-be35-3089c9ec1d7d
 
   export JWT_SECRET="your-very-secure-random-string-at-least-32-characters" # min 32 chars required
 
+  export ACCESS_TOKEN_EXPIRY_MINUTES=15 # access token expiry (15-30 minutes recommended)
+  export REFRESH_TOKEN_EXPIRY_HOURS=168 # refresh token expiry (168 hours = 7 days)
+
   export ALLOWED_ORIGINS="http://localhost:5173,http://localhost:5173" # comma-separated list
 ```
 

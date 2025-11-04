@@ -5,12 +5,12 @@ import (
 	"flag"
 	"log"
 	"os"
-	"strings"
-
 	"sight-reading/controllers"
 	"sight-reading/database"
 	"sight-reading/generation"
+	"sight-reading/logger"
 	"sight-reading/middleware"
+	"strings"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -18,6 +18,7 @@ import (
 
 func main() {
 	// init global deps
+	logger.InitLogger()
 	database.InitializeDBConnection()
 	middleware.InitJWTSecret()
 
