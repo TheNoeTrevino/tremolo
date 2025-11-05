@@ -12,7 +12,7 @@ import {
 	IconButton,
 	CircularProgress,
 	Fade,
-	Link as MuiLink,
+	Link as MuiLink, // duplicate alias from react router
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useAuth } from "../hooks/useAuth";
@@ -201,20 +201,22 @@ const LoginPage: React.FC = () => {
 									helperText={passwordError}
 									disabled={isLoading}
 									required
-									InputProps={{
-										endAdornment: (
-											<InputAdornment position="end">
-												<IconButton
-													aria-label="toggle password visibility"
-													onClick={handleClickShowPassword}
-													onMouseDown={handleMouseDownPassword}
-													edge="end"
-													disabled={isLoading}
-												>
-													{showPassword ? <VisibilityOff /> : <Visibility />}
-												</IconButton>
-											</InputAdornment>
-										),
+									slotProps={{
+										input: {
+											endAdornment: (
+												<InputAdornment position="end">
+													<IconButton
+														aria-label="toggle password visibility"
+														onClick={handleClickShowPassword}
+														onMouseDown={handleMouseDownPassword}
+														edge="end"
+														disabled={isLoading}
+													>
+														{showPassword ? <VisibilityOff /> : <Visibility />}
+													</IconButton>
+												</InputAdornment>
+											),
+										},
 									}}
 									sx={{ mb: 3 }}
 								/>

@@ -172,9 +172,6 @@ const Dashboard = () => {
 									<SearchRoundedIcon fontSize="small" />
 								</InputAdornment>
 							}
-							inputProps={{
-								"aria-label": "search",
-							}}
 						/>
 					</FormControl>
 				</Box>

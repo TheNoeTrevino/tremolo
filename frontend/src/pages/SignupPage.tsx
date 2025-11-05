@@ -406,20 +406,22 @@ const SignupPage: React.FC = () => {
 									helperText={passwordTouched && passwordError}
 									disabled={isLoading}
 									required
-									InputProps={{
-										endAdornment: (
-											<InputAdornment position="end">
-												<IconButton
-													aria-label="toggle password visibility"
-													onClick={handleClickShowPassword}
-													onMouseDown={handleMouseDownPassword}
-													edge="end"
-													disabled={isLoading}
-												>
-													{showPassword ? <VisibilityOff /> : <Visibility />}
-												</IconButton>
-											</InputAdornment>
-										),
+									slotProps={{
+										input: {
+											endAdornment: (
+												<InputAdornment position="end">
+													<IconButton
+														aria-label="toggle password visibility"
+														onClick={handleClickShowPassword}
+														onMouseDown={handleMouseDownPassword}
+														edge="end"
+														disabled={isLoading}
+													>
+														{showPassword ? <VisibilityOff /> : <Visibility />}
+													</IconButton>
+												</InputAdornment>
+											),
+										},
 									}}
 									sx={{ mb: 1 }}
 								/>
@@ -479,24 +481,26 @@ const SignupPage: React.FC = () => {
 									helperText={confirmPasswordError}
 									disabled={isLoading}
 									required
-									InputProps={{
-										endAdornment: (
-											<InputAdornment position="end">
-												<IconButton
-													aria-label="toggle confirm password visibility"
-													onClick={handleClickShowConfirmPassword}
-													onMouseDown={handleMouseDownPassword}
-													edge="end"
-													disabled={isLoading}
-												>
-													{showConfirmPassword ? (
-														<VisibilityOff />
-													) : (
-														<Visibility />
-													)}
-												</IconButton>
-											</InputAdornment>
-										),
+									slotProps={{
+										input: {
+											endAdornment: (
+												<InputAdornment position="end">
+													<IconButton
+														aria-label="toggle confirm password visibility"
+														onClick={handleClickShowConfirmPassword}
+														onMouseDown={handleMouseDownPassword}
+														edge="end"
+														disabled={isLoading}
+													>
+														{showConfirmPassword ? (
+															<VisibilityOff />
+														) : (
+															<Visibility />
+														)}
+													</IconButton>
+												</InputAdornment>
+											),
+										},
 									}}
 									sx={{ mb: 2 }}
 								/>
