@@ -32,6 +32,9 @@ https://github.com/user-attachments/assets/63a7100e-a79c-4aca-be35-3089c9ec1d7d
   export ACCESS_TOKEN_EXPIRY_MINUTES=15 # access token expiry (15-30 minutes recommended)
   export REFRESH_TOKEN_EXPIRY_HOURS=168 # refresh token expiry (168 hours = 7 days)
 
+  export MAX_LOGIN_ATTEMPTS=5 # max failed login attempts before account lockout
+  export ACCOUNT_LOCKOUT_DURATION_MINUTES=15 # duration to lock account after max failed attempts
+
   export ALLOWED_ORIGINS="http://localhost:5173,http://localhost:5173" # comma-separated list
 ```
 
