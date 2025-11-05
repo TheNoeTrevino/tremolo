@@ -25,6 +25,7 @@ export const AuthService = {
 				localStorage.setItem(ACCESS_TOKEN_KEY, response.data.access_token);
 				localStorage.setItem(REFRESH_TOKEN_KEY, response.data.refresh_token);
 			}
+			console.log(response.data);
 
 			return response.data;
 		} catch (error) {
@@ -34,6 +35,7 @@ export const AuthService = {
 					axiosError.response?.data?.error || "Login failed. Please try again.",
 				);
 			}
+			console.log(error);
 			throw new Error("An unexpected error occurred during login.");
 		}
 	},
@@ -151,7 +153,7 @@ axios.interceptors.response.use(
 			} catch (refreshError) {
 				// Refresh failed - logout and redirect to login
 				AuthService.logout();
-				window.location.href = "/login";
+				// TODO: there must be a better way to do this with react-router
 				return Promise.reject(refreshError);
 			}
 		}
