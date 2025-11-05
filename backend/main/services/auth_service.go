@@ -5,7 +5,10 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"sight-reading/database"
 	"sight-reading/logger"
@@ -40,6 +43,26 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	// Check if account is locked
+	normalizedEmail := normalizeEmail(reqBody.Email)
+	isLocked, lockedUntil, err := checkAccountLocked(normalizedEmail)
+	if err != nil {
+		logger.Error("Error checking account lock status", "error", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":    "Internal server error.",
+			"scenario": "AS.2",
+		})
+		return
+	}
+
+	if isLocked && lockedUntil != nil {
+		logger.Info("Login attempt on locked account", "email", normalizedEmail)
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": fmt.Sprintf("Account is locked until %s due to too many failed login attempts", lockedUntil.Format("3:04 PM MST")),
+		})
+		return
+	}
+
 	// Query user by email
 	query := `
 		SELECT id, email, first_name, last_name, role, password
@@ -56,7 +79,7 @@ func Login(c *gin.Context) {
 		PasswordHash sql.NullString `db:"password"`
 	}
 
-	err = database.DBClient.Get(&user, query, normalizeEmail(reqBody.Email))
+	err = database.DBClient.Get(&user, query, normalizedEmail)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// User not found - return generic error for security
@@ -67,7 +90,8 @@ func Login(c *gin.Context) {
 		}
 		// Database error
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Internal server error",
+			"error":    "Internal server error",
+			"scenario": "AS.3",
 		})
 		return
 	}
@@ -83,11 +107,41 @@ func Login(c *gin.Context) {
 	// Verify password using constant-time comparison
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash.String), []byte(reqBody.Password))
 	if err != nil {
-		// Invalid password
+		// Invalid password - increment failed attempts
+		if err := incrementFailedAttempts(normalizedEmail); err != nil {
+			logger.Error("Failed to increment failed attempts", "error", err.Error())
+		}
+
+		// Check if we should lock the account
+		attempts, err := getFailedAttempts(normalizedEmail)
+		if err != nil {
+			logger.Error("Failed to get failed attempts", "error", err.Error())
+		} else {
+			maxAttempts := getMaxLoginAttempts()
+			if attempts >= maxAttempts {
+				lockDuration := getLockoutDuration()
+				if err := lockAccount(normalizedEmail, lockDuration); err != nil {
+					logger.Error("Failed to lock account", "error", err.Error())
+				} else {
+					logger.Info("Account locked due to failed login attempts", "email", normalizedEmail, "attempts", attempts)
+					c.JSON(http.StatusUnauthorized, gin.H{
+						"error": fmt.Sprintf("Account locked for %d minutes due to too many failed login attempts", int(lockDuration.Minutes())),
+					})
+					return
+				}
+			}
+		}
+
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "Invalid credentials",
 		})
 		return
+	}
+
+	// Password is correct - reset lockout
+	if err := resetLockout(normalizedEmail); err != nil {
+		logger.Error("Failed to reset lockout", "error", err.Error())
+		// Continue with login even if reset fails
 	}
 
 	// Generate access token
@@ -141,7 +195,8 @@ func GetCurrentUser(c *gin.Context) {
 	if !ok {
 		logger.Error("Error parsing userID")
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Internal server error",
+			"error":    "Internal server error",
+			"scenario": "AS.4",
 		})
 		return
 	}
@@ -164,7 +219,8 @@ func GetCurrentUser(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Internal server error",
+			"error":    "Internal server error",
+			"scenario": "AS.5",
 		})
 		return
 	}
@@ -203,7 +259,8 @@ func Register(c *gin.Context) {
 	if err != nil {
 		logger.Error("Database error. Scenario: AS.2", "error", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Internal server error",
+			"error":    "Internal server error.",
+			"scenario": "AS.6",
 		})
 		return
 	}
@@ -275,6 +332,123 @@ func checkIfUserExists(email string) (bool, error) {
 // emails with different cases are considered different
 func normalizeEmail(email string) string {
 	return strings.ToLower(email)
+}
+
+// getMaxLoginAttempts returns the maximum allowed login attempts from environment
+func getMaxLoginAttempts() int {
+	if val := os.Getenv("MAX_LOGIN_ATTEMPTS"); val != "" {
+		if parsed, err := strconv.Atoi(val); err == nil {
+			return parsed
+		}
+	}
+	return 5 // default to 5 attempts
+}
+
+// getLockoutDuration returns the account lockout duration from environment
+func getLockoutDuration() time.Duration {
+	if val := os.Getenv("ACCOUNT_LOCKOUT_DURATION_MINUTES"); val != "" {
+		if parsed, err := strconv.Atoi(val); err == nil {
+			return time.Duration(parsed) * time.Minute
+		}
+	}
+	return 15 * time.Minute // default to 15 minutes
+}
+
+// checkAccountLocked checks if an account is currently locked
+//
+// Returns: isLocked, lockedUntil, error
+func checkAccountLocked(email string) (bool, *time.Time, error) {
+	var lockedUntil sql.NullTime
+
+	query := `
+		SELECT locked_until
+		FROM users
+		WHERE email = $1 AND locked_until > NOW()
+	`
+
+	err := database.DBClient.Get(&lockedUntil, query, email)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// No locked record found - account is not locked
+			return false, nil, nil
+		}
+		return false, nil, fmt.Errorf("database error checking lock status: %w", err)
+	}
+
+	if lockedUntil.Valid {
+		return true, &lockedUntil.Time, nil
+	}
+
+	return false, nil, nil
+}
+
+// incrementFailedAttempts increments the failed login attempts counter for a user
+func incrementFailedAttempts(email string) error {
+	query := `
+		UPDATE users
+		SET failed_login_attempts = failed_login_attempts + 1
+		WHERE email = $1
+	`
+
+	_, err := database.DBClient.Exec(query, email)
+	if err != nil {
+		return fmt.Errorf("failed to increment failed attempts: %w", err)
+	}
+
+	return nil
+}
+
+// getFailedAttempts retrieves the current failed login attempts for a user
+func getFailedAttempts(email string) (int, error) {
+	var attempts int
+
+	query := `
+		SELECT failed_login_attempts
+		FROM users
+		WHERE email = $1
+	`
+
+	err := database.DBClient.Get(&attempts, query, email)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get failed attempts: %w", err)
+	}
+
+	return attempts, nil
+}
+
+// lockAccount locks an account for a specified duration
+func lockAccount(email string, duration time.Duration) error {
+	lockedUntil := time.Now().Add(duration)
+
+	query := `
+		UPDATE users
+		SET locked_until = $1
+		WHERE email = $2
+	`
+
+	_, err := database.DBClient.Exec(query, lockedUntil, email)
+	if err != nil {
+		return fmt.Errorf("failed to lock account: %w", err)
+	}
+
+	logger.Info("Account locked", "email", email, "locked_until", lockedUntil)
+	return nil
+}
+
+// resetLockout resets failed login attempts and unlocks the account
+func resetLockout(email string) error {
+	query := `
+		UPDATE users
+		SET failed_login_attempts = 0, locked_until = NULL
+		WHERE email = $1
+	`
+
+	_, err := database.DBClient.Exec(query, email)
+	if err != nil {
+		return fmt.Errorf("failed to reset lockout: %w", err)
+	}
+
+	return nil
 }
 
 // RefreshToken validates a refresh token and generates a new access token
