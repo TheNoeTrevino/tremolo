@@ -50,7 +50,7 @@ func Login(c *gin.Context) {
 		logger.Error("Error checking account lock status", "error", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":    "Internal server error.",
-			"scenario": "AS.2",
+			"scenario": "AS.10",
 		})
 		return
 	}
@@ -58,7 +58,8 @@ func Login(c *gin.Context) {
 	if isLocked && lockedUntil != nil {
 		logger.Info("Login attempt on locked account", "email", normalizedEmail)
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": fmt.Sprintf("Account is locked until %s due to too many failed login attempts", lockedUntil.Format("3:04 PM MST")),
+			"error":    "Account is locked due to too many failed login attempts",
+			"scenario": "AS.11",
 		})
 		return
 	}
@@ -91,7 +92,7 @@ func Login(c *gin.Context) {
 		// Database error
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":    "Internal server error",
-			"scenario": "AS.3",
+			"scenario": "AS.12",
 		})
 		return
 	}
@@ -196,7 +197,7 @@ func GetCurrentUser(c *gin.Context) {
 		logger.Error("Error parsing userID")
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":    "Internal server error",
-			"scenario": "AS.4",
+			"scenario": "AS.5",
 		})
 		return
 	}
@@ -220,7 +221,7 @@ func GetCurrentUser(c *gin.Context) {
 		}
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":    "Internal server error",
-			"scenario": "AS.5",
+			"scenario": "AS.6",
 		})
 		return
 	}
@@ -257,16 +258,16 @@ func Register(c *gin.Context) {
 
 	exists, err := checkIfUserExists(normalizeEmail(reqBody.Email))
 	if err != nil {
-		logger.Error("Database error. Scenario: AS.2", "error", err.Error())
+		logger.Error("Database error. Scenario: AS.7", "error", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":    "Internal server error.",
-			"scenario": "AS.6",
+			"scenario": "AS.8",
 		})
 		return
 	}
 
 	if exists {
-		logger.Info("Attempt to register user with existing email. Scenario: AS.1", "email", reqBody.Email)
+		logger.Info("Attempt to register user with existing email. Scenario: AS.9", "email", reqBody.Email)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Email already exists",
 		})
