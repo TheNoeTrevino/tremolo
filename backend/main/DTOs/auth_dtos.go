@@ -18,6 +18,7 @@ type LoginRequest struct {
 }
 
 // ValidateLoginRequest validates the login request
+// TODO: move this to the validations package?
 func (req *LoginRequest) ValidateLoginRequest() error {
 	validate := validator.New()
 	err := validate.RegisterValidation("password_complexity", validations.PasswordComplexity)

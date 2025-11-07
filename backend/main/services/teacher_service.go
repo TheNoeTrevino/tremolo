@@ -106,6 +106,7 @@ func UpdateTeacher(c *gin.Context) {
 }
 
 func GetStudents(c *gin.Context) {
+	// language: sql
 	query := `
   SELECT first_name, last_name, role, school_id
   FROM users
@@ -137,6 +138,8 @@ func GetStudent(c *gin.Context) {
 	}
 
 	// the and of this is not right
+
+	// language: sql
 	query := `
   SELECT first_name, last_name, role, school_id
   FROM users

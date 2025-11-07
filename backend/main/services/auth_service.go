@@ -35,6 +35,8 @@ func Login(c *gin.Context) {
 	}
 
 	// Validate request
+	// WARN: is this really necessary here? we dont need complex password rules for login
+	// since we enforce it at the registration phase
 	err = reqBody.ValidateLoginRequest()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -64,7 +66,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Query user by email
+	// language: sql
 	query := `
 		SELECT id, email, first_name, last_name, role, password
 		FROM users
@@ -83,13 +85,13 @@ func Login(c *gin.Context) {
 	err = database.DBClient.Get(&user, query, normalizedEmail)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			// User not found - return generic error for security
+			logger.Info("User not found with provided", "email", normalizedEmail)
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": "Invalid credentials",
 			})
 			return
 		}
-		// Database error
+		// database acces error
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":    "Internal server error",
 			"scenario": "AS.12",
@@ -105,10 +107,9 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Verify password using constant-time comparison
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash.String), []byte(reqBody.Password))
 	if err != nil {
-		// Invalid password - increment failed attempts
+		logger.Info("Invalid password, incrementing failed attempts", "error", err.Error())
 		if err := incrementFailedAttempts(normalizedEmail); err != nil {
 			logger.Error("Failed to increment failed attempts", "error", err.Error())
 		}
@@ -139,10 +140,10 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Password is correct - reset lockout
+	// password is correct, lift the lockout
 	if err := resetLockout(normalizedEmail); err != nil {
 		logger.Error("Failed to reset lockout", "error", err.Error())
-		// Continue with login even if reset fails
+		// continue with login even if reset fails tho?
 	}
 
 	// Generate access token
@@ -163,7 +164,6 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Prepare response
 	response := dtos.LoginResponse{
 		User: dtos.UserResponse{
 			ID:        user.ID,
@@ -202,7 +202,7 @@ func GetCurrentUser(c *gin.Context) {
 		return
 	}
 
-	// Query user by ID
+	// language: sql
 	query := `
 		SELECT id, email, first_name, last_name, role
 		FROM users
@@ -282,7 +282,7 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	// Insert new user
+	// language: sql
 	insertQuery := `
 		INSERT INTO users (email, password, first_name, last_name, role)
 		VALUES ($1, $2, $3, $4, $5)
@@ -335,14 +335,10 @@ func normalizeEmail(email string) string {
 	return strings.ToLower(email)
 }
 
-// getMaxLoginAttempts returns the maximum allowed login attempts from environment
+// returns the maximum allowed login attempts from environment
+// TODO: add this to global env or something?
 func getMaxLoginAttempts() int {
-	if val := os.Getenv("MAX_LOGIN_ATTEMPTS"); val != "" {
-		if parsed, err := strconv.Atoi(val); err == nil {
-			return parsed
-		}
-	}
-	return 5 // default to 5 attempts
+	return 5 // default to 5 attempts for now. Idk if we should make this an env var or not
 }
 
 // getLockoutDuration returns the account lockout duration from environment
@@ -361,6 +357,7 @@ func getLockoutDuration() time.Duration {
 func checkAccountLocked(email string) (bool, *time.Time, error) {
 	var lockedUntil sql.NullTime
 
+	// language: sql
 	query := `
 		SELECT locked_until
 		FROM users
@@ -385,6 +382,7 @@ func checkAccountLocked(email string) (bool, *time.Time, error) {
 
 // incrementFailedAttempts increments the failed login attempts counter for a user
 func incrementFailedAttempts(email string) error {
+	// language: sql
 	query := `
 		UPDATE users
 		SET failed_login_attempts = failed_login_attempts + 1
@@ -403,6 +401,7 @@ func incrementFailedAttempts(email string) error {
 func getFailedAttempts(email string) (int, error) {
 	var attempts int
 
+	// language: sql
 	query := `
 		SELECT failed_login_attempts
 		FROM users
@@ -421,6 +420,7 @@ func getFailedAttempts(email string) (int, error) {
 func lockAccount(email string, duration time.Duration) error {
 	lockedUntil := time.Now().Add(duration)
 
+	// language: sql
 	query := `
 		UPDATE users
 		SET locked_until = $1
@@ -438,6 +438,7 @@ func lockAccount(email string, duration time.Duration) error {
 
 // resetLockout resets failed login attempts and unlocks the account
 func resetLockout(email string) error {
+	// language: sql
 	query := `
 		UPDATE users
 		SET failed_login_attempts = 0, locked_until = NULL
@@ -465,7 +466,7 @@ func RefreshToken(c *gin.Context) {
 		return
 	}
 
-	// Parse and validate refresh token
+	// validate refresh token
 	claims := &middleware.Claims{}
 	token, err := jwt.ParseWithClaims(reqBody.RefreshToken, claims, func(token *jwt.Token) (interface{}, error) {
 		// Verify signing method
@@ -482,7 +483,7 @@ func RefreshToken(c *gin.Context) {
 		return
 	}
 
-	// Verify it's actually a refresh token
+	// Verify its actually a refresh token
 	if claims.TokenType != "refresh" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "Invalid token type",
@@ -490,7 +491,6 @@ func RefreshToken(c *gin.Context) {
 		return
 	}
 
-	// Generate new access token
 	newAccessToken, err := middleware.GenerateAccessToken(claims.UserID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
