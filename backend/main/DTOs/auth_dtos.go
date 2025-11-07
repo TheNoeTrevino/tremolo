@@ -83,10 +83,12 @@ type RegisterRequest struct {
 // ValidateRegisterRequest validates the registration request
 func (req *RegisterRequest) ValidateRegisterRequest() error {
 	validate := validator.New()
-	// Register custom password complexity validator
-	validate.RegisterValidation("password_complexity", validations.PasswordComplexity)
+	err := validate.RegisterValidation("password_complexity", validations.PasswordComplexity)
+	if err != nil {
+		return err
+	}
 
-	err := validate.Struct(req)
+	err = validate.Struct(req)
 	if err != nil {
 		var errorMessage []string
 		if errs, ok := err.(validator.ValidationErrors); ok {
