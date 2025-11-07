@@ -16,6 +16,9 @@ import Converter from "./pages/Converter.tsx";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { environmentAndHttpsCheck } from "./utils/environmentValidation";
+
+environmentAndHttpsCheck();
 
 const router = createBrowserRouter([
 	{
