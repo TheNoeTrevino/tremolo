@@ -53,7 +53,6 @@ func main() {
 	config.AllowOrigins = allowedOrigins
 	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
-	config.AllowCredentials = true
 	router.Use(cors.New(config))
 
 	controllers.SetupAuthRoutes(router)
