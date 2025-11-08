@@ -10,7 +10,7 @@ This also be a technical exercise for myself as I will be learning a huge amount
 
 ## Current Progress:
 
-https://github.com/user-attachments/assets/63a7100e-a79c-4aca-be35-3089c9ec1d7d
+[deployment](https://tremolonotes.com/)
 
 ## Run the Project Locally
 
