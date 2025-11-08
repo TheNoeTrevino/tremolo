@@ -12,6 +12,7 @@ NC='\033[0m' # No Color
 # Configuration
 REQUIRED_PYTHON_VERSION=3.8
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$SCRIPT_DIR/.."
 
 # Helper functions
 print_header() {
@@ -102,31 +103,34 @@ check_go() {
 
 # Setup frontend
 setup_frontend() {
+
+  FRONTEND_DIR="$ROOT_DIR/frontend"
   print_header "Setting up Frontend"
 
-  if [ ! -d "$SCRIPT_DIR/frontend" ]; then
+  if [ ! -d "$FRONTEND_DIR" ]; then
     print_error "frontend directory not found"
     exit 1
   fi
 
   print_info "Running npm i in frontend..."
-  cd "$SCRIPT_DIR/frontend"
+  cd "$FRONTEND_DIR"
   npm i
 
   print_success "Frontend dependencies installed"
-  cd "$SCRIPT_DIR"
+  cd "$FRONTEND_DIR"
 }
 
 # Setup backend/music (Python/Django)
 setup_backend_music() {
+  BACKEND_MUSIC_DIR="$ROOT_DIR/backend/music"
   print_header "Setting up Backend Music Service (Django)"
 
-  if [ ! -d "$SCRIPT_DIR/backend/music" ]; then
+  if [ ! -d "$BACKEND_MUSIC_DIR" ]; then
     print_error "backend/music directory not found"
     exit 1
   fi
 
-  cd "$SCRIPT_DIR/backend/music"
+  cd "$BACKEND_MUSIC_DIR"
 
   # Check if venv already exists
   if [ -d "env" ]; then
@@ -154,13 +158,6 @@ setup_backend_music() {
     print_warning "requirements.txt not found"
   fi
 
-  # Run migrations
-  if [ -f "manage.py" ]; then
-    print_info "Running Django migrations..."
-    python3 manage.py migrate
-    print_success "Django migrations completed"
-  fi
-
   deactivate
   cd "$SCRIPT_DIR"
 }
@@ -170,7 +167,6 @@ setup_husky() {
   print_header "Setting up Git Hooks (Husky)"
 
   print_info "Installing Husky..."
-  cd "$SCRIPT_DIR"
 
   if [ -f "package.json" ]; then
     npm run prepare || true
@@ -178,8 +174,6 @@ setup_husky() {
   else
     print_warning "package.json not found in root, skipping Husky setup"
   fi
-
-  cd "$SCRIPT_DIR"
 }
 
 # Main setup flow
@@ -214,10 +208,11 @@ main() {
   echo -e "2. Start frontend:"
   echo -e "   cd frontend && npm run dev"
   echo ""
-  echo -e "3. Start music service (in new terminal):"
-  echo -e "   cd backend/music && source env/bin/activate && python3 manage.py runserver"
+  echo -e "3. Start music service :"
+  echo -e "   cd backend/music && source env/bin/activate && fastapi dev main.py "
+
   echo ""
-  echo -e "4. Start user tracking service (in new terminal):"
+  echo -e "4. Start user tracking service :"
   echo -e "   cd backend/main && go run main.go"
   echo ""
 }
