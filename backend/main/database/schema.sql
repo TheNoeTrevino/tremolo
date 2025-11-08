@@ -16,6 +16,8 @@ create table users (
     role varchar(255),
     email varchar(255) unique,
     password varchar(255) not null,
+    failed_login_attempts int default 0 not null,
+    locked_until timestamp null,
     school_id int references schools (id),
     created_date date default current_date,
     created_time time default current_time

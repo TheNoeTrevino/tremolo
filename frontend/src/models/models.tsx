@@ -41,7 +41,8 @@ export interface LoginRequest {
 
 export interface LoginResponse {
 	user: User;
-	token: string;
+	access_token: string;
+	refresh_token: string;
 }
 
 export interface AuthError {

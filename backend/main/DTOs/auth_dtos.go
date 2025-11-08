@@ -6,19 +6,27 @@ import (
 	"errors"
 	"strings"
 
+	"sight-reading/validations"
+
 	"github.com/go-playground/validator/v10"
 )
 
 // LoginRequest represents the request body for user login
 type LoginRequest struct {
 	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,min=6"`
+	Password string `json:"password" validate:"required,min=8,password_complexity"`
 }
 
 // ValidateLoginRequest validates the login request
+// TODO: move this to the validations package?
 func (req *LoginRequest) ValidateLoginRequest() error {
 	validate := validator.New()
-	err := validate.Struct(req)
+	err := validate.RegisterValidation("password_complexity", validations.PasswordComplexity)
+	if err != nil {
+		return err
+	}
+
+	err = validate.Struct(req)
 	if err != nil {
 		var errorMessage []string
 		if errs, ok := err.(validator.ValidationErrors); ok {
@@ -36,7 +44,9 @@ func (req *LoginRequest) ValidateLoginRequest() error {
 					case "required":
 						errorMessage = append(errorMessage, "Password is required")
 					case "min":
-						errorMessage = append(errorMessage, "Password must be at least 6 characters")
+						errorMessage = append(errorMessage, "Password must be at least 8 characters")
+					case "password_complexity":
+						errorMessage = append(errorMessage, "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character")
 					}
 				}
 			}
@@ -57,14 +67,15 @@ type UserResponse struct {
 
 // LoginResponse represents the response body for successful login
 type LoginResponse struct {
-	User  UserResponse `json:"user"`
-	Token string       `json:"token"`
+	User         UserResponse `json:"user"`
+	AccessToken  string       `json:"access_token"`
+	RefreshToken string       `json:"refresh_token"`
 }
 
 // RegisterRequest represents the request body for user registration
 type RegisterRequest struct {
 	Email     string `json:"email" validate:"required,email"`
-	Password  string `json:"password" validate:"required,min=6"`
+	Password  string `json:"password" validate:"required,min=8,password_complexity"`
 	FirstName string `json:"first_name" validate:"required,min=2"`
 	LastName  string `json:"last_name" validate:"required,min=2"`
 	Role      string `json:"role" validate:"required,oneof=student teacher parent"`
@@ -73,7 +84,12 @@ type RegisterRequest struct {
 // ValidateRegisterRequest validates the registration request
 func (req *RegisterRequest) ValidateRegisterRequest() error {
 	validate := validator.New()
-	err := validate.Struct(req)
+	err := validate.RegisterValidation("password_complexity", validations.PasswordComplexity)
+	if err != nil {
+		return err
+	}
+
+	err = validate.Struct(req)
 	if err != nil {
 		var errorMessage []string
 		if errs, ok := err.(validator.ValidationErrors); ok {
@@ -91,7 +107,9 @@ func (req *RegisterRequest) ValidateRegisterRequest() error {
 					case "required":
 						errorMessage = append(errorMessage, "Password is required")
 					case "min":
-						errorMessage = append(errorMessage, "Password must be at least 6 characters")
+						errorMessage = append(errorMessage, "Password must be at least 8 characters")
+					case "password_complexity":
+						errorMessage = append(errorMessage, "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character")
 					}
 				case "FirstName":
 					switch fieldErr.Tag() {

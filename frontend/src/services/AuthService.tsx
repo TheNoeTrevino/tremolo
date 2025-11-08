@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import { apiClient, isOk } from "./axiosInstance";
 import {
 	LoginRequest,
 	LoginResponse,
@@ -8,93 +8,105 @@ import {
 	RegisterResponse,
 } from "../models/models";
 
-const baseUrl = import.meta.env.VITE_BACKEND_MAIN;
-const TOKEN_KEY = "auth_token";
+const ACCESS_TOKEN_KEY = "access_token";
+const REFRESH_TOKEN_KEY = "refresh_token";
 
+// TODO: think about adding a fallback message
 export const AuthService = {
 	async login(email: string, password: string): Promise<LoginResponse> {
-		try {
-			const loginData: LoginRequest = { email, password };
-			const response = await axios.post<LoginResponse>(
-				`${baseUrl}/api/auth/login`,
-				loginData,
-			);
+		const loginData: LoginRequest = { email, password };
+		const response = await apiClient.post<LoginResponse | AuthError>(
+			"/api/auth/login",
+			loginData,
+		);
 
-			if (response.data.token) {
-				localStorage.setItem(TOKEN_KEY, response.data.token);
-			}
-
-			return response.data;
-		} catch (error) {
-			if (axios.isAxiosError(error)) {
-				const axiosError = error as AxiosError<AuthError>;
-				throw new Error(
-					axiosError.response?.data?.error || "Login failed. Please try again.",
-				);
-			}
-			throw new Error("An unexpected error occurred during login.");
+		if (!isOk(response)) {
+			const errorData = response.data as AuthError;
+			throw new Error(errorData.error || "Login failed. Please try again.");
 		}
+
+		const data = response.data as LoginResponse;
+
+		if (data.access_token && data.refresh_token) {
+			localStorage.setItem(ACCESS_TOKEN_KEY, data.access_token);
+			localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh_token);
+		}
+		console.log(data);
+
+		return data;
 	},
 
 	async getCurrentUser(): Promise<User> {
-		try {
-			const token = this.getToken();
-			if (!token) {
-				throw new Error("No authentication token found");
-			}
+		const token = this.getToken();
+		if (!token) {
+			throw new Error("No authentication token found");
+		}
 
-			const response = await axios.get<User>(`${baseUrl}/api/auth/me`, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
-
-			return response.data;
-		} catch (error) {
+		const response = await apiClient.get<User | AuthError>("/api/auth/me", {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		if (!isOk(response)) {
 			this.logout();
 
-			if (axios.isAxiosError(error)) {
-				const axiosError = error as AxiosError<AuthError>;
-				throw new Error(
-					axiosError.response?.data?.error ||
-						"Failed to fetch user data. Please login again.",
-				);
-			}
-			throw new Error("An unexpected error occurred.");
+			// custom error response. oh yea
+			const errorData = response.data as AuthError;
+			throw new Error(errorData.error); // maybe we should add an or here?
 		}
+
+		return response.data as User;
 	},
 
 	// TODO: can we make the user login right after?
 	async register(userData: RegisterRequest): Promise<RegisterResponse> {
-		try {
-			const response = await axios.post<RegisterResponse>(
-				`${baseUrl}/api/auth/register`,
-				userData,
-			);
-
-			return response.data;
-		} catch (error) {
-			if (axios.isAxiosError(error)) {
-				const axiosError = error as AxiosError<AuthError>;
-				throw new Error(
-					axiosError.response?.data?.error ||
-						"Registration failed. Please try again.",
-				);
-			}
-			throw new Error("An unexpected error occurred during registration.");
+		const response = await apiClient.post<RegisterResponse | AuthError>(
+			"/api/auth/register",
+			userData,
+		);
+		if (!isOk(response)) {
+			const errorData = response.data as AuthError;
+			throw new Error(errorData.error);
 		}
+
+		return response.data as RegisterResponse;
 	},
 
-	// helper methods
-	logout(): void {
-		localStorage.removeItem(TOKEN_KEY);
-	},
+	async refreshAccessToken(): Promise<string> {
+		const refreshToken = this.getRefreshToken();
+		if (!refreshToken) {
+			throw new Error("No refresh token available");
+		}
 
-	getToken(): string | null {
-		return localStorage.getItem(TOKEN_KEY);
+		const response = await apiClient.post<{ access_token: string } | AuthError>(
+			"/api/auth/refresh",
+			{ refresh_token: refreshToken },
+		);
+		if (!isOk(response)) {
+			this.logout();
+			throw new Error("Session expired. Please login again.");
+		}
+
+		const data = response.data as { access_token: string };
+		localStorage.setItem(ACCESS_TOKEN_KEY, data.access_token);
+		return data.access_token;
 	},
 
 	isAuthenticated(): boolean {
 		return !!this.getToken();
+	},
+
+	// helper methods
+	logout(): void {
+		localStorage.removeItem(ACCESS_TOKEN_KEY);
+		localStorage.removeItem(REFRESH_TOKEN_KEY);
+	},
+
+	getToken(): string | null {
+		return localStorage.getItem(ACCESS_TOKEN_KEY);
+	},
+
+	getRefreshToken(): string | null {
+		return localStorage.getItem(REFRESH_TOKEN_KEY);
 	},
 };

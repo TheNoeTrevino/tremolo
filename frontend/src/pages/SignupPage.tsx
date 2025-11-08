@@ -25,6 +25,8 @@ import { useAuth } from "../hooks/useAuth";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthService } from "../services/AuthService";
 import { UserRole } from "../models/models";
+import PasswordRequirements from "../components/PasswordRequirements";
+import { validatePasswordRequirements } from "../utils/passwordValidation";
 
 const SignupPage: React.FC = () => {
 	const [firstName, setFirstName] = useState<string>("");
@@ -36,6 +38,7 @@ const SignupPage: React.FC = () => {
 	const [showPassword, setShowPassword] = useState<boolean>(false);
 	const [showConfirmPassword, setShowConfirmPassword] =
 		useState<boolean>(false);
+	const [passwordTouched, setPasswordTouched] = useState<boolean>(false);
 
 	// Error states
 	const [error, setError] = useState<string>("");
@@ -51,21 +54,20 @@ const SignupPage: React.FC = () => {
 	const { isAuthenticated } = useAuth();
 	const navigate = useNavigate();
 
-	// Redirect if already authenticated
 	useEffect(() => {
 		if (isAuthenticated) {
 			navigate("/dashboard", { replace: true });
 		}
 	}, [isAuthenticated, navigate]);
 
-	// Password strength calculation
 	const calculatePasswordStrength = (pwd: string): number => {
 		let strength = 0;
-		if (pwd.length >= 6) strength += 25;
-		if (pwd.length >= 10) strength += 25;
-		if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) strength += 25;
+		if (pwd.length >= 8) strength += 20;
+		if (pwd.length >= 12) strength += 20;
+		if (/[a-z]/.test(pwd)) strength += 15;
+		if (/[A-Z]/.test(pwd)) strength += 15;
 		if (/\d/.test(pwd)) strength += 15;
-		if (/[^a-zA-Z0-9]/.test(pwd)) strength += 10;
+		if (/[!@#$%^&*()_+\-=[\]{}|;:,.<>?]/.test(pwd)) strength += 15;
 		return Math.min(strength, 100);
 	};
 
@@ -125,13 +127,16 @@ const SignupPage: React.FC = () => {
 		return true;
 	};
 
+	// Validate password against requirements (matches backend validation)
+	const { isValid: isPasswordValid } = validatePasswordRequirements(password);
+
 	const validatePassword = (password: string): boolean => {
 		if (!password) {
 			setPasswordError("Password is required");
 			return false;
 		}
-		if (password.length < 6) {
-			setPasswordError("Password must be at least 6 characters");
+		if (!isPasswordValid) {
+			setPasswordError("Password does not meet all requirements");
 			return false;
 		}
 		setPasswordError("");
@@ -179,13 +184,19 @@ const SignupPage: React.FC = () => {
 	const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newPassword = e.target.value;
 		setPassword(newPassword);
-		if (passwordError) {
+		// Show validation if field was already touched
+		if (passwordTouched && passwordError) {
 			validatePassword(newPassword);
 		}
 		// Re-validate confirm password if it's already filled
 		if (confirmPassword) {
 			validateConfirmPassword(confirmPassword, newPassword);
 		}
+	};
+
+	const handlePasswordBlur = () => {
+		setPasswordTouched(true);
+		validatePassword(password);
 	};
 
 	const handleConfirmPasswordChange = (
@@ -390,27 +401,35 @@ const SignupPage: React.FC = () => {
 									autoComplete="new-password"
 									value={password}
 									onChange={handlePasswordChange}
-									onBlur={() => validatePassword(password)}
-									error={!!passwordError}
-									helperText={passwordError || "Minimum 6 characters"}
+									onBlur={handlePasswordBlur}
+									error={passwordTouched && !!passwordError}
+									helperText={passwordTouched && passwordError}
 									disabled={isLoading}
 									required
-									InputProps={{
-										endAdornment: (
-											<InputAdornment position="end">
-												<IconButton
-													aria-label="toggle password visibility"
-													onClick={handleClickShowPassword}
-													onMouseDown={handleMouseDownPassword}
-													edge="end"
-													disabled={isLoading}
-												>
-													{showPassword ? <VisibilityOff /> : <Visibility />}
-												</IconButton>
-											</InputAdornment>
-										),
+									slotProps={{
+										input: {
+											endAdornment: (
+												<InputAdornment position="end">
+													<IconButton
+														aria-label="toggle password visibility"
+														onClick={handleClickShowPassword}
+														onMouseDown={handleMouseDownPassword}
+														edge="end"
+														disabled={isLoading}
+													>
+														{showPassword ? <VisibilityOff /> : <Visibility />}
+													</IconButton>
+												</InputAdornment>
+											),
+										},
 									}}
 									sx={{ mb: 1 }}
+								/>
+
+								{/* Password Requirements Checklist - Show when touched or has content */}
+								<PasswordRequirements
+									password={password}
+									show={passwordTouched || !!password}
 								/>
 
 								{password && (
@@ -462,24 +481,26 @@ const SignupPage: React.FC = () => {
 									helperText={confirmPasswordError}
 									disabled={isLoading}
 									required
-									InputProps={{
-										endAdornment: (
-											<InputAdornment position="end">
-												<IconButton
-													aria-label="toggle confirm password visibility"
-													onClick={handleClickShowConfirmPassword}
-													onMouseDown={handleMouseDownPassword}
-													edge="end"
-													disabled={isLoading}
-												>
-													{showConfirmPassword ? (
-														<VisibilityOff />
-													) : (
-														<Visibility />
-													)}
-												</IconButton>
-											</InputAdornment>
-										),
+									slotProps={{
+										input: {
+											endAdornment: (
+												<InputAdornment position="end">
+													<IconButton
+														aria-label="toggle confirm password visibility"
+														onClick={handleClickShowConfirmPassword}
+														onMouseDown={handleMouseDownPassword}
+														edge="end"
+														disabled={isLoading}
+													>
+														{showConfirmPassword ? (
+															<VisibilityOff />
+														) : (
+															<Visibility />
+														)}
+													</IconButton>
+												</InputAdornment>
+											),
+										},
 									}}
 									sx={{ mb: 2 }}
 								/>
