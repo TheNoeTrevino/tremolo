@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { TextField, MenuItem, FormControl, InputLabel, Select, SelectChangeEvent } from "@mui/material";
+import {
+	TextField,
+	MenuItem,
+	FormControl,
+	InputLabel,
+	Select,
+	SelectChangeEvent,
+} from "@mui/material";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { AuthService } from "../services/AuthService";
@@ -29,7 +36,8 @@ const SignupPage = () => {
 	const [confirmPassword, setConfirmPassword] = useState<string>("");
 	const [role, setRole] = useState<UserRole>("student");
 	const [showPassword, setShowPassword] = useState<boolean>(false);
-	const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+	const [showConfirmPassword, setShowConfirmPassword] =
+		useState<boolean>(false);
 	const [passwordTouched, setPasswordTouched] = useState<boolean>(false);
 
 	const [error, setError] = useState<string>("");
@@ -95,14 +103,24 @@ const SignupPage = () => {
 			validatePasswordField(newPassword);
 		}
 		if (confirmPassword) {
-			validateConfirmPassword(confirmPassword, newPassword, setConfirmPasswordError);
+			validateConfirmPassword(
+				confirmPassword,
+				newPassword,
+				setConfirmPasswordError,
+			);
 		}
 	};
 
-	const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleConfirmPasswordChange = (
+		e: React.ChangeEvent<HTMLInputElement>,
+	) => {
 		setConfirmPassword(e.target.value);
 		if (confirmPasswordError) {
-			validateConfirmPassword(e.target.value, password, setConfirmPasswordError);
+			validateConfirmPassword(
+				e.target.value,
+				password,
+				setConfirmPasswordError,
+			);
 		}
 	};
 
@@ -115,13 +133,31 @@ const SignupPage = () => {
 		setError("");
 		setSuccessMessage("");
 
-		const isFirstNameValid = validateName(firstName, "First name", setFirstNameError);
-		const isLastNameValid = validateName(lastName, "Last name", setLastNameError);
+		const isFirstNameValid = validateName(
+			firstName,
+			"First name",
+			setFirstNameError,
+		);
+		const isLastNameValid = validateName(
+			lastName,
+			"Last name",
+			setLastNameError,
+		);
 		const isEmailValid = validateEmail(email, setEmailError);
 		const isPasswordValid = validatePasswordField(password);
-		const isConfirmPasswordValid = validateConfirmPassword(confirmPassword, password, setConfirmPasswordError);
+		const isConfirmPasswordValid = validateConfirmPassword(
+			confirmPassword,
+			password,
+			setConfirmPasswordError,
+		);
 
-		if (!isFirstNameValid || !isLastNameValid || !isEmailValid || !isPasswordValid || !isConfirmPasswordValid) {
+		if (
+			!isFirstNameValid ||
+			!isLastNameValid ||
+			!isEmailValid ||
+			!isPasswordValid ||
+			!isConfirmPasswordValid
+		) {
 			return;
 		}
 
@@ -136,7 +172,9 @@ const SignupPage = () => {
 				role,
 			});
 
-			setSuccessMessage("Account created successfully! Redirecting to login...");
+			setSuccessMessage(
+				"Account created successfully! Redirecting to login...",
+			);
 
 			navigate("/login", {
 				state: { message: "Account created! Please log in." },
@@ -166,7 +204,9 @@ const SignupPage = () => {
 					autoFocus
 					value={firstName}
 					onChange={handleFirstNameChange}
-					onBlur={() => validateName(firstName, "First name", setFirstNameError)}
+					onBlur={() =>
+						validateName(firstName, "First name", setFirstNameError)
+					}
 					error={!!firstNameError}
 					helperText={firstNameError}
 					disabled={isLoading}
@@ -174,104 +214,109 @@ const SignupPage = () => {
 					sx={{ mb: 2 }}
 				/>
 
-					<TextField
-						fullWidth
-						id="lastName"
-						label="Last Name"
-						name="lastName"
-						autoComplete="family-name"
-						value={lastName}
-						onChange={handleLastNameChange}
-						onBlur={() => validateName(lastName, "Last name", setLastNameError)}
-						error={!!lastNameError}
-						helperText={lastNameError}
+				<TextField
+					fullWidth
+					id="lastName"
+					label="Last Name"
+					name="lastName"
+					autoComplete="family-name"
+					value={lastName}
+					onChange={handleLastNameChange}
+					onBlur={() => validateName(lastName, "Last name", setLastNameError)}
+					error={!!lastNameError}
+					helperText={lastNameError}
+					disabled={isLoading}
+					required
+					sx={{ mb: 2 }}
+				/>
+
+				<TextField
+					fullWidth
+					id="email"
+					label="Email Address"
+					name="email"
+					type="email"
+					autoComplete="email"
+					value={email}
+					onChange={handleEmailChange}
+					onBlur={() => validateEmail(email, setEmailError)}
+					error={!!emailError}
+					helperText={emailError}
+					disabled={isLoading}
+					required
+					sx={{ mb: 2 }}
+				/>
+
+				<PasswordField
+					id="password"
+					label="Password"
+					value={password}
+					onChange={handlePasswordChange}
+					onBlur={() => {
+						setPasswordTouched(true);
+						validatePasswordField(password);
+					}}
+					error={passwordError}
+					showPassword={showPassword}
+					onToggleVisibility={() => setShowPassword(!showPassword)}
+					disabled={isLoading}
+					autoComplete="new-password"
+					required
+					sx={{ mb: 1 }}
+				/>
+
+				<PasswordRequirements
+					password={password}
+					show={passwordTouched || !!password}
+				/>
+
+				<PasswordStrengthMeter
+					password={password}
+					strength={passwordStrength}
+					strengthColor={getPasswordStrengthColor(passwordStrength)}
+					strengthLabel={getPasswordStrengthLabel(passwordStrength)}
+				/>
+
+				<PasswordField
+					id="confirmPassword"
+					label="Confirm Password"
+					value={confirmPassword}
+					onChange={handleConfirmPasswordChange}
+					onBlur={() =>
+						validateConfirmPassword(
+							confirmPassword,
+							password,
+							setConfirmPasswordError,
+						)
+					}
+					error={confirmPasswordError}
+					showPassword={showConfirmPassword}
+					onToggleVisibility={() =>
+						setShowConfirmPassword(!showConfirmPassword)
+					}
+					disabled={isLoading}
+					autoComplete="new-password"
+					required
+					sx={{ mb: 2 }}
+				/>
+
+				<FormControl fullWidth sx={{ mb: 3 }}>
+					<InputLabel id="role-label">I am a...</InputLabel>
+					<Select
+						labelId="role-label"
+						id="role"
+						value={role}
+						label="I am a..."
+						onChange={handleRoleChange}
 						disabled={isLoading}
-						required
-						sx={{ mb: 2 }}
-					/>
+					>
+						<MenuItem value="student">Student</MenuItem>
+						<MenuItem value="teacher">Teacher</MenuItem>
+						<MenuItem value="parent">Parent</MenuItem>
+					</Select>
+				</FormControl>
 
-					<TextField
-						fullWidth
-						id="email"
-						label="Email Address"
-						name="email"
-						type="email"
-						autoComplete="email"
-						value={email}
-						onChange={handleEmailChange}
-						onBlur={() => validateEmail(email, setEmailError)}
-						error={!!emailError}
-						helperText={emailError}
-						disabled={isLoading}
-						required
-						sx={{ mb: 2 }}
-					/>
-
-					<PasswordField
-						id="password"
-						label="Password"
-						value={password}
-						onChange={handlePasswordChange}
-						onBlur={() => {
-							setPasswordTouched(true);
-							validatePasswordField(password);
-						}}
-						error={passwordError}
-						showPassword={showPassword}
-						onToggleVisibility={() => setShowPassword(!showPassword)}
-						disabled={isLoading}
-						autoComplete="new-password"
-						required
-						sx={{ mb: 1 }}
-					/>
-
-					<PasswordRequirements
-						password={password}
-						show={passwordTouched || !!password}
-					/>
-
-					<PasswordStrengthMeter
-						password={password}
-						strength={passwordStrength}
-						strengthColor={getPasswordStrengthColor(passwordStrength)}
-						strengthLabel={getPasswordStrengthLabel(passwordStrength)}
-					/>
-
-					<PasswordField
-						id="confirmPassword"
-						label="Confirm Password"
-						value={confirmPassword}
-						onChange={handleConfirmPasswordChange}
-						onBlur={() => validateConfirmPassword(confirmPassword, password, setConfirmPasswordError)}
-						error={confirmPasswordError}
-						showPassword={showConfirmPassword}
-						onToggleVisibility={() => setShowConfirmPassword(!showConfirmPassword)}
-						disabled={isLoading}
-						autoComplete="new-password"
-						required
-						sx={{ mb: 2 }}
-					/>
-
-					<FormControl fullWidth sx={{ mb: 3 }}>
-						<InputLabel id="role-label">I am a...</InputLabel>
-						<Select
-							labelId="role-label"
-							id="role"
-							value={role}
-							label="I am a..."
-							onChange={handleRoleChange}
-							disabled={isLoading}
-						>
-							<MenuItem value="student">Student</MenuItem>
-							<MenuItem value="teacher">Teacher</MenuItem>
-							<MenuItem value="parent">Parent</MenuItem>
-						</Select>
-					</FormControl>
-
-					<SubmitButton
-						isLoading={isLoading}
-						buttonText="Create Account"
-					/>
+				<SubmitButton isLoading={isLoading} buttonText="Create Account" />
 			</AuthCard>
 
 			<AuthFormFooter

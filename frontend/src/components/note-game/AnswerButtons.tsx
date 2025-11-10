@@ -12,7 +12,10 @@ interface AnswerButtonsProps {
 
 const totalOptions = [sharpOptions, naturalOptions, flatOptions];
 
-export const AnswerButtons = ({ onAnswer, styles = {} }: AnswerButtonsProps) => {
+export const AnswerButtons = ({
+	onAnswer,
+	styles = {},
+}: AnswerButtonsProps) => {
 	return (
 		<>
 			{totalOptions.map((optionList, index) => (

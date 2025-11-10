@@ -101,25 +101,22 @@ const LoginPage = () => {
 					required
 				/>
 
-					<PasswordField
-						id="password"
-						label="Password"
-						value={password}
-						onChange={handlePasswordChange}
-						onBlur={() => validatePassword(password)}
-						error={passwordError}
-						showPassword={showPassword}
-						onToggleVisibility={() => setShowPassword(!showPassword)}
-						disabled={isLoading}
-						autoComplete="current-password"
-						required
-						sx={{ mb: 3 }}
-					/>
+				<PasswordField
+					id="password"
+					label="Password"
+					value={password}
+					onChange={handlePasswordChange}
+					onBlur={() => validatePassword(password)}
+					error={passwordError}
+					showPassword={showPassword}
+					onToggleVisibility={() => setShowPassword(!showPassword)}
+					disabled={isLoading}
+					autoComplete="current-password"
+					required
+					sx={{ mb: 3 }}
+				/>
 
-					<SubmitButton
-						isLoading={isLoading}
-						buttonText="Sign In"
-					/>
+				<SubmitButton isLoading={isLoading} buttonText="Sign In" />
 			</AuthCard>
 
 			<AuthFormFooter

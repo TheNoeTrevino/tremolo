@@ -9,12 +9,7 @@ export const UserInfoLoadingSkeleton = () => {
 					<Skeleton variant="circular" sx={userInfoStyles.avatar} />
 					<Box>
 						<Skeleton variant="text" width={200} height={32} />
-						<Skeleton
-							variant="text"
-							width={150}
-							height={24}
-							sx={{ mt: 0.5 }}
-						/>
+						<Skeleton variant="text" width={150} height={24} sx={{ mt: 0.5 }} />
 					</Box>
 				</Box>
 

@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 
 interface ScoreboardStatsProps {
 	correctCounter: number;
@@ -51,15 +51,23 @@ export const ScoreDisplay = ({
 
 	if (!stats.accuracy) {
 		return (
-			<Typography fontSize={variant === "mobile" ? "0.875rem" : "1rem"} textAlign="center">
-				{variant === "mobile" ? "Answer to start!" : "Answer to start a session!"}
+			<Typography
+				fontSize={variant === "mobile" ? "0.875rem" : "1rem"}
+				textAlign="center"
+			>
+				{variant === "mobile"
+					? "Answer to start!"
+					: "Answer to start a session!"}
 			</Typography>
 		);
 	}
 
 	return (
 		<>
-			<Typography fontSize={variant === "mobile" ? "0.875rem" : "1rem"} fontWeight="500">
+			<Typography
+				fontSize={variant === "mobile" ? "0.875rem" : "1rem"}
+				fontWeight="500"
+			>
 				{stats.accuracy}
 			</Typography>
 			<Typography fontSize={variant === "mobile" ? "0.875rem" : "1rem"}>

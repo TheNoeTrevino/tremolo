@@ -1,9 +1,4 @@
-import {
-	Box,
-	Fade,
-	useTheme,
-	useMediaQuery,
-} from "@mui/material";
+import { Box, Fade, useTheme, useMediaQuery } from "@mui/material";
 import { useState, MouseEvent, useEffect, useRef, useCallback } from "react";
 import { MusicService } from "../../services/MusicService";
 import { noteGameProps } from "../../models/models";
