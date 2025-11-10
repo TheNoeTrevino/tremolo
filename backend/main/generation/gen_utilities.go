@@ -30,8 +30,6 @@ const (
 
 	// Question count ranges based on session length (updated for int8 NPM cap of 127)
 	// Short session: 5-10 minutes
-	MIN_QUESTIONS_SHORT = 100 // 5 min * 20 NPM
-	MAX_QUESTIONS_SHORT = 800 // 10 min * 80 NPM
 	// Medium session: 10-20 minutes
 	MIN_QUESTIONS_MEDIUM = 400  // 10 min * 40 NPM
 	MAX_QUESTIONS_MEDIUM = 2200 // 20 min * 110 NPM
