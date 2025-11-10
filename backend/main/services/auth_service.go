@@ -6,13 +6,12 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
-	"strings"
-	"time"
-
 	"sight-reading/database"
 	"sight-reading/logger"
 	"sight-reading/middleware"
+	"strconv"
+	"strings"
+	"time"
 
 	dtos "sight-reading/DTOs"
 
