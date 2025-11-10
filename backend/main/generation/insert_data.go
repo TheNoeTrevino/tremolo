@@ -65,7 +65,7 @@ func insertRealisticEntries(studentID int16, entryCount int) {
 // insertRealisticEntries inserts multiple realistic entries for a student with progression
 func insertRealisticEntries(studentID int16, entryCount int) {
 	insertEntryQuery := `
-  INSERT INTO note_game_entries (
+  insert into note_game_entries (
     user_id,
     time_length,
     total_questions,
@@ -74,7 +74,7 @@ func insertRealisticEntries(studentID int16, entryCount int) {
     created_date,
     created_time
   )
-  VALUES (
+  values (
     :user_id,
     :time_length,
     :total_questions,
@@ -83,7 +83,7 @@ func insertRealisticEntries(studentID int16, entryCount int) {
     :created_date,
     :created_time
   )
-  RETURNING
+  returning
     id
   `
 
