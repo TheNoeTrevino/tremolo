@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"math/rand/v2"
-
 	"sight-reading/database"
 
 	dtos "sight-reading/DTOs"
@@ -14,7 +13,7 @@ import (
 // Consider using insertRealisticEntries for better data quality
 func insertFakeEntry(userId int16) {
 	insertEntryQuery := `
-  INSERT INTO note_game_entries (
+  insert into note_game_entries (
     user_id,
     time_length,
     total_questions,
@@ -23,7 +22,7 @@ func insertFakeEntry(userId int16) {
     created_date,
     created_time
   )
-  VALUES (
+  values (
     :user_id,
     :time_length,
     :total_questions,
@@ -32,7 +31,7 @@ func insertFakeEntry(userId int16) {
     :created_date,
     :created_time
   )
-  RETURNING
+  returning
     id
   `
 	correctQuestions := int16(rand.IntN(100))
@@ -67,7 +66,7 @@ func insertFakeEntry(userId int16) {
 // insertRealisticEntries inserts multiple realistic entries for a student with progression
 func insertRealisticEntries(studentID int16, entryCount int) {
 	insertEntryQuery := `
-  INSERT INTO note_game_entries (
+  insert into note_game_entries (
     user_id,
     time_length,
     total_questions,
@@ -76,7 +75,7 @@ func insertRealisticEntries(studentID int16, entryCount int) {
     created_date,
     created_time
   )
-  VALUES (
+  values (
     :user_id,
     :time_length,
     :total_questions,
@@ -85,7 +84,7 @@ func insertRealisticEntries(studentID int16, entryCount int) {
     :created_date,
     :created_time
   )
-  RETURNING
+  returning
     id
   `
 
@@ -120,7 +119,7 @@ func insertRealisticEntries(studentID int16, entryCount int) {
 // Adds fake schools to the data base
 func insertFakeSchools() string {
 	insertSchoolQuery := `
-  INSERT INTO schools (
+  insert into schools (
     title,
     city,
     county,
@@ -129,7 +128,7 @@ func insertFakeSchools() string {
     created_time,
     created_date
   )
-  VALUES (
+  values (
     :title,
     :city,
     :county,
@@ -138,7 +137,7 @@ func insertFakeSchools() string {
     :created_time,
     :created_date
   )
-  RETURNING
+  returning
     id
   `
 	for range 1000 {
@@ -157,7 +156,7 @@ func insertFakeSchools() string {
 // insertFakeTeacherWithStudents creates one teacher with a specified number of students
 func insertFakeTeacherWithStudents(studentsPerTeacher int) dtos.User {
 	insertUserQuery := `
-  INSERT INTO users (
+  insert into users (
     first_name,
     last_name,
     school_id,
@@ -165,7 +164,7 @@ func insertFakeTeacherWithStudents(studentsPerTeacher int) dtos.User {
     email,
     password
   )
-  VALUES (
+  values (
     :first_name,
     :last_name,
     :school_id,
@@ -173,7 +172,7 @@ func insertFakeTeacherWithStudents(studentsPerTeacher int) dtos.User {
     :email,
     :password
   )
-  RETURNING
+  returning
     id
   `
 
@@ -217,11 +216,11 @@ func insertFakeTeacherWithStudents(studentsPerTeacher int) dtos.User {
 		}
 
 		associationQuery := `
-      INSERT INTO teacher_student (
+      insert into teacher_student (
         teacher_id,
         student_id
       )
-      VALUES (
+      values (
         :teacher_id,
         :student_id
       )
