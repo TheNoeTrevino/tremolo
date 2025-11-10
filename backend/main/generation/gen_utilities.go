@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 	"math/rand/v2"
+	"sight-reading/services"
 
 	dtos "sight-reading/DTOs"
-	"sight-reading/services"
 
 	"github.com/manveru/faker"
 )
@@ -108,7 +108,7 @@ func generateFakeEntryTimeLength() string {
 }
 
 func generateFakeDateCreated() sql.NullString {
-	year := rand.IntN(2) + 2022
+	year := 2025
 	month := rand.IntN(11) + 1
 	day := rand.IntN(26) + 1
 
