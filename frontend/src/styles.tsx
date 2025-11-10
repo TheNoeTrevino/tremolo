@@ -275,9 +275,64 @@ const userInfoStyles: Record<string, SxProps> = {
 	},
 };
 
+const authPageStyles: Record<string, SxProps> = {
+	container: {
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+		justifyContent: "center",
+		minHeight: "80vh",
+		py: { xs: 2, sm: 4 },
+	},
+	card: {
+		width: "100%",
+		maxWidth: 500,
+	},
+	cardContent: {
+		p: { xs: 3, sm: 4 },
+	},
+	title: {
+		textAlign: "center",
+		fontWeight: 600,
+		mb: 1,
+	},
+	subtitle: {
+		textAlign: "center",
+		mb: 3,
+	},
+	submitButton: {
+		height: 48,
+		position: "relative",
+	},
+	footerText: {
+		mt: 2,
+		textAlign: "center",
+	},
+	footerLink: {
+		textDecoration: "none",
+		fontWeight: 600,
+		"&:hover": {
+			textDecoration: "underline",
+		},
+	},
+	passwordStrengthContainer: {
+		mb: 2,
+	},
+	passwordStrengthHeader: {
+		display: "flex",
+		justifyContent: "space-between",
+		mb: 0.5,
+	},
+	passwordStrengthBar: {
+		height: 6,
+		borderRadius: 1,
+	},
+};
+
 export {
 	navbarStyles,
 	generatedMusicStyles,
 	landingPageStyles,
 	userInfoStyles,
+	authPageStyles,
 };
