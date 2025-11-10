@@ -170,9 +170,9 @@ func (r *UserRepository) GetFailedAttempts(email string) (int, error) {
 // LockAccount locks an account for a specified duration
 func (r *UserRepository) LockAccount(email string, lockedUntil time.Time) error {
 	query := `
-		UPDATE users
-		SET locked_until = $1
-		WHERE email = $2
+		update users
+		set locked_until = $1
+		where email = $2
 	`
 
 	_, err := r.db.Exec(query, lockedUntil, email)
@@ -182,9 +182,9 @@ func (r *UserRepository) LockAccount(email string, lockedUntil time.Time) error 
 // ResetLockout resets failed login attempts and unlocks the account
 func (r *UserRepository) ResetLockout(email string) error {
 	query := `
-		UPDATE users
-		SET failed_login_attempts = 0, locked_until = NULL
-		WHERE email = $1
+		update users
+		set failed_login_attempts = 0, locked_until = NULL
+		where email = $1
 	`
 
 	_, err := r.db.Exec(query, email)
