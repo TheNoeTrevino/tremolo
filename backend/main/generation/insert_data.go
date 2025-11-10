@@ -62,6 +62,59 @@ func insertRealisticEntries(studentID int16, entryCount int) {
 	}
 }
 
+// insertRealisticEntries inserts multiple realistic entries for a student with progression
+func insertRealisticEntries(studentID int16, entryCount int) {
+	insertEntryQuery := `
+  INSERT INTO note_game_entries (
+    user_id,
+    time_length,
+    total_questions,
+    correct_questions,
+    notes_per_minute,
+    created_date,
+    created_time
+  )
+  VALUES (
+    :user_id,
+    :time_length,
+    :total_questions,
+    :correct_questions,
+    :notes_per_minute,
+    :created_date,
+    :created_time
+  )
+  RETURNING
+    id
+  `
+
+	// Generate a progress profile for this student
+	profile := generateStudentProgressProfile()
+
+	// Generate all entries with realistic progression
+	entries := generateRealisticNoteGameEntries(studentID, entryCount, profile)
+
+	// Insert all entries
+	for _, entry := range entries {
+		err := entry.ValidateEntry()
+		if err != nil {
+			log.Printf(
+				"Warning: entry validation failed for student %d: %v. Skipping entry.",
+				studentID, err,
+			)
+			continue
+		}
+
+		result, err := database.DBClient.NamedExec(insertEntryQuery, entry)
+		if err != nil {
+			log.Printf(
+				"Warning: failed to insert entry for student %d: %v, \n Sql result: %v. Skipping entry.",
+				studentID, err, result,
+			)
+			continue
+		}
+	}
+}
+
 // Adds fake schools to the data base
 func insertFakeSchools() string {
 	insertSchoolQuery := `
