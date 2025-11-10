@@ -165,15 +165,14 @@ setup_backend_music() {
 # Setup Husky hooks
 setup_husky() {
   print_header "Setting up Git Hooks (Husky)"
-  cd "$ROOT_DIR"
-  print_info "Installing Husky..."
 
-  if [ -f "package.json" ]; then
-    npm run prepare || true
-    print_success "Git hooks configured"
-  else
-    print_warning "package.json not found in root, skipping Husky setup"
-  fi
+  print_info "Installing precommit hooks..."
+
+  cd "$ROOT_DIR"
+  print_info "Running npm i in root directory..."
+  npm i
+
+  print_success "Git hooks configured"
 }
 
 # Main setup flow
@@ -199,20 +198,16 @@ main() {
 
   echo -e "${YELLOW}Next steps:${NC}"
   echo -e "1. Set environment variables:"
-  echo -e "   export DATABASE_URL=\"postgresql://<user>:<password>@<host>:<port>/<database>\""
-  echo -e "   export DATABASE_USER=\"<username>\""
-  echo -e "   export DATABASE_PW=\"<password>\""
-  echo -e "   export VITE_BACKEND_MAIN=\"http://localhost:5001\""
-  echo -e "   export VITE_BACKEND_MUSIC=\"http://localhost:8000\""
+  echo -e "   Take a look at the 'Environment Setup' section in the README."
   echo ""
   echo -e "2. Start frontend:"
   echo -e "   cd frontend && npm run dev"
   echo ""
-  echo -e "3. Start music service :"
+  echo -e "3. Start music service:"
   echo -e "   cd backend/music && source env/bin/activate && fastapi dev main.py "
 
   echo ""
-  echo -e "4. Start user tracking service :"
+  echo -e "4. Start user tracking service:"
   echo -e "   cd backend/main && go run main.go"
   echo ""
 }
