@@ -165,7 +165,7 @@ setup_backend_music() {
 # Setup Husky hooks
 setup_husky() {
   print_header "Setting up Git Hooks (Husky)"
-
+  cd "$ROOT_DIR"
   print_info "Installing Husky..."
 
   if [ -f "package.json" ]; then
