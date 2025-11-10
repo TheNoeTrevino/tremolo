@@ -217,7 +217,11 @@ func (r *UserRepository) CreateUser(user User) (*User, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if closeErr := rows.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
 
 	var createdUser User
 	if rows.Next() {

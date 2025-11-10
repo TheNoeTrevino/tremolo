@@ -52,7 +52,11 @@ func (r *NoteGameRepository) CreateNoteGameEntry(entry NoteGameEntry) (int64, er
 	if err != nil {
 		return 0, err
 	}
-	defer rows.Close()
+	defer func() {
+		if closeErr := rows.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
 
 	var entryID int64
 	if rows.Next() {
