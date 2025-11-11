@@ -1,27 +1,11 @@
-import {
-	Box,
-	Button,
-	ButtonBase,
-	Card,
-	Fade,
-	Typography,
-	useTheme,
-	useMediaQuery,
-} from "@mui/material";
+import { Box, Fade, useTheme, useMediaQuery } from "@mui/material";
 import { useState, MouseEvent, useEffect, useRef, useCallback } from "react";
 import { MusicService } from "../../services/MusicService";
-import { noteGameStyles } from "./NoteGameStyles";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { noteGameProps } from "../../models/models";
 import { keypressToNote, noteToSound } from "./NoteGameUtilities";
-import {
-	sharpOptions,
-	naturalOptions,
-	flatOptions,
-	scaleOptions,
-	octaveOptions,
-} from "../../components/musical/MusicalOptions";
-import MusicButton from "../../components/musical/MusicButton";
+import { NoteGameMobileView } from "../../components/note-game/NoteGameMobileView";
+import { NoteGameDesktopView } from "../../components/note-game/NoteGameDesktopView";
+import { NoteGameViewProps } from "../../components/note-game/NoteGameViewProps";
 
 const NoteGame = () => {
 	const theme = useTheme();
@@ -68,7 +52,6 @@ const NoteGame = () => {
 
 	const openScaleOptions = Boolean(scaleAnchorEl);
 	const openOctaveOptions = Boolean(octaveAnchorEl);
-	const totalOptions = [sharpOptions, naturalOptions, flatOptions];
 
 	const fetchNote = useCallback(async (): Promise<void> => {
 		setNoteInformation(
@@ -76,7 +59,6 @@ const NoteGame = () => {
 		);
 	}, [scaleChoice, octaveChoice]);
 
-	// FIX: this is getting ran twice
 	useEffect(() => {
 		fetchNote();
 	}, [scaleChoice, octaveChoice, totalCounter, fetchNote]);
@@ -113,6 +95,24 @@ const NoteGame = () => {
 		audio.play();
 	};
 
+	const commonProps: NoteGameViewProps = {
+		correctCounter,
+		totalCounter,
+		currentTime,
+		startTime: startTime.current,
+		scaleAnchorEl,
+		octaveAnchorEl,
+		openScaleOptions,
+		openOctaveOptions,
+		handleScaleClick,
+		handleOctaveClick,
+		handleScaleClose,
+		handleOctaveClose,
+		chooseScale,
+		chooseOctave,
+		onAnswer: validateButtonClick,
+	};
+
 	return (
 		<div onKeyDown={validateKeyDown} tabIndex={0}>
 			<Fade in={true} timeout={500}>
@@ -126,178 +126,10 @@ const NoteGame = () => {
 						paddingBottom: isMobile ? "140px" : "0",
 					}}
 				>
-					{/* NOTE: just use different layouts for mobile and desktop for simplicity */}
 					{isMobile ? (
-						<>
-							<Box sx={noteGameStyles.mobileScoreboardStrip}>
-								{isNaN(correctCounter / totalCounter) ? (
-									<Typography fontSize="0.875rem" textAlign="center">
-										Answer to start!
-									</Typography>
-								) : (
-									<>
-										<Typography fontSize="0.875rem" fontWeight="500">
-											{correctCounter / totalCounter === 1
-												? "100%"
-												: `${Math.round((correctCounter / totalCounter) * 100)}%`}
-										</Typography>
-										<Typography fontSize="0.875rem">
-											{correctCounter}/{totalCounter}
-										</Typography>
-										<Typography fontSize="0.875rem">
-											NPM:{" "}
-											{Math.floor(
-												(totalCounter / (currentTime - startTime.current)) *
-													100,
-											)}
-										</Typography>
-									</>
-								)}
-							</Box>
-
-							<Card sx={noteGameStyles.mobileMusicContainer} elevation={6}>
-								<Box
-									id="sheet-music-div"
-									sx={noteGameStyles.mobileMusicDisplay}
-								></Box>
-							</Card>
-
-							<Box sx={noteGameStyles.mobileAnswerButtonsContainer}>
-								{totalOptions.map((optionList, index) => (
-									<Box key={index} sx={noteGameStyles.mobileButtonRow}>
-										{optionList.map((option) => (
-											<Button
-												key={option.value}
-												variant="contained"
-												sx={noteGameStyles.mobileAnswerButton}
-												onClick={() => validateButtonClick(option.value)}
-											>
-												{option.name}
-											</Button>
-										))}
-									</Box>
-								))}
-							</Box>
-
-							<Box sx={noteGameStyles.stickyControlsBar}>
-								<MusicButton
-									text="Scale"
-									handleClick={handleScaleClick}
-									options={scaleOptions}
-									anchorEl={scaleAnchorEl}
-									open={openScaleOptions}
-									handleClose={handleScaleClose}
-									handleOptionClick={chooseScale}
-									styles={{ flex: 1, height: "48px" }}
-									startIcon={<KeyboardArrowDownIcon />}
-								/>
-								<MusicButton
-									text="Octave"
-									handleClick={handleOctaveClick}
-									options={octaveOptions}
-									anchorEl={octaveAnchorEl}
-									open={openOctaveOptions}
-									handleClose={handleOctaveClose}
-									handleOptionClick={chooseOctave}
-									styles={{ flex: 1, height: "48px" }}
-									startIcon={<KeyboardArrowDownIcon />}
-								/>
-							</Box>
-						</>
+						<NoteGameMobileView {...commonProps} />
 					) : (
-						// Desktop Layout
-						<>
-							<Box id="main" sx={noteGameStyles.mainDiv}>
-								<ButtonBase
-									centerRipple={true}
-									component={Card}
-									elevation={6}
-									sx={noteGameStyles.optionButtonsCard}
-								>
-									{isNaN(correctCounter / totalCounter) ? (
-										<Card sx={noteGameStyles.scoreboardContainer} elevation={3}>
-											<Typography m={"1rem"}>
-												Answer to start a session!
-											</Typography>
-										</Card>
-									) : (
-										<Card sx={noteGameStyles.scoreboardContainer}>
-											<Card sx={noteGameStyles.scoreboardItems} elevation={3}>
-												<Typography m={"1rem"}>
-													Accuracy
-													{correctCounter / totalCounter === 1
-														? ": 100%"
-														: `: ${Math.round((correctCounter / totalCounter) * 100)}%`}
-												</Typography>
-											</Card>
-											<Card sx={noteGameStyles.scoreboardItems} elevation={3}>
-												<Typography m={"1rem"}>
-													Fraction: {correctCounter}/{totalCounter}
-												</Typography>
-											</Card>
-											<Card sx={noteGameStyles.scoreboardItems} elevation={3}>
-												<Typography m={"1rem"}>
-													{`NPM:
-                          ${Math.floor(
-														(totalCounter / (currentTime - startTime.current)) *
-															100,
-													)}`}
-												</Typography>
-											</Card>
-										</Card>
-									)}
-								</ButtonBase>
-								<Card sx={noteGameStyles.musicContainer} elevation={6}>
-									<Box
-										id="sheet-music-div"
-										sx={noteGameStyles.musicDisplay}
-									></Box>
-								</Card>
-								<Card elevation={6} sx={noteGameStyles.optionButtonsCard}>
-									<Box sx={noteGameStyles.optionButtonsContainer}>
-										{/* TODO: rename this to something with options */}
-										<MusicButton
-											text="Choose Scale"
-											handleClick={handleScaleClick}
-											options={scaleOptions}
-											anchorEl={scaleAnchorEl}
-											open={openScaleOptions}
-											handleClose={handleScaleClose}
-											handleOptionClick={chooseScale}
-											styles={{ mt: 2, width: "100%" }}
-											startIcon={<KeyboardArrowDownIcon />}
-										/>
-										<MusicButton
-											text="Choose Octave"
-											handleClick={handleOctaveClick}
-											options={octaveOptions}
-											anchorEl={octaveAnchorEl}
-											open={openOctaveOptions}
-											handleClose={handleOctaveClose}
-											handleOptionClick={chooseOctave}
-											styles={{ mt: 2, width: "100%" }}
-											startIcon={<KeyboardArrowDownIcon />}
-										/>
-									</Box>
-								</Card>
-							</Box>
-							<Box id="options">
-								{totalOptions.map((optionList, index) => (
-									<Box key={index} width={"100%"}>
-										{optionList.map((option) => (
-											<Button
-												key={option.value}
-												variant="contained"
-												sx={{ ...noteGameStyles.answerButtons }}
-												onClick={() => validateButtonClick(option.value)}
-											>
-												{option.name}
-											</Button>
-										))}
-									</Box>
-								))}
-							</Box>
-						</>
+						<NoteGameDesktopView {...commonProps} />
 					)}
 				</Box>
 			</Fade>

@@ -3,6 +3,7 @@
 package validations
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/go-playground/validator/v10"
@@ -47,4 +48,22 @@ func PasswordComplexity(fl validator.FieldLevel) bool {
 	hasSpecial := regexp.MustCompile(`[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]`).MatchString(password)
 
 	return hasUpper && hasLower && hasNumber && hasSpecial
+}
+
+// ValidateChartInterval validates chart interval parameter
+// Valid values: day, week, month, year (for date_trunc), all (no time constraint)
+// This prevents invalid data from reaching the database layer
+// Returns error if interval is invalid, nil otherwise
+func ValidateChartInterval(interval string) error {
+	validIntervals := map[string]bool{
+		"day":   true,
+		"week":  true,
+		"month": true,
+		"year":  true,
+		"all":   true,
+	}
+	if !validIntervals[interval] {
+		return fmt.Errorf("invalid interval '%s': must be one of: day, week, month, year, all", interval)
+	}
+	return nil
 }

@@ -2,9 +2,9 @@ package services
 
 import (
 	"net/http"
+	"sight-reading/repositories"
 
 	dtos "sight-reading/DTOs"
-	"sight-reading/database"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,44 +30,17 @@ func CreateNoteGameEntry(c *gin.Context) {
 		return
 	}
 
-	// NOTE: db check passed
-	query := `
-  INSERT INTO note_game_entries (
-    user_id,
-    time_length,
-    total_questions,
-    correct_questions,
-    notes_per_minute
-  )
-  VALUES (
-    :user_id
-    :time_length,
-    :total_questions,
-    :correct_questions,
-  )
-  RETURNING id, user_id
-  `
+	noteGameRepo := repositories.NewNoteGameRepository()
 
-	rows, err := database.DBClient.NamedQuery(query, reqBody)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
+	entry := repositories.NoteGameEntry{
+		UserID:           int(reqBody.UserID),
+		TimeLength:       reqBody.TimeLength,
+		TotalQuestions:   int(reqBody.TotalQuestions),
+		CorrectQuestions: int(reqBody.CorrectQuestions),
+		NotesPerMinute:   float64(reqBody.NPM),
 	}
 
-	var entryID int64
-	if rows.Next() {
-		err = rows.Scan(&entryID)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-	}
-
-	err = rows.Close()
+	entryID, err := noteGameRepo.CreateNoteGameEntry(entry)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -83,15 +56,9 @@ func CreateNoteGameEntry(c *gin.Context) {
 }
 
 func GetEntriesByUserId(c *gin.Context) {
-	// NOTE: db check passed
-	// TODO: specify columns
-	query := `
-  SELECT *
-  FROM entries
-  where entries.user_id = $1
-  `
-	var entries []dtos.Entry
-	err := database.DBClient.Select(entries, query, 1)
+	noteGameRepo := repositories.NewNoteGameRepository()
+
+	entries, err := noteGameRepo.GetEntriesByUserID(1)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"error":   err.Error(),
@@ -100,5 +67,17 @@ func GetEntriesByUserId(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, entries)
+	var dtoEntries []dtos.Entry
+	for _, entry := range entries {
+		dtoEntry := dtos.Entry{
+			UserID:           int16(entry.UserID),
+			TimeLength:       entry.TimeLength,
+			TotalQuestions:   int16(entry.TotalQuestions),
+			CorrectQuestions: int16(entry.CorrectQuestions),
+			NPM:              int8(entry.NotesPerMinute),
+		}
+		dtoEntries = append(dtoEntries, dtoEntry)
+	}
+
+	c.JSON(http.StatusOK, dtoEntries)
 }

@@ -4,9 +4,8 @@ package dtos
 
 import (
 	"errors"
-	"strings"
-
 	"sight-reading/validations"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 )

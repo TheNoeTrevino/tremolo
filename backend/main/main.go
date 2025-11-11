@@ -57,6 +57,8 @@ func main() {
 
 	controllers.SetupAuthRoutes(router)
 	controllers.SetupTeacherRoutes(router)
+	controllers.SetupChartRoutes(router)
+	controllers.SetupUserInfoRoutes(router)
 
 	err := router.Run(":5001")
 	if err != nil {

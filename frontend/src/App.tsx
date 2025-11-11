@@ -9,6 +9,11 @@ import { AuthProvider } from "./contexts/AuthContext";
 // button into its own component so we can easily change the default props
 const theme = createTheme({
 	components: {
+		MuiPaper: {
+			defaultProps: {
+				variant: "outlined",
+			},
+		},
 		MuiAppBar: {
 			defaultProps: {
 				variant: "outlined",
