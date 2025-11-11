@@ -49,6 +49,8 @@ func GetGeneralUserInfo(c *gin.Context) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
 		return
 	}
+	// TODO: Future enhancement - allow teachers to view their students' info
+	// Will require checking teacher_student table relationship
 
 	// Fetch user information
 	userInfo, err := services.GetGeneralUserInfo(requestedUserID)

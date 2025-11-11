@@ -1,6 +1,9 @@
 package dtos
 
-import "time"
+import (
+	"sight-reading/validations"
+	"time"
+)
 
 // ChartDataPoint represents a single point on the chart
 // Used for Chart.js time-series visualization with x (timestamp) and y (value)
@@ -20,13 +23,8 @@ type MultiMetricChartData struct {
 
 // ValidateInterval checks if the interval parameter is valid
 // Valid intervals: day, week, month, year (used with PostgreSQL date_trunc), all (no time constraint)
-func ValidateInterval(interval string) bool {
-	validIntervals := map[string]bool{
-		"day":   true,
-		"week":  true,
-		"month": true,
-		"year":  true,
-		"all":   true,
-	}
-	return validIntervals[interval]
+// Delegates to validations package for consistency
+// Returns error if validation fails, nil otherwise
+func ValidateInterval(interval string) error {
+	return validations.ValidateChartInterval(interval)
 }

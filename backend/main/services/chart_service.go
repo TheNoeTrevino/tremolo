@@ -48,8 +48,9 @@ func GetUserChartData(c *gin.Context) {
 	interval := c.DefaultQuery("interval", "day")
 	daysStr := c.DefaultQuery("days", "30")
 
-	if !dtos.ValidateInterval(interval) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid interval. Must be: day, week, month, or year"})
+	if err := dtos.ValidateInterval(interval); err != nil {
+		logger.Error("Invalid interval parameter", "error", err.Error(), "interval", interval, "user_id", requestedUserID)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -140,8 +141,9 @@ func GetTeacherClassChartData(c *gin.Context) {
 	interval := c.DefaultQuery("interval", "day")
 	daysStr := c.DefaultQuery("days", "30")
 
-	if !dtos.ValidateInterval(interval) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid interval. Must be: day, week, month, or year"})
+	if err := dtos.ValidateInterval(interval); err != nil {
+		logger.Error("Invalid interval parameter", "error", err.Error(), "interval", interval, "teacher_id", teacherID)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
