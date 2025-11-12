@@ -1,4 +1,13 @@
-import { Box, Fade, useTheme, useMediaQuery, Typography } from "@mui/material";
+import {
+	Box,
+	Fade,
+	useTheme,
+	useMediaQuery,
+	Typography,
+	Button,
+	ButtonGroup,
+	Paper,
+} from "@mui/material";
 import { useState, MouseEvent, useEffect, useRef, useCallback } from "react";
 import { MusicService } from "../../services/MusicService";
 import { noteGameProps } from "../../models/models";
@@ -12,7 +21,10 @@ import {
 	NoteGameEntryRequest,
 } from "../../services/NoteGameService";
 
-const GAME_DURATION_SECONDS = 30;
+type GameMode = "time" | "notes";
+
+const TIME_OPTIONS = [15, 30, 60, 120];
+const NOTE_OPTIONS = [10, 25, 50, 100];
 
 const NoteGame = () => {
 	const theme = useTheme();
@@ -21,7 +33,13 @@ const NoteGame = () => {
 
 	const [sound, setSound] = useState<string | undefined>(undefined);
 
-	const startTime = useRef<number>(Math.floor(new Date().getTime() / 1000));
+	// Game mode and settings
+	const [gameMode, setGameMode] = useState<GameMode>("time");
+	const [timeLimit, setTimeLimit] = useState<number>(30);
+	const [noteLimit, setNoteLimit] = useState<number>(25);
+	const [gameStarted, setGameStarted] = useState<boolean>(false);
+
+	const startTime = useRef<number | null>(null);
 	const [currentTime, setCurrentTime] = useState<number>(
 		Math.floor(new Date().getTime() / 1000),
 	);
@@ -56,9 +74,13 @@ const NoteGame = () => {
 	};
 	const chooseScale = (scaleChoice: string) => {
 		setScale(scaleChoice);
+		// Note will be refetched via useEffect when scaleChoice changes
+		resetGame();
 	};
 	const chooseOctave = (octaveChoice: string) => {
 		setOctaveChoice(octaveChoice);
+		// Note will be refetched via useEffect when octaveChoice changes
+		resetGame();
 	};
 
 	const openScaleOptions = Boolean(scaleAnchorEl);
@@ -68,6 +90,39 @@ const NoteGame = () => {
 		const mins = Math.floor(seconds / 60);
 		const secs = seconds % 60;
 		return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+	};
+
+	// Handler for changing game mode - does NOT reset game
+	const handleGameModeChange = (mode: GameMode) => {
+		if (mode === gameMode) return;
+		setGameMode(mode);
+		setGameStarted(false);
+		setGameOver(false);
+		setTotalcounter(0);
+		setCorrectCounter(0);
+		startTime.current = null;
+	};
+
+	// Handler for changing time limit - does NOT reset game
+	const handleTimeLimitChange = (time: number) => {
+		if (time === timeLimit) return;
+		setTimeLimit(time);
+		setGameStarted(false);
+		setGameOver(false);
+		setTotalcounter(0);
+		setCorrectCounter(0);
+		startTime.current = null;
+	};
+
+	// Handler for changing note limit - does NOT reset game
+	const handleNoteLimitChange = (notes: number) => {
+		if (notes === noteLimit) return;
+		setNoteLimit(notes);
+		setGameStarted(false);
+		setGameOver(false);
+		setTotalcounter(0);
+		setCorrectCounter(0);
+		startTime.current = null;
 	};
 
 	const useSaveNoteGame = useCallback(() => {
@@ -81,7 +136,8 @@ const NoteGame = () => {
 				return;
 			}
 
-			const elapsedSeconds = currentTime - startTime.current;
+			const elapsedSeconds =
+				startTime.current !== null ? currentTime - startTime.current : 0;
 			const hours = Math.floor(elapsedSeconds / 3600);
 			const minutes = Math.floor((elapsedSeconds % 3600) / 60);
 			const seconds = elapsedSeconds % 60;
@@ -112,19 +168,36 @@ const NoteGame = () => {
 	const saveGame = useSaveNoteGame();
 
 	useEffect(() => {
+		if (!gameStarted || gameOver || startTime.current === null) return;
+
 		const timer = setInterval(() => {
 			const now = Math.floor(new Date().getTime() / 1000);
 			setCurrentTime(now);
 
-			const elapsed = now - startTime.current;
-			if (elapsed >= GAME_DURATION_SECONDS && !gameOver) {
-				setGameOver(true);
-				saveGame();
+			if (gameMode === "time") {
+				const elapsed = now - startTime.current!;
+				if (elapsed >= timeLimit) {
+					setGameOver(true);
+					saveGame();
+				}
+			} else if (gameMode === "notes") {
+				if (totalCounter >= noteLimit) {
+					setGameOver(true);
+					saveGame();
+				}
 			}
 		}, 1000);
 
 		return () => clearInterval(timer);
-	}, [gameOver, saveGame]);
+	}, [
+		gameStarted,
+		gameOver,
+		gameMode,
+		timeLimit,
+		noteLimit,
+		totalCounter,
+		saveGame,
+	]);
 
 	const fetchNote = useCallback(async (): Promise<void> => {
 		if (!gameOver) {
@@ -151,6 +224,12 @@ const NoteGame = () => {
 	const validateButtonClick = (noteKey: string): void => {
 		if (gameOver) return;
 
+		// Start game on first note entry
+		if (!gameStarted) {
+			setGameStarted(true);
+			startTime.current = Math.floor(new Date().getTime() / 1000);
+		}
+
 		setTotalcounter(totalCounter + 1);
 		if (noteKey != noteInformation?.noteName) {
 			return;
@@ -164,6 +243,12 @@ const NoteGame = () => {
 	const validateKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
 		if (gameOver) return;
 
+		// Start game on first note entry
+		if (!gameStarted) {
+			setGameStarted(true);
+			startTime.current = Math.floor(new Date().getTime() / 1000);
+		}
+
 		setTotalcounter(totalCounter + 1);
 		if (keypressToNote[event.key] != noteInformation?.noteName) {
 			return;
@@ -176,10 +261,11 @@ const NoteGame = () => {
 
 	const resetGame = () => {
 		setGameOver(false);
+		setGameStarted(false);
 		setTotalcounter(0);
 		setCorrectCounter(0);
-		startTime.current = Math.floor(new Date().getTime() / 1000);
-		setCurrentTime(startTime.current);
+		startTime.current = null;
+		setCurrentTime(Math.floor(new Date().getTime() / 1000));
 		fetchNote();
 	};
 
@@ -201,18 +287,79 @@ const NoteGame = () => {
 		onAnswer: validateButtonClick,
 	};
 
-	const timeRemaining = Math.max(
-		0,
-		GAME_DURATION_SECONDS - (currentTime - startTime.current),
+	const timeRemaining =
+		gameMode === "time" && startTime.current !== null
+			? Math.max(0, timeLimit - (currentTime - startTime.current))
+			: 0;
+
+	// Top bar with game options (always visible)
+	const renderTopBar = () => (
+		<Box
+			sx={{
+				display: "flex",
+				justifyContent: "center",
+				alignItems: "center",
+				gap: 2,
+				mb: 3,
+				flexWrap: "wrap",
+			}}
+		>
+			{/* Game Mode Buttons */}
+			<ButtonGroup size="small">
+				<Button
+					variant={gameMode === "time" ? "contained" : "outlined"}
+					onClick={() => handleGameModeChange("time")}
+					disabled={gameStarted && !gameOver}
+				>
+					time
+				</Button>
+				<Button
+					variant={gameMode === "notes" ? "contained" : "outlined"}
+					onClick={() => handleGameModeChange("notes")}
+					disabled={gameStarted && !gameOver}
+				>
+					notes
+				</Button>
+			</ButtonGroup>
+
+			{/* Time/Note Limit Options */}
+			{gameMode === "time" ? (
+				<ButtonGroup size="small">
+					{TIME_OPTIONS.map((time) => (
+						<Button
+							key={time}
+							variant={timeLimit === time ? "contained" : "outlined"}
+							onClick={() => handleTimeLimitChange(time)}
+							disabled={gameStarted && !gameOver}
+						>
+							{time}
+						</Button>
+					))}
+				</ButtonGroup>
+			) : (
+				<ButtonGroup size="small">
+					{NOTE_OPTIONS.map((notes) => (
+						<Button
+							key={notes}
+							variant={noteLimit === notes ? "contained" : "outlined"}
+							onClick={() => handleNoteLimitChange(notes)}
+							disabled={gameStarted && !gameOver}
+						>
+							{notes}
+						</Button>
+					))}
+				</ButtonGroup>
+			)}
+		</Box>
 	);
 
 	if (gameOver) {
 		const accuracy =
 			totalCounter > 0 ? Math.round((correctCounter / totalCounter) * 100) : 0;
+		const elapsedTime =
+			startTime.current !== null ? currentTime - startTime.current : 0;
 		const npm =
-			currentTime - startTime.current > 0
-				? Math.round((totalCounter / (currentTime - startTime.current)) * 60)
-				: 0;
+			elapsedTime > 0 ? Math.round((totalCounter / elapsedTime) * 60) : 0;
 
 		// TODO: extract this into its own component
 		return (
@@ -220,7 +367,7 @@ const NoteGame = () => {
 				<Box
 					my={isMobile ? "0" : "2rem"}
 					sx={{
-						// TODO: we are reusing these styles extacty, extract to the NoeGameStyles.tsx file
+						// TODO: we are reusing these styles exactly, extract to the NoteGameStyles.tsx file
 						display: "flex",
 						justifyContent: "center",
 						alignItems: "center",
@@ -229,21 +376,22 @@ const NoteGame = () => {
 						gap: 2,
 					}}
 				>
+					{renderTopBar()}
 					<Typography variant="h4">Game Over!</Typography>
 					<Typography variant="h6">
 						Accuracy: {accuracy}% ({correctCounter}/{totalCounter})
 					</Typography>
 					<Typography variant="h6">Notes Per Minute: {npm}</Typography>
-					<button
+					<Button
+						variant="contained"
 						onClick={resetGame}
-						style={{
+						sx={{
 							padding: "10px 20px",
 							fontSize: "16px",
-							cursor: "pointer",
 						}}
 					>
 						Play Again
-					</button>
+					</Button>
 				</Box>
 			</Fade>
 		);
@@ -263,9 +411,20 @@ const NoteGame = () => {
 						paddingBottom: isMobile ? "140px" : "0",
 					}}
 				>
-					<Typography variant="h5" sx={{ mb: 2 }}>
-						Time Remaining: {formatTime(timeRemaining)}
-					</Typography>
+					{renderTopBar()}
+
+					{/* Display based on game mode */}
+					{gameMode === "time" ? (
+						<Typography variant="h5" sx={{ mb: 2 }}>
+							{gameStarted
+								? `Time Remaining: ${formatTime(timeRemaining)}`
+								: `Time: ${timeLimit}s`}
+						</Typography>
+					) : (
+						<Typography variant="h5" sx={{ mb: 2 }}>
+							Notes: {totalCounter} / {noteLimit}
+						</Typography>
+					)}
 					{isMobile ? (
 						<NoteGameMobileView {...commonProps} />
 					) : (

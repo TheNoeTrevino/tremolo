@@ -287,17 +287,18 @@ export const PerformanceChart = () => {
 				time: {
 					unit:
 						interval === "day"
-							? "day"
+							? "hour"
 							: interval === "week"
-								? "week"
+								? "day"
 								: interval === "month"
-									? "month"
-									: "year",
+									? "day"
+									: interval === "year"
+										? "month"
+										: "day",
 					displayFormats: {
+						hour: "HH:mm",
 						day: "MMM d",
-						week: "MMM d",
 						month: "MMM yyyy",
-						year: "yyyy",
 					},
 				},
 				grid: {

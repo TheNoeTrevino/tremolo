@@ -10,14 +10,12 @@ export const ChartService = {
 	/**
 	 * Fetch personal chart metrics for the authenticated user
 	 * @param userId - User ID to fetch data for
-	 * @param interval - Time interval for aggregation (day/week/month/year)
-	 * @param days - Number of days to fetch (default: 30)
+	 * @param interval - Time interval for aggregation (day/week/month/year/all)
 	 * @returns Promise with multi-metric chart data
 	 */
 	async getUserChartData(
 		userId: string,
 		interval: TimeInterval = "day",
-		days: number = 30,
 	): Promise<MultiMetricChartData> {
 		try {
 			const token = AuthService.getToken();
@@ -25,6 +23,15 @@ export const ChartService = {
 			if (!token) {
 				throw new Error("Authentication required");
 			}
+
+			// Map interval to number of days to fetch
+			const daysMap: Record<TimeInterval, number> = {
+				day: 1, // Today only
+				week: 7, // This week
+				month: 30, // This month (approximation)
+				year: 365, // This year
+				all: 99999, // All time
+			};
 
 			const response = await apiClient.get<MultiMetricChartData>(
 				`/api/charts/user/${userId}/metrics`,
@@ -34,7 +41,7 @@ export const ChartService = {
 					},
 					params: {
 						interval,
-						days,
+						days: daysMap[interval],
 					},
 				},
 			);
@@ -55,13 +62,11 @@ export const ChartService = {
 
 	/**
 	 * Fetch aggregated class metrics for teachers
-	 * @param interval - Time interval for aggregation (day/week/month/year)
-	 * @param days - Number of days to fetch (default: 30)
+	 * @param interval - Time interval for aggregation (day/week/month/year/all)
 	 * @returns Promise with multi-metric chart data (aggregated across all students)
 	 */
 	async getTeacherClassChartData(
 		interval: TimeInterval = "day",
-		days: number = 30,
 	): Promise<MultiMetricChartData> {
 		try {
 			const token = AuthService.getToken();
@@ -69,6 +74,15 @@ export const ChartService = {
 			if (!token) {
 				throw new Error("Authentication required");
 			}
+
+			// Map interval to number of days to fetch
+			const daysMap: Record<TimeInterval, number> = {
+				day: 1, // Today only
+				week: 7, // This week
+				month: 30, // This month (approximation)
+				year: 365, // This year
+				all: 99999, // All time
+			};
 
 			const response = await apiClient.get<MultiMetricChartData>(
 				`/api/charts/teacher/class-metrics`,
@@ -78,7 +92,7 @@ export const ChartService = {
 					},
 					params: {
 						interval,
-						days,
+						days: daysMap[interval],
 					},
 				},
 			);
