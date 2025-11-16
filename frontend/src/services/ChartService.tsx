@@ -1,5 +1,4 @@
 import { apiClient, isOk } from "./axiosInstance";
-import { AuthService } from "./AuthService";
 import { MultiMetricChartData, TimeInterval } from "../DTOs/chart";
 
 /**
@@ -18,12 +17,6 @@ export const ChartService = {
 		interval: TimeInterval = "day",
 	): Promise<MultiMetricChartData> {
 		try {
-			const token = AuthService.getToken();
-
-			if (!token) {
-				throw new Error("Authentication required");
-			}
-
 			// Map interval to number of days to fetch
 			const daysMap: Record<TimeInterval, number> = {
 				day: 1, // Today only
@@ -36,9 +29,6 @@ export const ChartService = {
 			const response = await apiClient.get<MultiMetricChartData>(
 				`/api/charts/user/${userId}/metrics`,
 				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
 					params: {
 						interval,
 						days: daysMap[interval],
@@ -69,12 +59,6 @@ export const ChartService = {
 		interval: TimeInterval = "day",
 	): Promise<MultiMetricChartData> {
 		try {
-			const token = AuthService.getToken();
-
-			if (!token) {
-				throw new Error("Authentication required");
-			}
-
 			// Map interval to number of days to fetch
 			const daysMap: Record<TimeInterval, number> = {
 				day: 1, // Today only
@@ -87,9 +71,6 @@ export const ChartService = {
 			const response = await apiClient.get<MultiMetricChartData>(
 				`/api/charts/teacher/class-metrics`,
 				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
 					params: {
 						interval,
 						days: daysMap[interval],
