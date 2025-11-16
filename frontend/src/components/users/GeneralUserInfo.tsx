@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Paper, Button, Divider } from "@mui/material";
+import { Box, Paper, Divider } from "@mui/material";
 import { UserInfoService } from "../../services/UserInfoService";
 import { GeneralUserInfo as GeneralUserInfoType } from "../../DTOs/user";
 import { useAuth } from "../../hooks/useAuth";
@@ -15,7 +15,7 @@ interface GeneralUserInfoProps {
 	onLogout?: () => void;
 }
 
-export const GeneralUserInfo = ({ userId, onLogout }: GeneralUserInfoProps) => {
+export const GeneralUserInfo = ({ userId }: GeneralUserInfoProps) => {
 	const { currentUser } = useAuth();
 	const [userInfo, setUserInfo] = useState<GeneralUserInfoType | null>(null);
 	const [loading, setLoading] = useState(true);
@@ -73,18 +73,6 @@ export const GeneralUserInfo = ({ userId, onLogout }: GeneralUserInfoProps) => {
 							size="small"
 						/>
 					</Box>
-
-					{onLogout && (
-						<Button
-							variant="outlined"
-							color="error"
-							onClick={onLogout}
-							size="small"
-							sx={userInfoStyles.logoutButton}
-						>
-							Logout
-						</Button>
-					)}
 				</Box>
 			</Box>
 		</Paper>

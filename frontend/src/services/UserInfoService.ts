@@ -1,6 +1,6 @@
 import { apiClient, isOk } from "./axiosInstance";
-import { AuthService } from "./AuthService";
 import { GeneralUserInfo } from "../DTOs/user";
+import { AuthService } from "./AuthService";
 
 /**
  * User Info Service

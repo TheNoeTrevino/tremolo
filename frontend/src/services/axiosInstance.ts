@@ -47,7 +47,21 @@ export const isOk = (response: AxiosResponse): boolean => {
 	return response.status >= 200 && response.status < 300;
 };
 
-// interceptor for automatic token refresh on 401's
+// Request interceptor: Automatically attach Authorization header if user is logged in
+apiClient.interceptors.request.use(
+	(config) => {
+		const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+		if (token) {
+			config.headers.Authorization = `Bearer ${token}`;
+		}
+		return config;
+	},
+	(error) => {
+		return Promise.reject(error);
+	},
+);
+
+// Response interceptor: Automatic token refresh on 401's
 apiClient.interceptors.response.use(
 	async (response) => {
 		const originalRequest = response.config as RetryableRequestConfig;

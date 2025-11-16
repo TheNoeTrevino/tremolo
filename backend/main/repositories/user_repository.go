@@ -16,7 +16,6 @@ func NewUserRepository() *UserRepository {
 	return &UserRepository{db: database.DBClient}
 }
 
-// User models for database operations
 type User struct {
 	ID                  int            `db:"id"`
 	Email               string         `db:"email"`

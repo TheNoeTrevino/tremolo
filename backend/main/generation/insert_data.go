@@ -195,7 +195,7 @@ func insertMultipleTeachersWithStudents(teacherCount int, studentsPerTeacher int
 	log.Printf("Estimated total entries: %d - %d entries\n",
 		teacherCount*studentsPerTeacher*20, teacherCount*studentsPerTeacher*100)
 
-	for i := 0; i < teacherCount; i++ {
+	for i := range teacherCount {
 		log.Printf("[%d/%d] Creating teacher with %d students...", i+1, teacherCount, studentsPerTeacher)
 		teacher := insertFakeTeacherWithStudents(studentsPerTeacher)
 		log.Printf("✓ Teacher %d: %s %s (ID assigned)", i+1, teacher.FirstName, teacher.LastName)

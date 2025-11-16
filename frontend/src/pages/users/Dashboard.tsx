@@ -2,7 +2,6 @@ import { Box, Fade, SxProps, Typography, Container } from "@mui/material";
 import { PerformanceChart } from "../../components/charts/PerformanceChart";
 import { GeneralUserInfo } from "../../components/users/GeneralUserInfo";
 import { useAuth } from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 
 const mainDiv: SxProps = {
 	display: "flex",
@@ -11,21 +10,13 @@ const mainDiv: SxProps = {
 };
 
 const Dashboard = () => {
-	const { currentUser, logout } = useAuth();
-	const navigate = useNavigate();
-
-	const handleLogout = () => {
-		logout();
-		navigate("/login");
-	};
+	const { currentUser } = useAuth();
 
 	return (
 		<Fade in={true}>
 			<Container maxWidth="xl">
 				<Box sx={mainDiv}>
-					{currentUser && (
-						<GeneralUserInfo userId={currentUser.id} onLogout={handleLogout} />
-					)}
+					{currentUser && <GeneralUserInfo userId={currentUser.id} />}
 					<Box sx={{ mb: 3 }}>
 						<PerformanceChart />
 					</Box>

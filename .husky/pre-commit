@@ -21,7 +21,7 @@ if git diff --cached --name-only | grep -q "^backend/music/"; then
       STAGED_PY_FILES=$(echo "$STAGED_PY_FILES" | sed 's|^backend/music/||')
 
       echo "Running Black on staged Python files..."
-      black $STAGED_PY_FILES
+      black "$STAGED_PY_FILES"
 
       if [ $? -ne 0 ]; then
         echo "❌ Black formatting failed."
@@ -29,7 +29,7 @@ if git diff --cached --name-only | grep -q "^backend/music/"; then
       fi
 
       echo "Running flake8 on staged Python files..."
-      flake8 $STAGED_PY_FILES --select=E9,F63,F7,F82
+      flake8 "$STAGED_PY_FILES" --select=E9,F63,F7,F82
 
       if [ $? -ne 0 ]; then
         echo "❌ Flake8 found critical errors."
@@ -57,7 +57,7 @@ if git diff --cached --name-only | grep -q "^backend/main/"; then
 
   if [ -n "$STAGED_GO_FILES" ]; then
     echo "Running gofmt on staged Go files..."
-    gofmt -w $STAGED_GO_FILES
+    gofmt -w "$STAGED_GO_FILES"
 
     if [ $? -ne 0 ]; then
       echo "❌ gofmt formatting failed."

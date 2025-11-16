@@ -30,6 +30,11 @@ import "chartjs-adapter-date-fns";
 import { useAuth } from "../../hooks/useAuth";
 import { ChartService } from "../../services/ChartService";
 import { TimeInterval, MultiMetricChartData } from "../../DTOs/chart";
+import {
+	CHART_THEME_COLORS,
+	getDatasetStyle,
+	getBaseChartOptions,
+} from "./chartConfig";
 
 // Register Chart.js components
 ChartJS.register(
@@ -42,14 +47,6 @@ ChartJS.register(
 	Tooltip,
 	Legend,
 );
-
-// Theme colors from App.tsx
-const THEME_COLORS = {
-	primary: "#1E201E", // NPM
-	secondary: "#3C3D37", // Accuracy
-	tertiary: "#697565", // Session Count
-	light: "#ECDFCC", // Total Questions
-};
 
 // Valid values for type safety
 const VALID_INTERVALS: TimeInterval[] = ["day", "week", "month", "year", "all"];
@@ -184,13 +181,7 @@ export const PerformanceChart = () => {
 							x: point.x.getTime(),
 							y: point.y,
 						})),
-						borderColor: THEME_COLORS.primary,
-						backgroundColor: THEME_COLORS.primary,
-						borderWidth: 2,
-						pointRadius: 3,
-						pointHoverRadius: 5,
-						tension: 0.4,
-						fill: false,
+						...getDatasetStyle(CHART_THEME_COLORS.primary),
 					},
 					{
 						label: "Accuracy %",
@@ -198,13 +189,7 @@ export const PerformanceChart = () => {
 							x: point.x.getTime(),
 							y: point.y,
 						})),
-						borderColor: THEME_COLORS.secondary,
-						backgroundColor: THEME_COLORS.secondary,
-						borderWidth: 2,
-						pointRadius: 3,
-						pointHoverRadius: 5,
-						tension: 0.4,
-						fill: false,
+						...getDatasetStyle(CHART_THEME_COLORS.secondary),
 					},
 					{
 						label: "Session Count",
@@ -212,13 +197,7 @@ export const PerformanceChart = () => {
 							x: point.x.getTime(),
 							y: point.y,
 						})),
-						borderColor: THEME_COLORS.tertiary,
-						backgroundColor: THEME_COLORS.tertiary,
-						borderWidth: 2,
-						pointRadius: 3,
-						pointHoverRadius: 5,
-						tension: 0.4,
-						fill: false,
+						...getDatasetStyle(CHART_THEME_COLORS.tertiary),
 					},
 					{
 						label: "Total Questions",
@@ -226,13 +205,7 @@ export const PerformanceChart = () => {
 							x: point.x.getTime(),
 							y: point.y,
 						})),
-						borderColor: THEME_COLORS.light,
-						backgroundColor: THEME_COLORS.light,
-						borderWidth: 2,
-						pointRadius: 3,
-						pointHoverRadius: 5,
-						tension: 0.4,
-						fill: false,
+						...getDatasetStyle(CHART_THEME_COLORS.light),
 					},
 				],
 			}
@@ -240,33 +213,11 @@ export const PerformanceChart = () => {
 
 	// Chart.js options with responsive design
 	const options: ChartOptions<"line"> = {
-		responsive: true,
-		maintainAspectRatio: false,
-		interaction: {
-			mode: "index",
-			intersect: false,
-		},
+		...getBaseChartOptions(),
 		plugins: {
-			legend: {
-				position: "bottom",
-				labels: {
-					usePointStyle: true,
-					padding: 15,
-					font: {
-						size: 12,
-					},
-				},
-			},
+			...getBaseChartOptions().plugins,
 			tooltip: {
-				backgroundColor: "rgba(0, 0, 0, 0.8)",
-				padding: 12,
-				titleFont: {
-					size: 14,
-				},
-				bodyFont: {
-					size: 12,
-				},
-				usePointStyle: true,
+				...getBaseChartOptions().plugins?.tooltip,
 				callbacks: {
 					title: (tooltipItems) => {
 						const xValue = tooltipItems[0].parsed.x;
@@ -287,17 +238,18 @@ export const PerformanceChart = () => {
 				time: {
 					unit:
 						interval === "day"
-							? "day"
+							? "hour"
 							: interval === "week"
-								? "week"
+								? "day"
 								: interval === "month"
-									? "month"
-									: "year",
+									? "day"
+									: interval === "year"
+										? "month"
+										: "day",
 					displayFormats: {
+						hour: "HH:mm",
 						day: "MMM d",
-						week: "MMM d",
 						month: "MMM yyyy",
-						year: "yyyy",
 					},
 				},
 				grid: {

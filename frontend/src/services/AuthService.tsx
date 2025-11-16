@@ -42,11 +42,7 @@ export const AuthService = {
 			throw new Error("No authentication token found");
 		}
 
-		const response = await apiClient.get<User | AuthError>("/api/auth/me", {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await apiClient.get<User | AuthError>("/api/auth/me");
 		if (!isOk(response)) {
 			this.logout();
 

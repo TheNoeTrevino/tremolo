@@ -1,3 +1,4 @@
+// Package repositories represents the data access layer
 package repositories
 
 import (
@@ -18,13 +19,13 @@ func NewNoteGameRepository() *NoteGameRepository {
 
 // NoteGameEntry represents a note game entry
 type NoteGameEntry struct {
-	ID               int     `db:"id"`
-	UserID           int     `db:"user_id"`
-	TimeLength       string  `db:"time_length"`
-	TotalQuestions   int     `db:"total_questions"`
-	CorrectQuestions int     `db:"correct_questions"`
-	NotesPerMinute   float64 `db:"notes_per_minute"`
-	CreatedDate      string  `db:"created_date"`
+	ID               int     `db:"id" json:"id"`
+	UserID           int     `db:"user_id" json:"user_id"`
+	TimeLength       string  `db:"time_length" json:"time_length"`
+	TotalQuestions   int     `db:"total_questions" json:"total_questions"`
+	CorrectQuestions int     `db:"correct_questions" json:"correct_questions"`
+	NotesPerMinute   float64 `db:"notes_per_minute" json:"notes_per_minute"`
+	CreatedDate      string  `db:"created_date" json:"created_date"`
 }
 
 // CreateNoteGameEntry inserts a new note game entry
@@ -87,6 +88,32 @@ func (r *NoteGameRepository) GetEntriesByUserID(userID int) ([]NoteGameEntry, er
 	return entries, nil
 }
 
+// GetRecentEntriesByUserID retrieves the last 30 note game entries for a user
+func (r *NoteGameRepository) GetRecentEntriesByUserID(userID int) ([]NoteGameEntry, error) {
+	query := `
+		select 
+			id,
+			user_id,
+			time_length,
+			total_questions,
+			correct_questions,
+			notes_per_minute,
+			created_date
+		from note_game_entries
+		where user_id = $1
+		order by created_date desc, id desc
+		limit 30
+	`
+
+	var entries []NoteGameEntry
+	err := r.db.Select(&entries, query, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return entries, nil
+}
+
 // FetchNPMData retrieves NPM (Notes Per Minute) data for chart visualization
 func (r *NoteGameRepository) FetchNPMData(userID int, interval string, days int) ([]dtos.ChartDataPoint, error) {
 	var query string
@@ -96,26 +123,24 @@ func (r *NoteGameRepository) FetchNPMData(userID int, interval string, days int)
 	if interval == "all" {
 		query = `
 			select
-				date_trunc('day', created_date) as timestamp,
-				avg(notes_per_minute) as value
+				created_date + created_time as timestamp,
+				notes_per_minute::float as value
 			from note_game_entries
 			where user_id = $1
-			group by date_trunc('day', created_date)
-			order by timestamp asc
+			order by created_date, created_time asc
 		`
 		err = r.db.Select(&data, query, userID)
 	} else {
 		query = `
 			select
-				date_trunc($1, created_date) as timestamp,
-				avg(notes_per_minute) as value
+				created_date + created_time as timestamp,
+				notes_per_minute::float as value
 			from note_game_entries
-			where user_id = $2
-			  and created_date >= current_date - interval '1 day' * $3
-			group by date_trunc($1, created_date)
-			order by timestamp asc
+			where user_id = $1
+			  and created_date >= current_date - interval '1 day' * $2
+			order by created_date, created_time asc
 		`
-		err = r.db.Select(&data, query, interval, userID, days)
+		err = r.db.Select(&data, query, userID, days)
 	}
 
 	if err != nil && err != sql.ErrNoRows {
@@ -134,26 +159,24 @@ func (r *NoteGameRepository) FetchAccuracyData(userID int, interval string, days
 	if interval == "all" {
 		query = `
 			select
-				date_trunc('day', created_date) as timestamp,
-				(sum(correct_questions)::float / nullif(sum(total_questions)::float, 0)) * 100 as value
+				created_date + created_time as timestamp,
+				(correct_questions::float / nullif(total_questions::float, 0)) * 100 as value
 			from note_game_entries
 			where user_id = $1
-			group by date_trunc('day', created_date)
-			order by timestamp asc
+			order by created_date, created_time asc
 		`
 		err = r.db.Select(&data, query, userID)
 	} else {
 		query = `
 			select
-				date_trunc($1, created_date) as timestamp,
-				(sum(correct_questions)::float / nullif(sum(total_questions)::float, 0)) * 100 as value
+				created_date + created_time as timestamp,
+				(correct_questions::float / nullif(total_questions::float, 0)) * 100 as value
 			from note_game_entries
-			where user_id = $2
-			  and created_date >= current_date - interval '1 day' * $3
-			group by date_trunc($1, created_date)
-			order by timestamp asc
+			where user_id = $1
+			  and created_date >= current_date - interval '1 day' * $2
+			order by created_date, created_time asc
 		`
-		err = r.db.Select(&data, query, interval, userID, days)
+		err = r.db.Select(&data, query, userID, days)
 	}
 
 	if err != nil && err != sql.ErrNoRows {
@@ -164,6 +187,7 @@ func (r *NoteGameRepository) FetchAccuracyData(userID int, interval string, days
 }
 
 // FetchSessionCountData retrieves session count data for chart visualization
+// Returns 1 for each individual game entry
 func (r *NoteGameRepository) FetchSessionCountData(userID int, interval string, days int) ([]dtos.ChartDataPoint, error) {
 	var query string
 	var data []dtos.ChartDataPoint
@@ -172,26 +196,24 @@ func (r *NoteGameRepository) FetchSessionCountData(userID int, interval string, 
 	if interval == "all" {
 		query = `
 			select
-				date_trunc('day', created_date) as timestamp,
-				count(*)::float as value
+				created_date + created_time as timestamp,
+				1::float as value
 			from note_game_entries
 			where user_id = $1
-			group by date_trunc('day', created_date)
-			order by timestamp asc
+			order by created_date, created_time asc
 		`
 		err = r.db.Select(&data, query, userID)
 	} else {
 		query = `
 			select
-				date_trunc($1, created_date) as timestamp,
-				count(*)::float as value
+				created_date + created_time as timestamp,
+				1::float as value
 			from note_game_entries
-			where user_id = $2
-			  and created_date >= current_date - interval '1 day' * $3
-			group by date_trunc($1, created_date)
-			order by timestamp asc
+			where user_id = $1
+			  and created_date >= current_date - interval '1 day' * $2
+			order by created_date, created_time asc
 		`
-		err = r.db.Select(&data, query, interval, userID, days)
+		err = r.db.Select(&data, query, userID, days)
 	}
 
 	if err != nil && err != sql.ErrNoRows {
@@ -210,26 +232,24 @@ func (r *NoteGameRepository) FetchTotalQuestionsData(userID int, interval string
 	if interval == "all" {
 		query = `
 			select
-				date_trunc('day', created_date) as timestamp,
-				sum(total_questions)::float as value
+				created_date + created_time as timestamp,
+				total_questions::float as value
 			from note_game_entries
 			where user_id = $1
-			group by date_trunc('day', created_date)
-			order by timestamp asc
+			order by created_date, created_time asc
 		`
 		err = r.db.Select(&data, query, userID)
 	} else {
 		query = `
 			select
-				date_trunc($1, created_date) as timestamp,
-				sum(total_questions)::float as value
+				created_date + created_time as timestamp,
+				total_questions::float as value
 			from note_game_entries
-			where user_id = $2
-			  and created_date >= current_date - interval '1 day' * $3
-			group by date_trunc($1, created_date)
-			order by timestamp asc
+			where user_id = $1
+			  and created_date >= current_date - interval '1 day' * $2
+			order by created_date, created_time asc
 		`
-		err = r.db.Select(&data, query, interval, userID, days)
+		err = r.db.Select(&data, query, userID, days)
 	}
 
 	if err != nil && err != sql.ErrNoRows {
@@ -239,7 +259,7 @@ func (r *NoteGameRepository) FetchTotalQuestionsData(userID int, interval string
 	return data, nil
 }
 
-// FetchTeacherNPMData retrieves aggregated NPM data for all students of a teacher
+// FetchTeacherNPMData retrieves NPM data for all students of a teacher (individual games)
 func (r *NoteGameRepository) FetchTeacherNPMData(teacherID int, interval string, days int) ([]dtos.ChartDataPoint, error) {
 	var query string
 	var data []dtos.ChartDataPoint
@@ -248,28 +268,26 @@ func (r *NoteGameRepository) FetchTeacherNPMData(teacherID int, interval string,
 	if interval == "all" {
 		query = `
 			select
-				date_trunc('day', nge.created_date) as timestamp,
-				avg(nge.notes_per_minute) as value
+				nge.created_date + nge.created_time as timestamp,
+				nge.notes_per_minute::float as value
 			from note_game_entries nge
 			inner join teacher_student ts on nge.user_id = ts.student_id
 			where ts.teacher_id = $1
-			group by date_trunc('day', nge.created_date)
-			order by timestamp asc
+			order by nge.created_date, nge.created_time asc
 		`
 		err = r.db.Select(&data, query, teacherID)
 	} else {
 		query = `
 			select
-				date_trunc($1, nge.created_date) as timestamp,
-				avg(nge.notes_per_minute) as value
+				nge.created_date + nge.created_time as timestamp,
+				nge.notes_per_minute::float as value
 			from note_game_entries nge
 			inner join teacher_student ts on nge.user_id = ts.student_id
-			where ts.teacher_id = $2
-			  and nge.created_date >= current_date - interval '1 day' * $3
-			group by date_trunc($1, nge.created_date)
-			order by timestamp asc
+			where ts.teacher_id = $1
+			  and nge.created_date >= current_date - interval '1 day' * $2
+			order by nge.created_date, nge.created_time asc
 		`
-		err = r.db.Select(&data, query, interval, teacherID, days)
+		err = r.db.Select(&data, query, teacherID, days)
 	}
 
 	if err != nil && err != sql.ErrNoRows {
@@ -279,7 +297,7 @@ func (r *NoteGameRepository) FetchTeacherNPMData(teacherID int, interval string,
 	return data, nil
 }
 
-// FetchTeacherAccuracyData retrieves aggregated accuracy data for all students of a teacher
+// FetchTeacherAccuracyData retrieves accuracy data for all students of a teacher (individual games)
 func (r *NoteGameRepository) FetchTeacherAccuracyData(teacherID int, interval string, days int) ([]dtos.ChartDataPoint, error) {
 	var query string
 	var data []dtos.ChartDataPoint
@@ -288,28 +306,26 @@ func (r *NoteGameRepository) FetchTeacherAccuracyData(teacherID int, interval st
 	if interval == "all" {
 		query = `
 			select
-				date_trunc('day', nge.created_date) as timestamp,
-				(sum(nge.correct_questions)::float / nullif(sum(nge.total_questions)::float, 0)) * 100 as value
+				nge.created_date + nge.created_time as timestamp,
+				(nge.correct_questions::float / nullif(nge.total_questions::float, 0)) * 100 as value
 			from note_game_entries nge
 			inner join teacher_student ts on nge.user_id = ts.student_id
 			where ts.teacher_id = $1
-			group by date_trunc('day', nge.created_date)
-			order by timestamp asc
+			order by nge.created_date, nge.created_time asc
 		`
 		err = r.db.Select(&data, query, teacherID)
 	} else {
 		query = `
 			select
-				date_trunc($1, nge.created_date) as timestamp,
-				(sum(nge.correct_questions)::float / nullif(sum(nge.total_questions)::float, 0)) * 100 as value
+				nge.created_date + nge.created_time as timestamp,
+				(nge.correct_questions::float / nullif(nge.total_questions::float, 0)) * 100 as value
 			from note_game_entries nge
 			inner join teacher_student ts on nge.user_id = ts.student_id
-			where ts.teacher_id = $2
-			  and nge.created_date >= current_date - interval '1 day' * $3
-			group by date_trunc($1, nge.created_date)
-			order by timestamp asc
+			where ts.teacher_id = $1
+			  and nge.created_date >= current_date - interval '1 day' * $2
+			order by nge.created_date, nge.created_time asc
 		`
-		err = r.db.Select(&data, query, interval, teacherID, days)
+		err = r.db.Select(&data, query, teacherID, days)
 	}
 
 	if err != nil && err != sql.ErrNoRows {
@@ -319,7 +335,8 @@ func (r *NoteGameRepository) FetchTeacherAccuracyData(teacherID int, interval st
 	return data, nil
 }
 
-// FetchTeacherSessionCountData retrieves aggregated session count for all students of a teacher
+// FetchTeacherSessionCountData retrieves session count for all students of a teacher (individual games)
+// Returns 1 for each individual game entry
 func (r *NoteGameRepository) FetchTeacherSessionCountData(teacherID int, interval string, days int) ([]dtos.ChartDataPoint, error) {
 	var query string
 	var data []dtos.ChartDataPoint
@@ -328,28 +345,26 @@ func (r *NoteGameRepository) FetchTeacherSessionCountData(teacherID int, interva
 	if interval == "all" {
 		query = `
 			select
-				date_trunc('day', nge.created_date) as timestamp,
-				count(*)::float as value
+				nge.created_date + nge.created_time as timestamp,
+				1::float as value
 			from note_game_entries nge
 			inner join teacher_student ts on nge.user_id = ts.student_id
 			where ts.teacher_id = $1
-			group by date_trunc('day', nge.created_date)
-			order by timestamp asc
+			order by nge.created_date, nge.created_time asc
 		`
 		err = r.db.Select(&data, query, teacherID)
 	} else {
 		query = `
 			select
-				date_trunc($1, nge.created_date) as timestamp,
-				count(*)::float as value
+				nge.created_date + nge.created_time as timestamp,
+				1::float as value
 			from note_game_entries nge
 			inner join teacher_student ts on nge.user_id = ts.student_id
-			where ts.teacher_id = $2
-			  and nge.created_date >= current_date - interval '1 day' * $3
-			group by date_trunc($1, nge.created_date)
-			order by timestamp asc
+			where ts.teacher_id = $1
+			  and nge.created_date >= current_date - interval '1 day' * $2
+			order by nge.created_date, nge.created_time asc
 		`
-		err = r.db.Select(&data, query, interval, teacherID, days)
+		err = r.db.Select(&data, query, teacherID, days)
 	}
 
 	if err != nil && err != sql.ErrNoRows {
@@ -359,7 +374,7 @@ func (r *NoteGameRepository) FetchTeacherSessionCountData(teacherID int, interva
 	return data, nil
 }
 
-// FetchTeacherTotalQuestionsData retrieves aggregated total questions for all students of a teacher
+// FetchTeacherTotalQuestionsData retrieves total questions for all students of a teacher (individual games)
 func (r *NoteGameRepository) FetchTeacherTotalQuestionsData(teacherID int, interval string, days int) ([]dtos.ChartDataPoint, error) {
 	var query string
 	var data []dtos.ChartDataPoint
@@ -368,28 +383,26 @@ func (r *NoteGameRepository) FetchTeacherTotalQuestionsData(teacherID int, inter
 	if interval == "all" {
 		query = `
 			select
-				date_trunc('day', nge.created_date) as timestamp,
-				sum(nge.total_questions)::float as value
+				nge.created_date + nge.created_time as timestamp,
+				nge.total_questions::float as value
 			from note_game_entries nge
 			inner join teacher_student ts on nge.user_id = ts.student_id
 			where ts.teacher_id = $1
-			group by date_trunc('day', nge.created_date)
-			order by timestamp asc
+			order by nge.created_date, nge.created_time asc
 		`
 		err = r.db.Select(&data, query, teacherID)
 	} else {
 		query = `
 			select
-				date_trunc($1, nge.created_date) as timestamp,
-				sum(nge.total_questions)::float as value
+				nge.created_date + nge.created_time as timestamp,
+				nge.total_questions::float as value
 			from note_game_entries nge
 			inner join teacher_student ts on nge.user_id = ts.student_id
-			where ts.teacher_id = $2
-			  and nge.created_date >= current_date - interval '1 day' * $3
-			group by date_trunc($1, nge.created_date)
-			order by timestamp asc
+			where ts.teacher_id = $1
+			  and nge.created_date >= current_date - interval '1 day' * $2
+			order by nge.created_date, nge.created_time asc
 		`
-		err = r.db.Select(&data, query, interval, teacherID, days)
+		err = r.db.Select(&data, query, teacherID, days)
 	}
 
 	if err != nil && err != sql.ErrNoRows {
