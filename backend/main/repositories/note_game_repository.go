@@ -1,3 +1,4 @@
+// Package repositories represents the data access layer
 package repositories
 
 import (
@@ -18,13 +19,13 @@ func NewNoteGameRepository() *NoteGameRepository {
 
 // NoteGameEntry represents a note game entry
 type NoteGameEntry struct {
-	ID               int     `db:"id"`
-	UserID           int     `db:"user_id"`
-	TimeLength       string  `db:"time_length"`
-	TotalQuestions   int     `db:"total_questions"`
-	CorrectQuestions int     `db:"correct_questions"`
-	NotesPerMinute   float64 `db:"notes_per_minute"`
-	CreatedDate      string  `db:"created_date"`
+	ID               int     `db:"id" json:"id"`
+	UserID           int     `db:"user_id" json:"user_id"`
+	TimeLength       string  `db:"time_length" json:"time_length"`
+	TotalQuestions   int     `db:"total_questions" json:"total_questions"`
+	CorrectQuestions int     `db:"correct_questions" json:"correct_questions"`
+	NotesPerMinute   float64 `db:"notes_per_minute" json:"notes_per_minute"`
+	CreatedDate      string  `db:"created_date" json:"created_date"`
 }
 
 // CreateNoteGameEntry inserts a new note game entry
@@ -76,6 +77,32 @@ func (r *NoteGameRepository) GetEntriesByUserID(userID int) ([]NoteGameEntry, er
 		from note_game_entries
 		where user_id = $1
 		order by created_date desc
+	`
+
+	var entries []NoteGameEntry
+	err := r.db.Select(&entries, query, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return entries, nil
+}
+
+// GetRecentEntriesByUserID retrieves the last 30 note game entries for a user
+func (r *NoteGameRepository) GetRecentEntriesByUserID(userID int) ([]NoteGameEntry, error) {
+	query := `
+		select 
+			id,
+			user_id,
+			time_length,
+			total_questions,
+			correct_questions,
+			notes_per_minute,
+			created_date
+		from note_game_entries
+		where user_id = $1
+		order by created_date desc, id desc
+		limit 30
 	`
 
 	var entries []NoteGameEntry

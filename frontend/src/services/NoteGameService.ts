@@ -8,6 +8,16 @@ export interface NoteGameEntryRequest {
 	notes_per_minute: number;
 }
 
+export interface NoteGameEntry {
+	id: number;
+	user_id: number;
+	time_length: string;
+	total_questions: number;
+	correct_questions: number;
+	notes_per_minute: number;
+	created_date: string;
+}
+
 interface NoteGameEntryResponse {
 	message: string;
 	id: number;
@@ -33,5 +43,20 @@ export const NoteGameService = {
 		}
 
 		return response.data as NoteGameEntryResponse;
+	},
+
+	async getRecentEntries(): Promise<NoteGameEntry[]> {
+		const response = await apiClient.get<NoteGameEntry[] | NoteGameError>(
+			"/api/note-game/recent",
+		);
+
+		if (!isOk(response)) {
+			const errorData = response.data as NoteGameError;
+			throw new Error(
+				errorData.error || "Failed to fetch recent entries. Please try again.",
+			);
+		}
+
+		return response.data as NoteGameEntry[];
 	},
 };

@@ -55,3 +55,22 @@ func CreateNoteGameEntry(authenticatedUserID int, entry *dtos.Entry) (int64, err
 
 	return entryID, nil
 }
+
+// GetRecentNoteGameEntries retrieves the last 30 note game entries for a user
+func GetRecentNoteGameEntries(authenticatedUserID int) ([]repositories.NoteGameEntry, error) {
+	noteGameRepo := repositories.NewNoteGameRepository()
+
+	entries, err := noteGameRepo.GetRecentEntriesByUserID(authenticatedUserID)
+	if err != nil {
+		logger.Error("Failed to fetch recent note game entries",
+			"error", err.Error(),
+			"user_id", authenticatedUserID)
+		return nil, err
+	}
+
+	logger.Info("Recent note game entries fetched successfully",
+		"user_id", authenticatedUserID,
+		"count", len(entries))
+
+	return entries, nil
+}

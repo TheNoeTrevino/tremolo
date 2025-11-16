@@ -16,6 +16,7 @@ func SetupNoteGameRoutes(router *gin.Engine) {
 	noteGame.Use(middleware.AuthMiddleware())
 	{
 		noteGame.POST("/entry", CreateNoteGameEntry)
+		noteGame.GET("/recent", GetRecentNoteGameEntries)
 	}
 }
 
@@ -54,4 +55,28 @@ func CreateNoteGameEntry(c *gin.Context) {
 		"message": "Note game entry saved successfully",
 		"id":      entryID,
 	})
+}
+
+// GetRecentNoteGameEntries fetches the last 30 note game entries for the authenticated user
+// Protected: Requires JWT authentication
+func GetRecentNoteGameEntries(c *gin.Context) {
+	userIDInterface, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	authenticatedUserID, ok := userIDInterface.(int)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	entries, err := services.GetRecentNoteGameEntries(authenticatedUserID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch recent entries"})
+		return
+	}
+
+	c.JSON(http.StatusOK, entries)
 }
