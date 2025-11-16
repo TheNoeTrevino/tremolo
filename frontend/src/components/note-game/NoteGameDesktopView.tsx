@@ -1,4 +1,4 @@
-import { Box, Card, ButtonBase, Button } from "@mui/material";
+import { Box, Card, Button } from "@mui/material";
 import { noteGameStyles } from "../../pages/note-game/NoteGameStyles";
 import {
 	sharpOptions,
